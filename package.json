@@ -40,7 +40,7 @@
     "ew-user-registry-contracts": "0.0.6",
     "ew-utils-general-lib": "0.0.2",
     "ew-utils-testbackend": "0.0.3",
-    "ew-asset-registry-lib": "0.0.2",
+    "ew-asset-registry-lib": "0.0.3",
     "jsonschema": "^1.2.4",
     "precise-proofs": "0.0.1",
     "sloffle": "v1.3.0-beta06",
