@@ -30,6 +30,7 @@ test-parity:
     - sh /prepare.sh
     - cp ci.connection-config.json connection-config.json 
     - npm install 
+    - npm run start-test-backend > /dev/null 2>&1 &
     - npm test 
 
 test-parity-POA:
@@ -43,6 +44,7 @@ test-parity-POA:
     - sh /prepare.sh
     - cp ci.connection-config.json connection-config.json 
     - npm install 
+    - npm run start-test-backend > /dev/null 2>&1 &
     - npm test
 
 test-ganache:
@@ -53,6 +55,7 @@ test-ganache:
     - sh /prepare.sh
     - npm install 
     - npm run start-ganache > /dev/null 2>&1 &
+    - npm run start-test-backend > /dev/null 2>&1 &
     - npm test
 
 push-to-registry:
