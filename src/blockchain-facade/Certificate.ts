@@ -48,9 +48,9 @@ export class Entity extends TradableEntity.TradableEntity.Entity
 
     async sync(): Promise<Entity> {
 
-        const cert = await this.configuration.blockchainProperties.certificateLogicInstance.getCertificate(this.id);
-
         if (this.id != null) {
+            const cert = await this.configuration.blockchainProperties.certificateLogicInstance.getCertificate(this.id);
+
             this.assetId = cert.tradableEntity.assetId;
             this.owner = cert.tradableEntity.owner;
             this.powerInW = cert.tradableEntity.powerInW;
