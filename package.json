@@ -10,7 +10,7 @@
   "scripts": {
     "parity-docker": "docker pull docker.slock.it/build-images/parity:v1.11.8-tobalaba && docker run --name 'parityDocker' -p 8180:8180 -p 8545:8545 -p 8546:8546 -p 8090:8091 docker.slock.it/build-images/parity:v1.11.8-tobalaba",
     "dockerstop": "docker kill 'parityDocker' && docker container rm 'parityDocker'",
-    "start-test-backend": "node node_modules/ewf-coo-test-backend/index.js",
+    "start-test-backend": "node node_modules/ew-utils-testbackend/index.js",
     "test": "npm run build-ts && mocha dist/js/test/ --timeout 60000",
     "start-ganache": "ganache-cli -m 'chalk park staff buzz chair purchase wise oak receive avoid avoid home' -g 0 -l 80000000 -e 1000000 -a 20",
     "testlight": "npm run build-ts && mocha build/ts/test/",
