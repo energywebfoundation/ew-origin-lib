@@ -62,41 +62,39 @@ describe('CertificateLogic-Facade', () => {
 
     let conf: GeneralLib.Configuration.Entity;
 
+    let blockceationTime;
+
     it('should deploy the contracts', async () => {
 
-        const userContracts = await migrateUserRegistryContracts((web3 as any));
-
-        userLogic = new UserLogic((web3 as any),
-                                  userContracts[process.cwd() + '/node_modules/ew-user-registry-contracts/dist/contracts/UserLogic.json']);
+        const userContracts = await migrateUserRegistryContracts((web3 as any), privateKeyDeployment);
+        userLogic = new UserLogic((web3 as any), (userContracts as any).UserLogic);
 
         await userLogic.setUser(accountDeployment, 'admin', { privateKey: privateKeyDeployment });
 
         await userLogic.setRoles(accountDeployment, 3, { privateKey: privateKeyDeployment });
 
-        const userContractLookupAddr = userContracts[process.cwd() + '/node_modules/ew-user-registry-contracts/dist/contracts/UserContractLookup.json'];
+        const userContractLookupAddr = (userContracts as any).UserContractLookup;
 
         userRegistryContract = new UserContractLookup((web3 as any), userContractLookupAddr);
-        const assetContracts = await migrateAssetRegistryContracts((web3 as any), userContractLookupAddr);
+        const assetContracts = await migrateAssetRegistryContracts((web3 as any), userContractLookupAddr, privateKeyDeployment);
 
-        const assetRegistryLookupAddr = assetContracts[process.cwd() + '/node_modules/ew-asset-registry-contracts/dist/contracts/AssetContractLookup.json'];
+        const assetRegistryLookupAddr = (assetContracts as any).AssetContractLookup;
 
-        const assetProducingAddr = assetContracts[process.cwd() + '/node_modules/ew-asset-registry-contracts/dist/contracts/AssetProducingRegistryLogic.json'];
-        const originContracts = await migrateCertificateRegistryContracts((web3 as any), assetRegistryLookupAddr);
+        const assetProducingAddr = (assetContracts as any).AssetProducingRegistryLogic;
+        const originContracts = await migrateCertificateRegistryContracts((web3 as any), assetRegistryLookupAddr, privateKeyDeployment);
 
         assetRegistryContract = new AssetContractLookup((web3 as any), assetRegistryLookupAddr);
-        originRegistryContract = new OriginContractLookup((web3 as any), originContracts[process.cwd() + '/node_modules/ew-origin-contracts/dist/contracts/OriginContractLookup.json']);
-        certificateLogic = new CertificateLogic((web3 as any), originContracts[process.cwd() + '/node_modules/ew-origin-contracts/dist/contracts/CertificateLogic.json']);
         assetRegistry = new AssetProducingRegistryLogic((web3 as any), assetProducingAddr);
 
         Object.keys(originContracts).forEach(async (key) => {
 
-            const deployedBytecode = await web3.eth.getCode(originContracts[key]);
-            assert.isTrue(deployedBytecode.length > 0);
+            if (key.includes('OriginContractLookup')) {
+                originRegistryContract = new OriginContractLookup((web3 as any), originContracts[key]);
+            }
 
-            const contractInfo = JSON.parse(fs.readFileSync(key, 'utf8'));
-
-            const tempBytecode = '0x' + contractInfo.deployedBytecode;
-            assert.equal(deployedBytecode, tempBytecode);
+            if (key.includes('CertificateLogic')) {
+                certificateLogic = new CertificateLogic((web3 as any), originContracts[key]);
+            }
 
         });
 
@@ -106,8 +104,8 @@ describe('CertificateLogic-Facade', () => {
                     address: accountDeployment, privateKey: privateKeyDeployment,
                 },
                 producingAssetLogicInstance: assetRegistry,
-                certificateLogicInstance: certificateLogic,
                 userLogicInstance: userLogic,
+                certificateLogicInstance: certificateLogic,
                 web3,
             },
             offChainDataSource: {
@@ -119,16 +117,21 @@ describe('CertificateLogic-Facade', () => {
     });
 
     it('should return correct balances', async () => {
+
         assert.equal(await Certificate.Certificate.getCertificateListLength(conf), 0);
-        assert.equal(await Certificate.Certificate.getBalance(accountAssetOwner, conf), 0);
-        assert.equal(await Certificate.Certificate.getBalance(accountTrader, conf), 0);
+        assert.equal(await Certificate.TradableEntity.getBalance(accountAssetOwner, conf), 0);
+        assert.equal(await Certificate.TradableEntity.getBalance(accountTrader, conf), 0);
 
     });
 
     it('should onboard tests-users', async () => {
 
         await userLogic.setUser(accountAssetOwner, 'assetOwner', { privateKey: privateKeyDeployment });
-        await userLogic.setRoles(accountAssetOwner, 8, { privateKey: privateKeyDeployment });
+
+        await userLogic.setUser(accountTrader, 'trader', { privateKey: privateKeyDeployment });
+
+        await userLogic.setRoles(accountTrader, 24, { privateKey: privateKeyDeployment });
+        await userLogic.setRoles(accountAssetOwner, 24, { privateKey: privateKeyDeployment });
     });
 
     it('should onboard a new asset', async () => {
@@ -185,8 +188,8 @@ describe('CertificateLogic-Facade', () => {
 
     it('should return correct balances', async () => {
         assert.equal(await Certificate.Certificate.getCertificateListLength(conf), 1);
-        assert.equal(await Certificate.Certificate.getBalance(accountAssetOwner, conf), 1);
-        assert.equal(await Certificate.Certificate.getBalance(accountTrader, conf), 0);
+        assert.equal(await Certificate.TradableEntity.getBalance(accountAssetOwner, conf), 1);
+        assert.equal(await Certificate.TradableEntity.getBalance(accountTrader, conf), 0);
 
     });
 
@@ -197,6 +200,7 @@ describe('CertificateLogic-Facade', () => {
         delete certificate.configuration;
         delete certificate.proofs;
 
+        blockceationTime = '' + (await web3.eth.getBlock('latest')).timestamp;
         assert.deepEqual(certificate as any, {
             id: '0',
             initialized: true,
@@ -209,11 +213,47 @@ describe('CertificateLogic-Facade', () => {
             approvedAddress: '0x0000000000000000000000000000000000000000',
             retired: false,
             dataLog: 'lastSmartMeterReadFileHash',
-            creationTime: '' + (await web3.eth.getBlock('latest')).timestamp,
+            creationTime: blockceationTime,
             parentId: '0',
             maxOwnerChanges: '3',
             ownerChangerCounter: '0',
         });
+
+    });
+
+    it('should transfer certificate', async () => {
+
+        conf.blockchainProperties.activeUser = {
+            address: accountAssetOwner, privateKey: assetOwnerPK,
+        };
+        let certificate = await (new Certificate.Certificate.Entity('0', conf).sync());
+
+        await certificate.transferFrom(accountTrader);
+
+        certificate = await (new Certificate.Certificate.Entity('0', conf).sync());
+
+        delete certificate.configuration;
+        delete certificate.proofs;
+
+        assert.deepEqual(certificate as any, {
+            id: '0',
+            initialized: true,
+            assetId: '0',
+            owner: accountTrader,
+            powerInW: '100',
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            onCHainDirectPurchasePrice: '0',
+            escrow: [],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            retired: false,
+            dataLog: 'lastSmartMeterReadFileHash',
+            creationTime: blockceationTime,
+            parentId: '0',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '1',
+        });
+
+        assert.equal(await Certificate.TradableEntity.getBalance(accountTrader, conf), 1);
 
     });
 

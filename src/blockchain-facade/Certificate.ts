@@ -2,6 +2,7 @@ import * as GeneralLib from 'ew-utils-general-lib';
 import * as TradableEntity from '..';
 import { CertificateLogic } from 'ew-origin-contracts';
 import { logger } from './Logger';
+import { Tx } from 'web3/eth/types';
 
 export interface CertificateSpecific extends TradableEntity.TradableEntity.OnChainProperties {
     retired: boolean;
@@ -27,9 +28,15 @@ export const getAllCertificates = async (configuration: GeneralLib.Configuration
 
 };
 
+export const isRetired = async (certId: number, configuration: GeneralLib.Configuration.Entity): Promise<boolean> => {
+    return configuration.blockchainProperties.certificateLogicInstance.isRetired(certId);
+};
+
+/*
 export const getBalance = async (owner: string, configuration: GeneralLib.Configuration.Entity): Promise<number> => {
     return (configuration.blockchainProperties.certificateLogicInstance.balanceOf(owner));
 };
+*/
 
 export class Entity extends TradableEntity.TradableEntity.Entity
     implements CertificateSpecific {
@@ -70,6 +77,56 @@ export class Entity extends TradableEntity.TradableEntity.Entity
             this.configuration.logger.verbose(`Certificate ${this.id} synced`);
         }
         return this;
+    }
+
+    async buyCertificate(): Promise<Tx> {
+        if (this.configuration.blockchainProperties.activeUser.privateKey) {
+            return this.configuration.blockchainProperties.certificateLogicInstance.buyCertificate(
+                this.id,
+                { privateKey: this.configuration.blockchainProperties.activeUser.privateKey });
+        }
+        else {
+            return this.configuration.blockchainProperties.certificateLogicInstance.buyCertificate(
+                this.id,
+                { from: this.configuration.blockchainProperties.activeUser.address });
+        }
+    }
+
+    async retireCertificate(): Promise<Tx> {
+        if (this.configuration.blockchainProperties.activeUser.privateKey) {
+            return this.configuration.blockchainProperties.certificateLogicInstance.retireCertificate(
+                this.id,
+                { privateKey: this.configuration.blockchainProperties.activeUser.privateKey });
+        }
+        else {
+            return this.configuration.blockchainProperties.certificateLogicInstance.retireCertificate(
+                this.id,
+                { from: this.configuration.blockchainProperties.activeUser.address });
+        }
+    }
+
+    async splitCertificate(power: number): Promise<Tx> {
+        if (this.configuration.blockchainProperties.activeUser.privateKey) {
+            return this.configuration.blockchainProperties.certificateLogicInstance.splitCertificate(
+                this.id,
+                power,
+                { privateKey: this.configuration.blockchainProperties.activeUser.privateKey });
+        }
+        else {
+            return this.configuration.blockchainProperties.certificateLogicInstance.splitCertificate(
+                this.id,
+                power,
+                { from: this.configuration.blockchainProperties.activeUser.address },
+            );
+        }
+    }
+
+    async getCertificateOwner(): Promise<string> {
+        return this.configuration.blockchainProperties.certificateLogicInstance.getCertificateOwner(this.id);
+    }
+
+    async isRetired(): Promise<boolean> {
+        return this.configuration.blockchainProperties.certificateLogicInstance.isRetired(this.id);
     }
 
 }
