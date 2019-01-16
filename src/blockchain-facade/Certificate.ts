@@ -2,7 +2,7 @@ import * as GeneralLib from 'ew-utils-general-lib';
 import * as TradableEntity from '..';
 import { CertificateLogic } from 'ew-origin-contracts';
 import { logger } from './Logger';
-import { Tx } from 'web3/eth/types';
+import { TransactionReceipt } from 'web3/types';
 
 export interface CertificateSpecific extends TradableEntity.TradableEntity.OnChainProperties {
     retired: boolean;
@@ -66,6 +66,7 @@ export class Entity extends TradableEntity.TradableEntity.Entity
             this.escrow = cert.tradableEntity.escrow;
             this.approvedAddress = cert.tradableEntity.approvedAddress;
 
+            this.children = cert.certificateSpecific.children;
             this.retired = cert.certificateSpecific.retired;
             this.dataLog = cert.certificateSpecific.dataLog;
             this.creationTime = cert.certificateSpecific.creationTime;
@@ -79,7 +80,7 @@ export class Entity extends TradableEntity.TradableEntity.Entity
         return this;
     }
 
-    async buyCertificate(): Promise<Tx> {
+    async buyCertificate(): Promise<TransactionReceipt> {
         if (this.configuration.blockchainProperties.activeUser.privateKey) {
             return this.configuration.blockchainProperties.certificateLogicInstance.buyCertificate(
                 this.id,
@@ -92,7 +93,7 @@ export class Entity extends TradableEntity.TradableEntity.Entity
         }
     }
 
-    async retireCertificate(): Promise<Tx> {
+    async retireCertificate(): Promise<TransactionReceipt> {
         if (this.configuration.blockchainProperties.activeUser.privateKey) {
             return this.configuration.blockchainProperties.certificateLogicInstance.retireCertificate(
                 this.id,
@@ -105,7 +106,7 @@ export class Entity extends TradableEntity.TradableEntity.Entity
         }
     }
 
-    async splitCertificate(power: number): Promise<Tx> {
+    async splitCertificate(power: number): Promise<TransactionReceipt> {
         if (this.configuration.blockchainProperties.activeUser.privateKey) {
             return this.configuration.blockchainProperties.certificateLogicInstance.splitCertificate(
                 this.id,

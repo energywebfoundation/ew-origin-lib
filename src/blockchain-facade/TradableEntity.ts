@@ -1,5 +1,5 @@
 import * as GeneralLib from 'ew-utils-general-lib';
-import { Tx } from 'web3/eth/types';
+import { TransactionReceipt } from 'web3/types';
 
 export interface OnChainProperties {
     assetId: number;
@@ -48,7 +48,7 @@ export const isApprovedForAll = async (
 export const setApprovalForAll = async (
     matcher: string,
     approved: boolean,
-    configuration: GeneralLib.Configuration.Entity): Promise<Tx> => {
+    configuration: GeneralLib.Configuration.Entity): Promise<TransactionReceipt> => {
 
     if (configuration.blockchainProperties.activeUser.privateKey) {
         return configuration.blockchainProperties.certificateLogicInstance.setApprovalForAll(
@@ -84,11 +84,11 @@ export abstract class Entity extends GeneralLib.BlockchainDataModelEntity.Entity
     async safeTransferFrom(
         _to: string,
         _calldata?: string,
-    ): Promise<Tx> {
+    ): Promise<TransactionReceipt> {
 
         if (this.configuration.blockchainProperties.activeUser.privateKey) {
             return this.configuration.blockchainProperties.certificateLogicInstance.safeTransferFrom(
-                this.owner.address,
+                this.owner,
                 _to,
                 this.id,
                 _calldata ? _calldata : null,
@@ -96,7 +96,7 @@ export abstract class Entity extends GeneralLib.BlockchainDataModelEntity.Entity
         }
         else {
             return this.configuration.blockchainProperties.certificateLogicInstance.safeTransferFrom(
-                this.owner.address,
+                this.owner,
                 _to,
                 this.id,
                 _calldata ? _calldata : null,
@@ -106,7 +106,7 @@ export abstract class Entity extends GeneralLib.BlockchainDataModelEntity.Entity
 
     async transferFrom(
         _to: string,
-    ): Promise<Tx> {
+    ): Promise<TransactionReceipt> {
 
         if (this.configuration.blockchainProperties.activeUser.privateKey) {
             return this.configuration.blockchainProperties.certificateLogicInstance.transferFrom(
@@ -125,7 +125,7 @@ export abstract class Entity extends GeneralLib.BlockchainDataModelEntity.Entity
     }
 
     async approve(
-        _approved: string): Promise<Tx> {
+        _approved: string): Promise<TransactionReceipt> {
         if (this.configuration.blockchainProperties.activeUser.privateKey) {
             return this.configuration.blockchainProperties.certificateLogicInstance.approve(
                 _approved,
@@ -148,7 +148,7 @@ export abstract class Entity extends GeneralLib.BlockchainDataModelEntity.Entity
         return this.configuration.blockchainProperties.certificateLogicInstance.isApprovedForAll(this.owner, matcher);
     }
 
-    async setTradableToken(token: string): Promise<Tx> {
+    async setTradableToken(token: string): Promise<TransactionReceipt> {
         if (this.configuration.blockchainProperties.activeUser.privateKey) {
             return this.configuration.blockchainProperties.certificateLogicInstance.setTradableToken(
                 this.id,
@@ -163,7 +163,7 @@ export abstract class Entity extends GeneralLib.BlockchainDataModelEntity.Entity
         }
     }
 
-    async setOnChainDirectPurchasePrice(price: number): Promise<Tx> {
+    async setOnChainDirectPurchasePrice(price: number): Promise<TransactionReceipt> {
         if (this.configuration.blockchainProperties.activeUser.privateKey) {
             return this.configuration.blockchainProperties.certificateLogicInstance.setOnChainDirectPurchasePrice(
                 this.id,
@@ -187,12 +187,42 @@ export abstract class Entity extends GeneralLib.BlockchainDataModelEntity.Entity
         return this.configuration.blockchainProperties.certificateLogicInstance.getOnChainDirectPurchasePrice(this.id);
     }
 
-    async removeEscrow(escrow: string): Promise<Tx> {
-        return this.configuration.blockchainProperties.certificateLogicInstance.removeEscrow(this.id, escrow);
+    async removeEscrow(escrow: string): Promise<TransactionReceipt> {
+
+        if (this.configuration.blockchainProperties.activeUser.privateKey) {
+            return this.configuration.blockchainProperties.certificateLogicInstance.removeEscrow(
+                this.id,
+                escrow,
+                { privateKey: this.configuration.blockchainProperties.activeUser.privateKey });
+        }
+        else {
+            return this.configuration.blockchainProperties.certificateLogicInstance.removeEscrow(
+                this.id,
+                escrow,
+                { from: this.configuration.blockchainProperties.activeUser.address },
+            );
+        }
     }
 
-    async addEscrowForEntity(escrow: string): Promise<Tx> {
-        return this.configuration.blockchainProperties.certificateLogicInstance.addEscrowForEntity(this.id, escrow);
+    async addEscrowForEntity(escrow: string): Promise<TransactionReceipt> {
+
+        if (this.configuration.blockchainProperties.activeUser.privateKey) {
+            return this.configuration.blockchainProperties.certificateLogicInstance.addEscrowForEntity(
+                this.id,
+                escrow,
+                { privateKey: this.configuration.blockchainProperties.activeUser.privateKey });
+        }
+        else {
+            return this.configuration.blockchainProperties.certificateLogicInstance.addEscrowForEntity(
+                this.id,
+                escrow,
+                { from: this.configuration.blockchainProperties.activeUser.address },
+            );
+        }
+    }
+
+    async getOwner(): Promise<string> {
+        return this.configuration.blockchainProperties.certificateLogicInstance.ownerOf(this.id);
     }
 
 }

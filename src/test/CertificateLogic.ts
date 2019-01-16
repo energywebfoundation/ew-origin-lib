@@ -17,7 +17,6 @@
 import { assert } from 'chai';
 import * as fs from 'fs';
 import 'mocha';
-import { Web3Type } from '../types/web3';
 import { migrateUserRegistryContracts, UserLogic, UserContractLookup } from 'ew-user-registry-contracts';
 import { migrateAssetRegistryContracts, AssetContractLookup, AssetProducingRegistryLogic } from 'ew-asset-registry-contracts';
 import { OriginContractLookup, CertificateLogic, migrateCertificateRegistryContracts } from 'ew-origin-contracts';
@@ -25,6 +24,7 @@ import * as Certificate from '..';
 import * as GeneralLib from 'ew-utils-general-lib';
 import { logger } from '../blockchain-facade/Logger';
 import * as Asset from 'ew-asset-registry-lib';
+import { deployERC20TestToken, Erc20TestToken, TestReceiver, deployERC721TestReceiver } from 'ew-erc-test-contracts';
 
 describe('CertificateLogic-Facade', () => {
 
@@ -35,10 +35,13 @@ describe('CertificateLogic-Facade', () => {
     let originRegistryContract: OriginContractLookup;
     let userRegistryContract: UserContractLookup;
 
+    let erc20TestToken: Erc20TestToken;
+    let testReceiver: TestReceiver;
+
     const configFile = JSON.parse(fs.readFileSync(process.cwd() + '/connection-config.json', 'utf8'));
 
     const Web3 = require('web3');
-    const web3: Web3Type = new Web3(configFile.develop.web3);
+    const web3 = new Web3(configFile.develop.web3);
 
     const privateKeyDeployment = configFile.develop.deployKey.startsWith('0x') ?
         configFile.develop.deployKey : '0x' + configFile.develop.deployKey;
@@ -196,6 +199,7 @@ describe('CertificateLogic-Facade', () => {
     it('should return certificate', async () => {
 
         const certificate = await (new Certificate.Certificate.Entity('0', conf).sync());
+        assert.equal(await certificate.getOwner(), accountAssetOwner);
 
         delete certificate.configuration;
         delete certificate.proofs;
@@ -205,6 +209,7 @@ describe('CertificateLogic-Facade', () => {
             id: '0',
             initialized: true,
             assetId: '0',
+            children: [],
             owner: accountAssetOwner,
             powerInW: '100',
             acceptedToken: '0x0000000000000000000000000000000000000000',
@@ -232,6 +237,10 @@ describe('CertificateLogic-Facade', () => {
 
         certificate = await (new Certificate.Certificate.Entity('0', conf).sync());
 
+        assert.equal(await Certificate.Certificate.getCertificateListLength(conf), 1);
+        assert.equal(await Certificate.TradableEntity.getBalance(accountAssetOwner, conf), 0);
+        assert.equal(await Certificate.TradableEntity.getBalance(accountTrader, conf), 1);
+        assert.equal(await certificate.getOwner(), accountTrader);
         delete certificate.configuration;
         delete certificate.proofs;
 
@@ -239,6 +248,7 @@ describe('CertificateLogic-Facade', () => {
             id: '0',
             initialized: true,
             assetId: '0',
+            children: [],
             owner: accountTrader,
             powerInW: '100',
             acceptedToken: '0x0000000000000000000000000000000000000000',
@@ -253,7 +263,606 @@ describe('CertificateLogic-Facade', () => {
             ownerChangerCounter: '1',
         });
 
-        assert.equal(await Certificate.TradableEntity.getBalance(accountTrader, conf), 1);
+    });
+
+    it('create a new certificate (#1)', async () => {
+
+        await assetRegistry.saveSmartMeterRead(
+            0,
+            200,
+            'lastSmartMeterReadFileHash',
+            { privateKey: assetSmartmeterPK });
+        const certificate = await (new Certificate.Certificate.Entity('1', conf).sync());
+
+        delete certificate.configuration;
+        delete certificate.proofs;
+
+        blockceationTime = '' + (await web3.eth.getBlock('latest')).timestamp;
+        assert.deepEqual(certificate as any, {
+            id: '1',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountAssetOwner,
+            powerInW: '100',
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            onCHainDirectPurchasePrice: '0',
+            escrow: [matcherAccount],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            retired: false,
+            dataLog: 'lastSmartMeterReadFileHash',
+            creationTime: blockceationTime,
+            parentId: '1',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '0',
+        });
+
+    });
+
+    it('should approve', async () => {
+        let certificate = await (new Certificate.Certificate.Entity('1', conf).sync());
+
+        assert.equal(await certificate.getApproved(), '0x0000000000000000000000000000000000000000');
+
+        await certificate.approve('0x0000000000000000000000000000000000000001');
+        assert.equal(await certificate.getApproved(), '0x0000000000000000000000000000000000000001');
+
+        certificate = await certificate.sync();
+        delete certificate.configuration;
+        delete certificate.proofs;
+        assert.deepEqual(certificate as any, {
+            id: '1',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountAssetOwner,
+            powerInW: '100',
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            onCHainDirectPurchasePrice: '0',
+            escrow: [matcherAccount],
+            approvedAddress: '0x0000000000000000000000000000000000000001',
+            retired: false,
+            dataLog: 'lastSmartMeterReadFileHash',
+            creationTime: blockceationTime,
+            parentId: '1',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '0',
+        });
+    });
+
+    it('should set erc20-token and price for a certificate', async () => {
+
+        let certificate = await (new Certificate.Certificate.Entity('1', conf).sync());
+
+        await certificate.setOnChainDirectPurchasePrice(100);
+
+        assert.equal(await certificate.getOnChainDirectPurchasePrice(), 100);
+
+        certificate = await certificate.sync();
+
+        assert.equal(certificate.onCHainDirectPurchasePrice, 100);
+
+        const erc20TestAddress = (await deployERC20TestToken(
+            web3,
+            accountTrader,
+            privateKeyDeployment,
+        )).contractAddress;
+
+        erc20TestToken = new Erc20TestToken(web3, erc20TestAddress);
+
+        await certificate.setTradableToken(erc20TestAddress);
+
+        certificate = await certificate.sync();
+
+        assert.equal(await certificate.getTradableToken(), erc20TestAddress);
+        delete certificate.configuration;
+        delete certificate.proofs;
+
+        assert.deepEqual(certificate as any, {
+            id: '1',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountAssetOwner,
+            powerInW: '100',
+            acceptedToken: erc20TestAddress,
+            onCHainDirectPurchasePrice: '100',
+            escrow: [matcherAccount],
+            approvedAddress: '0x0000000000000000000000000000000000000001',
+            retired: false,
+            dataLog: 'lastSmartMeterReadFileHash',
+            creationTime: blockceationTime,
+            parentId: '1',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '0',
+        });
+
+    });
+
+    it('should fail buying a certificate when not enough erc20 tokens approved', async () => {
+
+        conf.blockchainProperties.activeUser = {
+            address: accountTrader, privateKey: traderPK,
+        };
+
+        const certificate = await (new Certificate.Certificate.Entity('1', conf).sync());
+
+        let failed = false;
+
+        try {
+            await certificate.buyCertificate();
+        }
+        catch (ex) {
+            failed = true;
+            assert.include(ex.message, 'erc20 transfer failed');
+        }
+
+        assert.isTrue(failed);
+
+    });
+
+    it('should buying a certificate when enough erc20 tokens are approved', async () => {
+
+        await erc20TestToken.approve(accountAssetOwner, 100, { privateKey: traderPK });
+
+        let certificate = await (new Certificate.Certificate.Entity('1', conf).sync());
+
+        await certificate.buyCertificate();
+        certificate = await certificate.sync();
+
+        delete certificate.configuration;
+        delete certificate.proofs;
+
+        assert.deepEqual(certificate as any, {
+            id: '1',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountTrader,
+            powerInW: '100',
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            onCHainDirectPurchasePrice: '0',
+            escrow: [],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            retired: false,
+            dataLog: 'lastSmartMeterReadFileHash',
+            creationTime: blockceationTime,
+            parentId: '1',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '1',
+        });
+
+    });
+
+    it('should create a new certificate (#2)', async () => {
+
+        await assetRegistry.saveSmartMeterRead(
+            0,
+            300,
+            'lastSmartMeterReadFileHash#3',
+            { privateKey: assetSmartmeterPK });
+        const certificate = await (new Certificate.Certificate.Entity('2', conf).sync());
+
+        delete certificate.configuration;
+        delete certificate.proofs;
+
+        blockceationTime = '' + (await web3.eth.getBlock('latest')).timestamp;
+        assert.deepEqual(certificate as any, {
+            id: '2',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountAssetOwner,
+            powerInW: '100',
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            onCHainDirectPurchasePrice: '0',
+            escrow: [matcherAccount],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            retired: false,
+            dataLog: 'lastSmartMeterReadFileHash#3',
+            creationTime: blockceationTime,
+            parentId: '2',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '0',
+        });
+
+    });
+
+    it('should split a certificate', async () => {
+
+        conf.blockchainProperties.activeUser = {
+            address: accountAssetOwner, privateKey: assetOwnerPK,
+        };
+
+        let certificate = await (new Certificate.Certificate.Entity('2', conf).sync());
+
+        await certificate.splitCertificate(60);
+
+        certificate = await certificate.sync();
+        delete certificate.configuration;
+        delete certificate.proofs;
+
+        assert.deepEqual(certificate as any, {
+            id: '2',
+            initialized: true,
+            assetId: '0',
+            children: ['3', '4'],
+            owner: accountAssetOwner,
+            powerInW: '100',
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            onCHainDirectPurchasePrice: '0',
+            escrow: [matcherAccount],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            retired: false,
+            dataLog: 'lastSmartMeterReadFileHash#3',
+            creationTime: blockceationTime,
+            parentId: '2',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '0',
+        });
+
+        const c1 = await (new Certificate.Certificate.Entity('3', conf).sync());
+        delete c1.configuration;
+        delete c1.proofs;
+
+        const c2 = await (new Certificate.Certificate.Entity('4', conf).sync());
+        delete c2.configuration;
+        delete c2.proofs;
+
+        assert.deepEqual((c1) as any, {
+            id: '3',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountAssetOwner,
+            powerInW: '60',
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            onCHainDirectPurchasePrice: '0',
+            escrow: [matcherAccount],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            retired: false,
+            dataLog: 'lastSmartMeterReadFileHash#3',
+            creationTime: blockceationTime,
+            parentId: '2',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '0',
+        });
+
+        assert.deepEqual((c2) as any, {
+            id: '4',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountAssetOwner,
+            powerInW: '40',
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            onCHainDirectPurchasePrice: '0',
+            escrow: [matcherAccount],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            retired: false,
+            dataLog: 'lastSmartMeterReadFileHash#3',
+            creationTime: blockceationTime,
+            parentId: '2',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '0',
+        });
+    });
+
+    it('should retire a certificate', async () => {
+
+        let certificate = await (new Certificate.Certificate.Entity('3', conf).sync());
+
+        await certificate.retireCertificate();
+
+        certificate = await certificate.sync();
+
+        assert.isTrue(await certificate.isRetired());
+        assert.equal(await certificate.getCertificateOwner(), accountAssetOwner);
+
+        delete certificate.configuration;
+        delete certificate.proofs;
+
+        assert.deepEqual((certificate) as any, {
+            id: '3',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountAssetOwner,
+            powerInW: '60',
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            onCHainDirectPurchasePrice: '0',
+            escrow: [],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            retired: true,
+            dataLog: 'lastSmartMeterReadFileHash#3',
+            creationTime: blockceationTime,
+            parentId: '2',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '0',
+        });
+
+    });
+
+    it('should fail when trying to remove a non-existing matcher of a certificate', async () => {
+        let certificate = await (new Certificate.Certificate.Entity('4', conf).sync());
+
+        let failed = false;
+        try {
+            await certificate.removeEscrow(accountTrader);
+
+        } catch (ex) {
+            assert.include(ex.message, 'escrow address not in array');
+            failed = true;
+        }
+
+        assert.isTrue(failed);
+        certificate = await certificate.sync();
+        delete certificate.configuration;
+        delete certificate.proofs;
+
+        assert.deepEqual((certificate) as any, {
+            id: '4',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountAssetOwner,
+            powerInW: '40',
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            onCHainDirectPurchasePrice: '0',
+            escrow: [matcherAccount],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            retired: false,
+            dataLog: 'lastSmartMeterReadFileHash#3',
+            creationTime: blockceationTime,
+            parentId: '2',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '0',
+        });
+    });
+
+    it('should remove matcher of a certificate', async () => {
+        let certificate = await (new Certificate.Certificate.Entity('4', conf).sync());
+
+        await certificate.removeEscrow(matcherAccount);
+
+        certificate = await certificate.sync();
+        delete certificate.configuration;
+        delete certificate.proofs;
+
+        assert.deepEqual((certificate) as any, {
+            id: '4',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountAssetOwner,
+            powerInW: '40',
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            onCHainDirectPurchasePrice: '0',
+            escrow: [],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            retired: false,
+            dataLog: 'lastSmartMeterReadFileHash#3',
+            creationTime: blockceationTime,
+            parentId: '2',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '0',
+        });
+    });
+
+    it('should add a matcher to a certificate', async () => {
+        let certificate = await (new Certificate.Certificate.Entity('4', conf).sync());
+
+        await certificate.addEscrowForEntity(matcherAccount);
+
+        certificate = await certificate.sync();
+        delete certificate.configuration;
+        delete certificate.proofs;
+
+        assert.deepEqual((certificate) as any, {
+            id: '4',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountAssetOwner,
+            powerInW: '40',
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            onCHainDirectPurchasePrice: '0',
+            escrow: [matcherAccount],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            retired: false,
+            dataLog: 'lastSmartMeterReadFileHash#3',
+            creationTime: blockceationTime,
+            parentId: '2',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '0',
+        });
+    });
+
+    it('should create a new certificate (#5)', async () => {
+
+        await assetRegistry.saveSmartMeterRead(
+            0,
+            400,
+            'lastSmartMeterReadFileHash#4',
+            { privateKey: assetSmartmeterPK });
+        const certificate = await (new Certificate.Certificate.Entity('5', conf).sync());
+
+        delete certificate.configuration;
+        delete certificate.proofs;
+
+        blockceationTime = '' + (await web3.eth.getBlock('latest')).timestamp;
+        assert.deepEqual(certificate as any, {
+            id: '5',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountAssetOwner,
+            powerInW: '100',
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            onCHainDirectPurchasePrice: '0',
+            escrow: [matcherAccount],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            retired: false,
+            dataLog: 'lastSmartMeterReadFileHash#4',
+            creationTime: blockceationTime,
+            parentId: '5',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '0',
+        });
+
+    });
+
+    it('should fail using safeTransferFrom without calldata to an address', async () => {
+
+        const certificate = await (new Certificate.Certificate.Entity('5', conf).sync());
+
+        let failed = false;
+
+        try {
+            await certificate.safeTransferFrom(accountTrader);
+
+        } catch (ex) {
+
+            assert.include(ex.message, '_to is not a contract');
+            failed = true;
+        }
+
+        assert.isTrue(failed);
+
+    });
+
+    it('should be able to use safeTransferFrom without calldata', async () => {
+
+        const testReceiverAddress = (await deployERC721TestReceiver(
+            web3,
+            certificateLogic.web3Contract.options.address,
+            privateKeyDeployment)).contractAddress;
+
+        testReceiver = new TestReceiver(web3, testReceiverAddress);
+
+        await userLogic.setUser(testReceiverAddress, 'testReceiverAddress', { privateKey: privateKeyDeployment });
+
+        await userLogic.setRoles(testReceiverAddress, 24, { privateKey: privateKeyDeployment });
+        let certificate = await (new Certificate.Certificate.Entity('5', conf).sync());
+
+        await certificate.safeTransferFrom(testReceiverAddress);
+
+        certificate = await certificate.sync();
+        delete certificate.configuration;
+        delete certificate.proofs;
+
+        assert.deepEqual(certificate as any, {
+            id: '5',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: testReceiverAddress,
+            powerInW: '100',
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            onCHainDirectPurchasePrice: '0',
+            escrow: [],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            retired: false,
+            dataLog: 'lastSmartMeterReadFileHash#4',
+            creationTime: blockceationTime,
+            parentId: '5',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '1',
+        });
+
+    });
+
+    it('should create a new certificate (#6)', async () => {
+
+        await assetRegistry.saveSmartMeterRead(
+            0,
+            500,
+            'lastSmartMeterReadFileHash#5',
+            { privateKey: assetSmartmeterPK });
+        const certificate = await (new Certificate.Certificate.Entity('6', conf).sync());
+
+        delete certificate.configuration;
+        delete certificate.proofs;
+
+        blockceationTime = '' + (await web3.eth.getBlock('latest')).timestamp;
+        assert.deepEqual(certificate as any, {
+            id: '6',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountAssetOwner,
+            powerInW: '100',
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            onCHainDirectPurchasePrice: '0',
+            escrow: [matcherAccount],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            retired: false,
+            dataLog: 'lastSmartMeterReadFileHash#5',
+            creationTime: blockceationTime,
+            parentId: '6',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '0',
+        });
+
+    });
+
+    it('should fail using safeTransferFrom calldata to an address', async () => {
+
+        const certificate = await (new Certificate.Certificate.Entity('6', conf).sync());
+
+        let failed = false;
+
+        try {
+            await certificate.safeTransferFrom(accountTrader, '0x001');
+
+        } catch (ex) {
+
+            assert.include(ex.message, '_to is not a contract');
+            failed = true;
+        }
+
+        assert.isTrue(failed);
+
+    });
+
+    it('should be able to use safeTransferFrom', async () => {
+
+        const testReceiverAddress = (await deployERC721TestReceiver(
+            web3,
+            certificateLogic.web3Contract.options.address,
+            privateKeyDeployment)).contractAddress;
+
+        testReceiver = new TestReceiver(web3, testReceiverAddress);
+
+        await userLogic.setUser(testReceiverAddress, 'testReceiverAddress', { privateKey: privateKeyDeployment });
+
+        await userLogic.setRoles(testReceiverAddress, 24, { privateKey: privateKeyDeployment });
+        let certificate = await (new Certificate.Certificate.Entity('6', conf).sync());
+
+        await certificate.safeTransferFrom(testReceiverAddress, '0x001');
+
+        certificate = await certificate.sync();
+        delete certificate.configuration;
+        delete certificate.proofs;
+
+        assert.deepEqual(certificate as any, {
+            id: '6',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: testReceiverAddress,
+            powerInW: '100',
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            onCHainDirectPurchasePrice: '0',
+            escrow: [],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            retired: false,
+            dataLog: 'lastSmartMeterReadFileHash#5',
+            creationTime: blockceationTime,
+            parentId: '6',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '1',
+        });
 
     });
 
