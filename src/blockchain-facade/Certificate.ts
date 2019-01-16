@@ -75,7 +75,10 @@ export class Entity extends TradableEntity.TradableEntity.Entity
             this.ownerChangerCounter = cert.certificateSpecific.ownerChangeCounter;
             this.initialized = true;
 
-            this.configuration.logger.verbose(`Certificate ${this.id} synced`);
+            if (this.configuration.logger) {
+                this.configuration.logger.verbose(`Certificate ${this.id} synced`);
+            }
+            
         }
         return this;
     }
