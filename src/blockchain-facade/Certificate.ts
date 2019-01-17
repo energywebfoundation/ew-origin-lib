@@ -2,7 +2,7 @@ import * as GeneralLib from 'ew-utils-general-lib';
 import * as TradableEntity from '..';
 import { CertificateLogic } from 'ew-origin-contracts';
 import { logger } from './Logger';
-import { TransactionReceipt } from 'web3/types';
+import { TransactionReceipt, Log } from 'web3/types';
 
 export interface CertificateSpecific extends TradableEntity.TradableEntity.OnChainProperties {
     retired: boolean;
@@ -32,11 +32,48 @@ export const isRetired = async (certId: number, configuration: GeneralLib.Config
     return configuration.blockchainProperties.certificateLogicInstance.isRetired(certId);
 };
 
-/*
-export const getBalance = async (owner: string, configuration: GeneralLib.Configuration.Entity): Promise<number> => {
-    return (configuration.blockchainProperties.certificateLogicInstance.balanceOf(owner));
+export const getAllCertificateEvents = async (
+    certId: number,
+    configuration: GeneralLib.Configuration.Entity): Promise<Log[]> => {
+
+    const allEvents = await configuration.blockchainProperties.certificateLogicInstance.getAllEvents(
+        {
+            topics: [null, configuration.blockchainProperties.web3.utils.padLeft(configuration.blockchainProperties.web3.utils.fromDecimal(certId), 64, '0')],
+        });
+
+    const returnEvents = [];
+
+    for (const fullEvent of allEvents) {
+
+        // we have to remove some false positives due to ERC721 interface
+        if (fullEvent.event === 'Transfer') {
+
+            if (fullEvent.returnValues._tokenId === '' + certId) {
+                returnEvents.push(fullEvent);
+            }
+        }
+        else {
+            returnEvents.push(fullEvent);
+        }
+
+    }
+
+    // we also have to search 
+    if (certId !== 0) {
+
+        const transferEvents = await configuration.blockchainProperties.certificateLogicInstance.getAllTransferEvents(
+            {
+                topics: ['0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef', null, null, configuration.blockchainProperties.web3.utils.padLeft(configuration.blockchainProperties.web3.utils.fromDecimal(certId), 64, '0')],
+            });
+
+        for (const transferEvent of transferEvents) {
+            returnEvents.push(transferEvent);
+        }
+
+    }
+
+    return returnEvents;
 };
-*/
 
 export class Entity extends TradableEntity.TradableEntity.Entity
     implements CertificateSpecific {
@@ -78,7 +115,7 @@ export class Entity extends TradableEntity.TradableEntity.Entity
             if (this.configuration.logger) {
                 this.configuration.logger.verbose(`Certificate ${this.id} synced`);
             }
-            
+
         }
         return this;
     }
@@ -131,6 +168,52 @@ export class Entity extends TradableEntity.TradableEntity.Entity
 
     async isRetired(): Promise<boolean> {
         return this.configuration.blockchainProperties.certificateLogicInstance.isRetired(this.id);
+    }
+
+    async getAllCertificateEvents(): Promise<Log[]> {
+
+        const allEvents = await this.configuration.blockchainProperties.certificateLogicInstance.getAllEvents(
+            {
+                topics: [null,
+                    this.configuration.blockchainProperties.web3.utils.padLeft(this.configuration.blockchainProperties.web3.utils.fromDecimal(this.id), 64, '0'),
+                ],
+            });
+
+        const returnEvents = [];
+
+        for (const fullEvent of allEvents) {
+
+            // we have to remove some false positives due to ERC721 interface
+            if (fullEvent.event === 'Transfer') {
+
+                if (fullEvent.returnValues._tokenId === '' + this.id) {
+                    returnEvents.push(fullEvent);
+                }
+            }
+            else {
+                returnEvents.push(fullEvent);
+            }
+
+        }
+
+        // we also have to search 
+        if (this.id !== '0') {
+
+            const transferEvents = await this.configuration.blockchainProperties.certificateLogicInstance.getAllTransferEvents(
+                {
+                    topics: ['0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef',
+                        null,
+                        null,
+                        this.configuration.blockchainProperties.web3.utils.padLeft(this.configuration.blockchainProperties.web3.utils.fromDecimal(this.id), 64, '0')],
+                });
+
+            for (const transferEvent of transferEvents) {
+                returnEvents.push(transferEvent);
+            }
+
+        }
+
+        return returnEvents;
     }
 
 }

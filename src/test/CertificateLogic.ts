@@ -864,6 +864,88 @@ describe('CertificateLogic-Facade', () => {
             ownerChangerCounter: '1',
         });
 
+        let allEvents = await Certificate.Certificate.getAllCertificateEvents(0, conf);
+
+        /*
+        for (let i = 0; i < allEvents.length; i++) {
+            console.log('');
+            console.log((allEvents as any)[i].event);
+            console.log((allEvents as any)[i].returnValues);
+            console.log((allEvents as any)[i].raw.topics);
+            console.log('');
+        }
+        console.log('-----------------');
+       */
+        allEvents = await Certificate.Certificate.getAllCertificateEvents(1, conf);
+
+        /*
+        for (let i = 0; i < allEvents.length; i++) {
+            console.log('');
+            console.log((allEvents as any)[i].event);
+            console.log((allEvents as any)[i].returnValues);
+            console.log((allEvents as any)[i].raw.topics);
+            console.log('');
+        }
+        console.log('-----------------');
+        */
+        allEvents = await Certificate.Certificate.getAllCertificateEvents(2, conf);
+
+        /*
+        for (let i = 0; i < allEvents.length; i++) {
+            console.log('');
+            console.log((allEvents as any)[i].event);
+            console.log((allEvents as any)[i].returnValues);
+            console.log((allEvents as any)[i].raw.topics);
+            console.log('');
+        }
+        console.log('-----------------');
+        */
+        allEvents = await Certificate.Certificate.getAllCertificateEvents(3, conf);
+        /*
+        for (let i = 0; i < allEvents.length; i++) {
+            console.log('');
+            console.log((allEvents as any)[i].event);
+            console.log((allEvents as any)[i].returnValues);
+            console.log((allEvents as any)[i].raw.topics);
+            console.log('');
+        }
+        console.log('-----------------');
+        */
+        allEvents = await Certificate.Certificate.getAllCertificateEvents(4, conf);
+
+        /*
+        for (let i = 0; i < allEvents.length; i++) {
+            console.log('');
+            console.log((allEvents as any)[i].event);
+            console.log((allEvents as any)[i].returnValues);
+            console.log((allEvents as any)[i].raw.topics);
+            console.log('');
+        }
+        console.log('-----------------');
+        */
+        allEvents = await Certificate.Certificate.getAllCertificateEvents(5, conf);
+
+        /*
+        for (let i = 0; i < allEvents.length; i++) {
+            console.log('');
+            console.log((allEvents as any)[i].event);
+            console.log((allEvents as any)[i].returnValues);
+            console.log((allEvents as any)[i].raw.topics);
+            console.log('');
+        }
+        console.log('-----------------');
+        */
+        allEvents = await Certificate.Certificate.getAllCertificateEvents(6, conf);
+
+        /*
+        for (let i = 0; i < allEvents.length; i++) {
+            console.log('');
+            console.log((allEvents as any)[i].event);
+            console.log((allEvents as any)[i].returnValues);
+            console.log((allEvents as any)[i].raw.topics);
+            console.log('');
+        }*/
+        //        console.log(allEvents);
     });
 
 });
