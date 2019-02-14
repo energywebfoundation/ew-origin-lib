@@ -140,7 +140,6 @@ describe('CertificateLogic-Facade', () => {
     it('should onboard a new asset', async () => {
 
         const assetProps: Asset.ProducingAsset.OnChainProperties = {
-            certificatesUsedForWh: 0,
             smartMeter: { address: assetSmartmeter },
             owner: { address: accountAssetOwner },
             lastSmartMeterReadWh: 0,
@@ -149,8 +148,6 @@ describe('CertificateLogic-Facade', () => {
             matcher: [{ address: matcherAccount }],
             propertiesDocumentHash: null,
             url: null,
-            certificatesCreatedForWh: 0,
-            lastSmartMeterCO2OffsetRead: 0,
             maxOwnerChanges: 3,
         };
 
