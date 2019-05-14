@@ -44,6 +44,15 @@ export const getAllCertificates = async (configuration: GeneralLib.Configuration
 
 };
 
+export const getLeafCertificates = async (configuration: GeneralLib.Configuration.Entity) => {
+    const certificatePromises = Array(await getCertificateListLength(configuration))
+        .fill(null)
+        .map((item, index) => (new Entity(index.toString(), configuration)).sync());
+
+    const certs = await Promise.all(certificatePromises);
+    return certs.filter((cert: Entity) => cert.children.length === 0);
+};
+
 export const isRetired = async (certId: number, configuration: GeneralLib.Configuration.Entity): Promise<boolean> => {
     return configuration.blockchainProperties.certificateLogicInstance.isRetired(certId);
 };
