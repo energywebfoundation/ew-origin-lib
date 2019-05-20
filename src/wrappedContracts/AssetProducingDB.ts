@@ -931,11 +931,9 @@ export class AssetProducingDB extends GeneralFunctions {
 
             if (!txParams.gas) {
                 try {
-                    gas = await this.web3Contract.methods
-                        .changeOwner(_newOwner)
-                        .estimateGas({
-                            from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
-                        });
+                    gas = await this.web3Contract.methods.changeOwner(_newOwner).estimateGas({
+                        from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
+                    });
                 } catch (ex) {
                     if (!(await getClientVersion(this.web3)).includes('Parity')) {
                         throw new Error(ex);
@@ -1107,11 +1105,9 @@ export class AssetProducingDB extends GeneralFunctions {
 
             if (!txParams.gas) {
                 try {
-                    gas = await this.web3Contract.methods
-                        .addFullAsset(_a)
-                        .estimateGas({
-                            from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
-                        });
+                    gas = await this.web3Contract.methods.addFullAsset(_a).estimateGas({
+                        from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
+                    });
                 } catch (ex) {
                     if (!(await getClientVersion(this.web3)).includes('Parity')) {
                         throw new Error(ex);
@@ -1190,11 +1186,9 @@ export class AssetProducingDB extends GeneralFunctions {
 
             if (!txParams.gas) {
                 try {
-                    gas = await this.web3Contract.methods
-                        .setActive(_assetId, _active)
-                        .estimateGas({
-                            from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
-                        });
+                    gas = await this.web3Contract.methods.setActive(_assetId, _active).estimateGas({
+                        from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
+                    });
                 } catch (ex) {
                     if (!(await getClientVersion(this.web3)).includes('Parity')) {
                         throw new Error(ex);

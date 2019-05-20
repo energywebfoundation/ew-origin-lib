@@ -170,11 +170,9 @@ export class OriginContractLookup extends GeneralFunctions {
 
             if (!txParams.gas) {
                 try {
-                    gas = await this.web3Contract.methods
-                        .update(_originRegistry)
-                        .estimateGas({
-                            from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
-                        });
+                    gas = await this.web3Contract.methods.update(_originRegistry).estimateGas({
+                        from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
+                    });
                 } catch (ex) {
                     if (!(await getClientVersion(this.web3)).includes('Parity')) {
                         throw new Error(ex);
@@ -346,11 +344,9 @@ export class OriginContractLookup extends GeneralFunctions {
 
             if (!txParams.gas) {
                 try {
-                    gas = await this.web3Contract.methods
-                        .changeOwner(_newOwner)
-                        .estimateGas({
-                            from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
-                        });
+                    gas = await this.web3Contract.methods.changeOwner(_newOwner).estimateGas({
+                        from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
+                    });
                 } catch (ex) {
                     if (!(await getClientVersion(this.web3)).includes('Parity')) {
                         throw new Error(ex);

@@ -17,11 +17,7 @@
 import { assert } from 'chai';
 import * as fs from 'fs';
 import 'mocha';
-import {
-    migrateUserRegistryContracts,
-    UserLogic,
-    UserContractLookup
-} from 'ew-user-registry-lib';
+import { migrateUserRegistryContracts, UserLogic, UserContractLookup } from 'ew-user-registry-lib';
 import {
     migrateAssetRegistryContracts,
     AssetContractLookup,

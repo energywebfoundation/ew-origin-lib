@@ -412,11 +412,9 @@ export class CertificateLogic extends GeneralFunctions {
 
             if (!txParams.gas) {
                 try {
-                    gas = await this.web3Contract.methods
-                        .update(_newLogic)
-                        .estimateGas({
-                            from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
-                        });
+                    gas = await this.web3Contract.methods.update(_newLogic).estimateGas({
+                        from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
+                    });
                 } catch (ex) {
                     if (!(await getClientVersion(this.web3)).includes('Parity')) {
                         throw new Error(ex);
@@ -1197,11 +1195,9 @@ export class CertificateLogic extends GeneralFunctions {
 
             if (!txParams.gas) {
                 try {
-                    gas = await this.web3Contract.methods
-                        .changeOwner(_newOwner)
-                        .estimateGas({
-                            from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
-                        });
+                    gas = await this.web3Contract.methods.changeOwner(_newOwner).estimateGas({
+                        from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
+                    });
                 } catch (ex) {
                     if (!(await getClientVersion(this.web3)).includes('Parity')) {
                         throw new Error(ex);
@@ -1541,11 +1537,9 @@ export class CertificateLogic extends GeneralFunctions {
 
             if (!txParams.gas) {
                 try {
-                    gas = await this.web3Contract.methods
-                        .init(_database, _admin)
-                        .estimateGas({
-                            from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
-                        });
+                    gas = await this.web3Contract.methods.init(_database, _admin).estimateGas({
+                        from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
+                    });
                 } catch (ex) {
                     if (!(await getClientVersion(this.web3)).includes('Parity')) {
                         throw new Error(ex);

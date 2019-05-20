@@ -17,7 +17,9 @@ export class TestReceiver extends GeneralFunctions {
                 ? new web3.eth.Contract(TestReceiverJSON.abi, address)
                 : new web3.eth.Contract(
                       TestReceiverJSON.abi,
-                      (TestReceiverJSON as any).networks.length > 0 ? TestReceiverJSON.networks[0] : null
+                      (TestReceiverJSON as any).networks.length > 0
+                          ? TestReceiverJSON.networks[0]
+                          : null
                   )
         );
         this.web3 = web3;

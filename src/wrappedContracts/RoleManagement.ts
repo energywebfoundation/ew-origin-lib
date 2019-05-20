@@ -17,7 +17,9 @@ export class RoleManagement extends GeneralFunctions {
                 ? new web3.eth.Contract(RoleManagementJSON.abi, address)
                 : new web3.eth.Contract(
                       RoleManagementJSON.abi,
-                      (RoleManagementJSON as any).networks.length > 0 ? RoleManagementJSON.networks[0] : null
+                      (RoleManagementJSON as any).networks.length > 0
+                          ? RoleManagementJSON.networks[0]
+                          : null
                   )
         );
         this.web3 = web3;
@@ -90,11 +92,9 @@ export class RoleManagement extends GeneralFunctions {
 
             if (!txParams.gas) {
                 try {
-                    gas = await this.web3Contract.methods
-                        .changeOwner(_newOwner)
-                        .estimateGas({
-                            from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
-                        });
+                    gas = await this.web3Contract.methods.changeOwner(_newOwner).estimateGas({
+                        from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
+                    });
                 } catch (ex) {
                     if (!(await getClientVersion(this.web3)).includes('Parity')) {
                         throw new Error(ex);

@@ -17,7 +17,9 @@ export class Erc20TestToken extends GeneralFunctions {
                 ? new web3.eth.Contract(Erc20TestTokenJSON.abi, address)
                 : new web3.eth.Contract(
                       Erc20TestTokenJSON.abi,
-                      (Erc20TestTokenJSON as any).networks.length > 0 ? Erc20TestTokenJSON.networks[0] : null
+                      (Erc20TestTokenJSON as any).networks.length > 0
+                          ? Erc20TestTokenJSON.networks[0]
+                          : null
                   )
         );
         this.web3 = web3;
@@ -106,11 +108,9 @@ export class Erc20TestToken extends GeneralFunctions {
 
             if (!txParams.gas) {
                 try {
-                    gas = await this.web3Contract.methods
-                        .approve(_spender, _tokens)
-                        .estimateGas({
-                            from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
-                        });
+                    gas = await this.web3Contract.methods.approve(_spender, _tokens).estimateGas({
+                        from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
+                    });
                 } catch (ex) {
                     if (!(await getClientVersion(this.web3)).includes('Parity')) {
                         throw new Error(ex);
@@ -298,11 +298,9 @@ export class Erc20TestToken extends GeneralFunctions {
 
             if (!txParams.gas) {
                 try {
-                    gas = await this.web3Contract.methods
-                        .transfer(_to, _tokens)
-                        .estimateGas({
-                            from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
-                        });
+                    gas = await this.web3Contract.methods.transfer(_to, _tokens).estimateGas({
+                        from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
+                    });
                 } catch (ex) {
                     if (!(await getClientVersion(this.web3)).includes('Parity')) {
                         throw new Error(ex);
