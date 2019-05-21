@@ -16,8 +16,7 @@
     "start-ganache": "ganache-cli -m 'chalk park staff buzz chair purchase wise oak receive avoid avoid home' -g 0 -l 80000000 -e 1000000 -a 20",
     "prettier": "prettier --write --config-precedence file-override './src/**/*'",
     "lint": "solium -d contracts && tslint 'src/**/*{.ts,.tsx}'",
-    "lint-fix": "solium -d contracts --fix && tslint --fix 'src/**/*{.ts,.tsx}'",
-    "prepublish": "npm run compile && npm run build-ts"
+    "lint-fix": "solium -d contracts --fix && tslint --fix 'src/**/*{.ts,.tsx}'"
   },
   "repository": {
     "type": "git",
@@ -36,11 +35,11 @@
     "@types/web3": "1.0.14",
     "chai": "4.1.2",
     "ethlint": "1.2.4",
-    "ew-asset-registry-lib": "Kuzirashi/ew-asset-registry-lib#51a89f410ba16b129761655c89af95ff1404c6f4",
+    "ew-asset-registry-lib": "git+ssh://git@github.com:energywebfoundation/ew-asset-registry-lib.git#9f501a360f799487a5e8da6b5b78549f5a313c7a",
     "ew-erc-test-contracts": "0.0.99",
-    "ew-user-registry-lib": "energywebfoundation/ew-user-registry-lib#c47ae92eebc8f26f3ed734bf64529a983deb3987",
-    "ew-utils-general-lib": "energywebfoundation/ew-utils-general-lib#a2d0f16c39bf65fe2c6ee56dec304100ed764e4a",
-    "ew-utils-testbackend": "energywebfoundation/ptt-utils-testbackend#a6b2d3060bff7f1bce6b082ee3b376d2ba310339",
+    "ew-user-registry-lib": "git+ssh://git@github.com:energywebfoundation/ew-user-registry-lib.git#c47ae92eebc8f26f3ed734bf64529a983deb3987",
+    "ew-utils-general-lib": "git+ssh://git@github.com:energywebfoundation/ew-utils-general-lib.git#a2d0f16c39bf65fe2c6ee56dec304100ed764e4a",
+    "ew-utils-testbackend": "git+ssh://git@github.com:energywebfoundation/ptt-utils-testbackend.git#a6b2d3060bff7f1bce6b082ee3b376d2ba310339",
     "fs-extra": "8.0.1",
     "ganache-cli": "6.1.8",
     "lint-staged": "8.1.7",
