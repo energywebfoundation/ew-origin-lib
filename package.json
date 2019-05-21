@@ -10,7 +10,7 @@
   "scripts": {
     "compile": "truffle compile",
     "deploy-contracts": "truffle migrate",
-    "build-ts": "rm -rf dist/js && node_modules/typescript/bin/tsc",
+    "build-ts": "rm -rf dist/js && tsc",
     "start-test-backend": "node node_modules/ew-utils-testbackend/index.js",
     "test": "npm run build-ts && mocha dist/js/src/test/ --timeout 60000",
     "start-ganache": "ganache-cli -m 'chalk park staff buzz chair purchase wise oak receive avoid avoid home' -g 0 -l 80000000 -e 1000000 -a 20",
@@ -30,21 +30,18 @@
   },
   "homepage": "https://github.com/energywebfoundation/ew-origin-lib#readme",
   "dependencies": {
-    "ew-asset-registry-lib": "1.0.2",
-    "ew-user-registry-lib": "1.0.2",
-    "ew-utils-general-lib": "1.0.1",
-    "ew-utils-testbackend": "0.0.99",
-    "web3": "1.0.0-beta.37",
-    "winston": "3.2.1"
-  },
-  "devDependencies": {
     "@types/chai": "4.1.4",
     "@types/mocha": "2.2.48",
     "@types/node": "9.6.28",
     "@types/web3": "1.0.14",
     "chai": "4.1.2",
     "ethlint": "1.2.4",
+    "ew-asset-registry-lib": "Kuzirashi/ew-asset-registry-lib#51a89f410ba16b129761655c89af95ff1404c6f4",
     "ew-erc-test-contracts": "0.0.99",
+    "ew-user-registry-lib": "energywebfoundation/ew-user-registry-lib#c47ae92eebc8f26f3ed734bf64529a983deb3987",
+    "ew-utils-general-lib": "energywebfoundation/ew-utils-general-lib#a2d0f16c39bf65fe2c6ee56dec304100ed764e4a",
+    "ew-utils-testbackend": "energywebfoundation/ptt-utils-testbackend#a6b2d3060bff7f1bce6b082ee3b376d2ba310339",
+    "fs-extra": "8.0.1",
     "ganache-cli": "6.1.8",
     "lint-staged": "8.1.7",
     "mocha": "5.2.0",
@@ -54,7 +51,9 @@
     "tslint-config-prettier": "1.18.0",
     "tslint-lines-between-class-members": "1.3.1",
     "tslint-sonarts": "1.9.0",
-    "typescript": "2.9.2"
+    "typescript": "2.9.2",
+    "web3": "1.0.0-beta.37",
+    "winston": "3.2.1"
   },
   "postinstall": "rm -f node_modules/web3/index.d.ts",
   "lint-staged": {
@@ -63,5 +62,8 @@
       "prettier --write --config ./.prettierrc --config-precedence file-override",
       "git add"
     ]
+  },
+  "bin": {
+    "ew-origin-lib-build": "./scripts/build.js"
   }
 }
