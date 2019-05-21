@@ -49,9 +49,6 @@ async function executeCommand(command, directory) {
 async function run() {
   console.log('EW-ORIGIN-LIB-BUILD: Start...');
 
-  await executeCommand('npx ew-utils-general-lib-build', ROOT_DIRECTORY)
-  await executeCommand('npx ew-user-registry-lib-build', ROOT_DIRECTORY)
-  await executeCommand('npx ew-asset-registry-lib-build', ROOT_DIRECTORY)
   await executeCommand('npm run compile', ROOT_DIRECTORY)
   await executeCommand('npm run build-ts', ROOT_DIRECTORY)
 
