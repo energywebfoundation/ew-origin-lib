@@ -21,14 +21,12 @@ interface CertificateSpecificDBInterface {
 
     /// @notice gets whether the certificate has the retired flag
     /// @param _certificateID the certificate id
-    ///@return retired flag
-    function getRetired(uint _certificateID) external returns (bool);
+    /// @return retired flag
+    function isRetired(uint _certificateID) external returns (bool);
 
     /// @notice sets the retired flag for a certificate
     /// @param _certificateID the certificate id
-    /// @param _retired the retired flag
-    function setRetired(uint _certificateID, bool _retired) external;
-
+    function retire(uint _certificateID) external;
 
     /// @notice gets the dataLog for a certificate
     /// @param _certificateID the certificate id

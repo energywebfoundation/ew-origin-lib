@@ -560,6 +560,8 @@ describe('CertificateLogic', () => {
                     _childOne: '1',
                     _childTwo: '2'
                 });
+
+                console.log(certSplittedEvent);
                 //    }
             });
 

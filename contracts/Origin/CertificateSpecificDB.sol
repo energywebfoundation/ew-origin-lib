@@ -61,17 +61,20 @@ contract CertificateSpecificDB is CertificateSpecificDBInterface, Owned {
     /// @param _certificateId the id of the certificate
     /// @param _newOwnerChangeCounter the new counter
     function setOwnerChangeCounter(uint _certificateId, uint _newOwnerChangeCounter) external {
-        require(msg.sender == owner || msg.sender == address(this));
+        require(msg.sender == owner || msg.sender == address(this), "You are not the owner.");
         CertificateSpecificContract.CertificateSpecific storage certificate = getCertificateInternally(_certificateId);
         certificate.ownerChangeCounter = _newOwnerChangeCounter;
     }
 
     /// @notice sets the retired flag for a certificate
     /// @param _certificateId the id of the certificate
-    /// @param _retired flag whether the certificate is retired
-    function setRetired(uint _certificateId, bool _retired) external onlyOwner {
+    function retire(uint _certificateId) external onlyOwner {
         CertificateSpecificContract.CertificateSpecific storage certificate = getCertificateInternally(_certificateId);
-        certificate.retired = _retired;
+        require(
+            certificate.status == CertificateSpecificContract.Status.Active,
+            "Failed - Attempting to retire a non-active certificate."
+        );
+        certificate.status = CertificateSpecificContract.Status.Retired;
     }
 
     /// @notice returns the number of children of a certificate
@@ -111,8 +114,8 @@ contract CertificateSpecificDB is CertificateSpecificDBInterface, Owned {
     /// @notice gets the flag whether the certificate is retired
     /// @param _certificateId the id of a certificate
     /// @return flag whether a certificate is retired
-    function getRetired(uint _certificateId) external onlyOwner returns (bool){
-        return getCertificateInternally(_certificateId).retired;
+    function isRetired(uint _certificateId) external onlyOwner returns (bool) {
+        return getCertificateInternally(_certificateId).status == CertificateSpecificContract.Status.Retired;
     }
 
     /**
