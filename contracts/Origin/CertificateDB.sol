@@ -42,7 +42,7 @@ contract CertificateDB is TradableEntityDB, CertificateSpecificContract, Certifi
 
     /// @notice Constructor
     /// @param _certificateLogic The address of the corresbonding logic contract
-    constructor(address _certificateLogic) TradableEntityDB(_certificateLogic) public { }
+    // constructor(address _certificateLogic) TradableEntityDB(_certificateLogic) public { }
 
     /**
         external functions
@@ -71,7 +71,7 @@ contract CertificateDB is TradableEntityDB, CertificateSpecificContract, Certifi
         view
         returns (CertificateSpecificContract.CertificateSpecific memory _certificate)
     {
-        require(msg.sender == owner || msg.sender == address(this));
+        require(msg.sender == owner || msg.sender == address(this), "Unauthorized to get this certificate.");
         return certificateList[_certificateId].certificateSpecific;
     }
 
@@ -111,7 +111,7 @@ contract CertificateDB is TradableEntityDB, CertificateSpecificContract, Certifi
         });
 
 
-        CertificateDB.CertificateSpecific memory certificateSpecific= CertificateSpecific({
+        CertificateDB.CertificateSpecific memory certificateSpecific = CertificateSpecific({
             status: uint(CertificateSpecificContract.Status.Active),
             dataLog: _lastSmartMeterReadFileHash,
             creationTime: block.timestamp,

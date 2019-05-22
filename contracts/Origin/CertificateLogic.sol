@@ -147,10 +147,14 @@ contract CertificateLogic is CertificateInterface, RoleManagement, TradableEntit
     {
         CertificateDB.Certificate memory cert = CertificateDB(address(db)).getCertificate(_certificateId);
         require(cert.tradableEntity.owner == msg.sender, "You have to be the owner of the contract.");
-        require(cert.certificateSpecific.children.length == 0,
+        require(
+            cert.certificateSpecific.children.length == 0,
             "Unable to split certificates that have already been split"
         );
-        require(cert.certificateSpecific.status == CertificateSpecificContract.Status.Active, "Certificate has to be active to be retired.");
+        require(
+            cert.certificateSpecific.status == uint(CertificateSpecificContract.Status.Active),
+            "Certificate has to be active to be retired."
+        );
 
         retireCertificateAuto(_certificateId);
     }
@@ -162,23 +166,23 @@ contract CertificateLogic is CertificateInterface, RoleManagement, TradableEntit
         CertificateDB.Certificate memory parent = CertificateDB(address(db)).getCertificate(_certificateId);
         require(
             msg.sender == parent.tradableEntity.owner || checkMatcher(parent.tradableEntity.escrow),
-            'You are not the owner of the certificate'
+            "You are not the owner of the certificate"
         );
         require(parent.tradableEntity.powerInW > _power, "The certificate doesn't have enough power to be split.");
         require(
-            parent.certificateSpecific.status == CertificateSpecificContract.Status.Active,
-            "Unable to split certificates. You can only split Active certificates"
+            parent.certificateSpecific.status == uint(CertificateSpecificContract.Status.Active),
+            "Unable to split certificate. You can only split Active certificates."
         );
         require(
             parent.certificateSpecific.children.length == 0,
-            "Unable to split certificates that have already been split"
+            "This certificate has already been split."
         );
 
         (uint childIdOne,uint childIdTwo) = CertificateDB(address(db)).createChildCertificate(_certificateId, _power);
         emit Transfer(address(0), parent.tradableEntity.owner, childIdOne);
         emit Transfer(address(0), parent.tradableEntity.owner, childIdTwo);
 
-        parent.status = uint(CertificateSpecificContract.Status.Split);
+        parent.certificateSpecific.status = uint(CertificateSpecificContract.Status.Split);
         emit LogCertificateSplit(_certificateId, childIdOne, childIdTwo);
     }
 
@@ -278,7 +282,7 @@ contract CertificateLogic is CertificateInterface, RoleManagement, TradableEntit
         internal
     {
         require(
-            _certificate.certificateSpecific.status == CertificateSpecificContract.Status.Active,
+            _certificate.certificateSpecific.status == uint(CertificateSpecificContract.Status.Active),
             "You can only change owners for active contracts."
         );
         require(_certificate.certificateSpecific.children.length == 0, "This certificates has children and it's owner cannot be changed.");

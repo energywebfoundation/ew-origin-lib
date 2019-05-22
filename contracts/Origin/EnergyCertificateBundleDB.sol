@@ -43,7 +43,7 @@ contract EnergyCertificateBundleDB is TradableEntityDB, TradableEntityContract, 
 
     /// @notice Constructor
     /// @param _certificateLogic the originContractLookup-address
-    constructor(address _certificateLogic) TradableEntityDB(_certificateLogic) public { }
+    // constructor(address _certificateLogic) TradableEntityDB(_certificateLogic) public { }
 
     /**
         external functions
@@ -142,7 +142,6 @@ contract EnergyCertificateBundleDB is TradableEntityDB, TradableEntityContract, 
         view
         returns (TradableEntityContract.TradableEntity memory _entity)
     {
-
         return bundleList[_entityId].tradableEntity;
     }
 

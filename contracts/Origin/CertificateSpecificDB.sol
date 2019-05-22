@@ -71,10 +71,10 @@ contract CertificateSpecificDB is CertificateSpecificDBInterface, Owned {
     function retire(uint _certificateId) external onlyOwner {
         CertificateSpecificContract.CertificateSpecific storage certificate = getCertificateInternally(_certificateId);
         require(
-            certificate.status == CertificateSpecificContract.Status.Active,
-            "Failed - Attempting to retire a non-active certificate."
+            certificate.status == uint(CertificateSpecificContract.Status.Active),
+            "Failed - Attempted to retire a non-active certificate."
         );
-        certificate.status = CertificateSpecificContract.Status.Retired;
+        certificate.status = uint(CertificateSpecificContract.Status.Retired);
     }
 
     /// @notice returns the number of children of a certificate
@@ -115,7 +115,14 @@ contract CertificateSpecificDB is CertificateSpecificDBInterface, Owned {
     /// @param _certificateId the id of a certificate
     /// @return flag whether a certificate is retired
     function isRetired(uint _certificateId) external onlyOwner returns (bool) {
-        return getCertificateInternally(_certificateId).status == CertificateSpecificContract.Status.Retired;
+        return getCertificateInternally(_certificateId).status == uint(CertificateSpecificContract.Status.Retired);
+    }
+
+    /// @notice gets the flag whether the certificate is active
+    /// @param _certificateId the id of a certificate
+    /// @return flag whether a certificate is active
+    function isActive(uint _certificateId) external onlyOwner returns (bool) {
+        return getCertificateInternally(_certificateId).status == uint(CertificateSpecificContract.Status.Active);
     }
 
     /**
