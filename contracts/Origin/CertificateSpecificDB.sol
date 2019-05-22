@@ -66,15 +66,13 @@ contract CertificateSpecificDB is CertificateSpecificDBInterface, Owned {
         certificate.ownerChangeCounter = _newOwnerChangeCounter;
     }
 
-    /// @notice sets the retired flag for a certificate
+    /// @notice sets the status to Split for a certificate
     /// @param _certificateId the id of the certificate
-    function retire(uint _certificateId) external onlyOwner {
+    function setStatus(uint _certificateId, CertificateSpecificContract.Status status) external onlyOwner {
         CertificateSpecificContract.CertificateSpecific storage certificate = getCertificateInternally(_certificateId);
-        require(
-            certificate.status == uint(CertificateSpecificContract.Status.Active),
-            "Failed - Attempted to retire a non-active certificate."
-        );
-        certificate.status = uint(CertificateSpecificContract.Status.Retired);
+        if (certificate.status != uint(status)) {
+            certificate.status = uint(status);
+        }
     }
 
     /// @notice returns the number of children of a certificate

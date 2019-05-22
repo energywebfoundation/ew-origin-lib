@@ -176,11 +176,11 @@ contract CertificateLogic is CertificateInterface, RoleManagement, TradableEntit
             "This certificate has already been split."
         );
 
-        (uint childIdOne,uint childIdTwo) = CertificateDB(address(db)).createChildCertificate(_certificateId, _power);
+        (uint childIdOne, uint childIdTwo) = CertificateDB(address(db)).createChildCertificate(_certificateId, _power);
         emit Transfer(address(0), parent.tradableEntity.owner, childIdOne);
         emit Transfer(address(0), parent.tradableEntity.owner, childIdTwo);
 
-        parent.certificateSpecific.status = uint(CertificateSpecificContract.Status.Split);
+        CertificateSpecificDB(address(db)).setStatus(_certificateId, CertificateSpecificContract.Status.Split);
         emit LogCertificateSplit(_certificateId, childIdOne, childIdTwo);
     }
 
@@ -221,7 +221,7 @@ contract CertificateLogic is CertificateInterface, RoleManagement, TradableEntit
 	/// @param _certificateId The id of the requested certificate
     function retireCertificateAuto(uint _certificateId) internal {
         db.setTradableEntityEscrowExternal(_certificateId, new address[](0));
-        CertificateSpecificDB(address(db)).retire(_certificateId);
+        CertificateSpecificDB(address(db)).setStatus(_certificateId, CertificateSpecificContract.Status.Retired);
         emit LogCertificateRetired(_certificateId);
     }
 
@@ -284,7 +284,7 @@ contract CertificateLogic is CertificateInterface, RoleManagement, TradableEntit
         CertificateDB(address(db)).setOwnerChangeCounterResetEscrow(_certificateId,ownerChangeCounter);
 
         if(_certificate.certificateSpecific.maxOwnerChanges <= ownerChangeCounter){
-            CertificateSpecificDB(address(db)).retire(_certificateId);
+            CertificateSpecificDB(address(db)).setStatus(_certificateId, CertificateSpecificContract.Status.Retired);
             emit LogCertificateRetired(_certificateId);
         }
     }

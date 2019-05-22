@@ -439,7 +439,7 @@ describe('CertificateLogic', () => {
                 const certParent = await certificateLogic.getCertificate(0);
                 const certificateSpecificParent = certParent.certificateSpecific;
 
-                assert.equal(certificateSpecificParent.status, 0);
+                assert.equal(certificateSpecificParent.status, 2);
                 assert.equal(certificateSpecificParent.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecificParent.parentId, 0);
                 assert.equal(certificateSpecificParent.children.length, 2);
@@ -560,8 +560,6 @@ describe('CertificateLogic', () => {
                     _childOne: '1',
                     _childTwo: '2'
                 });
-
-                console.log(certSplittedEvent);
                 //    }
             });
 
@@ -3045,7 +3043,7 @@ describe('CertificateLogic', () => {
                     });
                 } catch (ex) {
                     failed = true;
-                    assert.include(ex.message, 'not the enitity-owner');
+                    assert.include(ex.message, 'not the entity-owner');
                 }
 
                 assert.isTrue(failed);
@@ -3060,7 +3058,7 @@ describe('CertificateLogic', () => {
                     });
                 } catch (ex) {
                     failed = true;
-                    assert.include(ex.message, 'not the enitity-owner');
+                    assert.include(ex.message, 'not the entity-owner');
                 }
 
                 assert.isTrue(failed);
@@ -3098,7 +3096,7 @@ describe('CertificateLogic', () => {
                     });
                 } catch (ex) {
                     failed = true;
-                    assert.include(ex.message, 'not the enitity-owner');
+                    assert.include(ex.message, 'not the entity-owner');
                 }
 
                 assert.isTrue(failed);
@@ -3113,7 +3111,7 @@ describe('CertificateLogic', () => {
                     });
                 } catch (ex) {
                     failed = true;
-                    assert.include(ex.message, 'not the enitity-owner');
+                    assert.include(ex.message, 'not the entity-owner');
                 }
 
                 assert.isTrue(failed);
@@ -3363,7 +3361,7 @@ describe('CertificateLogic', () => {
                     );
                 } catch (ex) {
                     failed = true;
-                    assert.include(ex.message, 'not the enitity-owner');
+                    assert.include(ex.message, 'not the entity-owner');
                 }
 
                 assert.isTrue(failed);
@@ -3379,7 +3377,7 @@ describe('CertificateLogic', () => {
                     );
                 } catch (ex) {
                     failed = true;
-                    assert.include(ex.message, 'not the enitity-owner');
+                    assert.include(ex.message, 'not the entity-owner');
                 }
 
                 assert.isTrue(failed);
@@ -3411,7 +3409,7 @@ describe('CertificateLogic', () => {
                     );
                 } catch (ex) {
                     failed = true;
-                    assert.include(ex.message, 'not the enitity-owner');
+                    assert.include(ex.message, 'not the entity-owner');
                 }
 
                 assert.isTrue(failed);
@@ -3427,7 +3425,7 @@ describe('CertificateLogic', () => {
                     );
                 } catch (ex) {
                     failed = true;
-                    assert.include(ex.message, 'not the enitity-owner');
+                    assert.include(ex.message, 'not the entity-owner');
                 }
 
                 assert.isTrue(failed);
@@ -3551,7 +3549,7 @@ describe('CertificateLogic', () => {
                     );
                 } catch (ex) {
                     failed = true;
-                    assert.include(ex.message, 'not the enitity-owner');
+                    assert.include(ex.message, 'not the entity-owner');
                 }
 
                 assert.isTrue(failed);
@@ -3567,7 +3565,7 @@ describe('CertificateLogic', () => {
                     );
                 } catch (ex) {
                     failed = true;
-                    assert.include(ex.message, 'not the enitity-owner');
+                    assert.include(ex.message, 'not the entity-owner');
                 }
 
                 assert.isTrue(failed);

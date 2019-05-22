@@ -17,6 +17,8 @@
 pragma solidity ^0.5.2;
 pragma experimental ABIEncoderV2;
 
+import "../../contracts/Origin/CertificateSpecificContract.sol";
+
 interface CertificateSpecificDBInterface {
 
     /// @notice gets whether the certificate has the retired flag
@@ -24,9 +26,9 @@ interface CertificateSpecificDBInterface {
     /// @return retired flag
     function isRetired(uint _certificateID) external returns (bool);
 
-    /// @notice sets the retired flag for a certificate
+    /// @notice sets the status for a certificate
     /// @param _certificateID the certificate id
-    function retire(uint _certificateID) external;
+    function setStatus(uint _certificateID, CertificateSpecificContract.Status status) external;
 
     /// @notice gets the dataLog for a certificate
     /// @param _certificateID the certificate id

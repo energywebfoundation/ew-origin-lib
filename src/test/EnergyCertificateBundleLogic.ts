@@ -3661,7 +3661,7 @@ describe('EnergyCertificateBundleLogic', () => {
                     );
                 } catch (ex) {
                     failed = true;
-                    assert.include(ex.message, 'not the enitity-owner');
+                    assert.include(ex.message, 'not the entity-owner');
                 }
 
                 assert.isTrue(failed);
@@ -3677,7 +3677,7 @@ describe('EnergyCertificateBundleLogic', () => {
                     );
                 } catch (ex) {
                     failed = true;
-                    assert.include(ex.message, 'not the enitity-owner');
+                    assert.include(ex.message, 'not the entity-owner');
                 }
 
                 assert.isTrue(failed);
@@ -3729,7 +3729,7 @@ describe('EnergyCertificateBundleLogic', () => {
                     });
                 } catch (ex) {
                     failed = true;
-                    assert.include(ex.message, 'not the enitity-owner');
+                    assert.include(ex.message, 'not the entity-owner');
                 }
 
                 assert.isTrue(failed);
@@ -3743,7 +3743,7 @@ describe('EnergyCertificateBundleLogic', () => {
                     });
                 } catch (ex) {
                     failed = true;
-                    assert.include(ex.message, 'not the enitity-owner');
+                    assert.include(ex.message, 'not the entity-owner');
                 }
 
                 assert.isTrue(failed);

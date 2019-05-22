@@ -502,7 +502,7 @@ describe('CertificateLogic-Facade', () => {
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
-            status: '0',
+            status: '2',
             dataLog: 'lastSmartMeterReadFileHash#3',
             creationTime: blockceationTime,
             parentId: '2',

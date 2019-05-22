@@ -33,7 +33,7 @@ contract CertificateDB is TradableEntityDB, CertificateSpecificContract, Certifi
     }
 
     modifier onlyOwnerOrSelf {
-        require(msg.sender == owner || msg.sender == address(this),"not the contract itself or the owner");
+        require(msg.sender == owner || msg.sender == address(this), "not the contract itself or the owner");
         _;
     }
 

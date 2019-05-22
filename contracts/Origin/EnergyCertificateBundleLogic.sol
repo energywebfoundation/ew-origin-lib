@@ -260,12 +260,11 @@ contract EnergyCertificateBundleLogic is EnergyCertificateBundleInterface,
 
     }
 
-    /// @notice automaticly retires a bundle
+    /// @notice automatically retires a bundle
     /// @param _bundleId The id of the requested bundle
     function retireBundleAuto(uint _bundleId) internal{
-
         db.setTradableEntityEscrowExternal(_bundleId, new address[](0));
-        EnergyCertificateBundleDB(address(db)).retire(_bundleId);
+        EnergyCertificateBundleDB(address(db)).setStatus(_bundleId, CertificateSpecificContract.Status.Retired);
         emit LogBundleRetired(_bundleId);
     }
 
@@ -314,7 +313,7 @@ contract EnergyCertificateBundleLogic is EnergyCertificateBundleInterface,
 
         if(_bundle.certificateSpecific.maxOwnerChanges <= ownerChangeCounter){
          //   EnergyCertificateBundleDB(db).setBundleEscrow(_bundleId, empty);
-            EnergyCertificateBundleDB(address(db)).retire(_bundleId);
+            EnergyCertificateBundleDB(address(db)).setStatus(_bundleId, CertificateSpecificContract.Status.Retired);
             emit LogBundleRetired(_bundleId);
         }
     }

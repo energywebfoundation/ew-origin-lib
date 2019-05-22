@@ -1014,7 +1014,7 @@ export class EnergyCertificateBundleDB extends GeneralFunctions {
         let transactionParams;
 
         const txData = await this.web3Contract.methods
-            .retire(_certificateId)
+            .setStatus(_certificateId, 1)
             .encodeABI();
 
         let gas;
@@ -1033,7 +1033,7 @@ export class EnergyCertificateBundleDB extends GeneralFunctions {
             if (!txParams.gas) {
                 try {
                     gas = await this.web3Contract.methods
-                        .retire(_certificateId)
+                        .setStatus(_certificateId, 1)
                         .estimateGas({
                             from: txParams ? txParams.from : (await this.web3.eth.getAccounts())[0]
                         });
@@ -1086,7 +1086,7 @@ export class EnergyCertificateBundleDB extends GeneralFunctions {
             return await this.sendRaw(this.web3, transactionParams.privateKey, transactionParams);
         } else {
             return await this.web3Contract.methods
-                .retire(_certificateId)
+                .setStatus(_certificateId, 1)
                 .send({ from: transactionParams.from, gas: transactionParams.gas });
         }
     }
