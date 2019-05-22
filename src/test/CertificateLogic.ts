@@ -144,12 +144,19 @@ describe('CertificateLogic-Facade', () => {
             },
             logger
         };
+
+        console.log({ certificateLogic: certificateLogic.web3Contract })
     });
 
     it('should return correct balances', async () => {
-        assert.equal(await Certificate.Certificate.getCertificateListLength(conf), 0);
-        assert.equal(await Certificate.TradableEntity.getBalance(accountAssetOwner, conf), 0);
-        assert.equal(await Certificate.TradableEntity.getBalance(accountTrader, conf), 0);
+        // console.log({ conf })
+        const result1 = await Certificate.Certificate.getCertificateListLength(conf);
+        const result2 = await Certificate.TradableEntity.getBalance(accountAssetOwner, conf);
+        const result3 = await Certificate.TradableEntity.getBalance(accountTrader, conf);
+        console.log({result1, result2, result3});
+        assert.equal(result1, 0);
+        assert.equal(result2, 0);
+        assert.equal(result3, 0);
     });
 
     it('should onboard tests-users', async () => {
@@ -235,7 +242,7 @@ describe('CertificateLogic-Facade', () => {
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
-            retired: false,
+            status: '0',
             dataLog: 'lastSmartMeterReadFileHash',
             creationTime: blockceationTime,
             parentId: '0',
@@ -273,7 +280,7 @@ describe('CertificateLogic-Facade', () => {
             onCHainDirectPurchasePrice: '0',
             escrow: [],
             approvedAddress: '0x0000000000000000000000000000000000000000',
-            retired: false,
+            status: '0',
             dataLog: 'lastSmartMeterReadFileHash',
             creationTime: blockceationTime,
             parentId: '0',
@@ -303,7 +310,7 @@ describe('CertificateLogic-Facade', () => {
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
-            retired: false,
+            status: '0',
             dataLog: 'lastSmartMeterReadFileHash',
             creationTime: blockceationTime,
             parentId: '1',
@@ -334,7 +341,7 @@ describe('CertificateLogic-Facade', () => {
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000001',
-            retired: false,
+            status: '0',
             dataLog: 'lastSmartMeterReadFileHash',
             creationTime: blockceationTime,
             parentId: '1',
@@ -381,7 +388,7 @@ describe('CertificateLogic-Facade', () => {
             onCHainDirectPurchasePrice: '100',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000001',
-            retired: false,
+            status: '0',
             dataLog: 'lastSmartMeterReadFileHash',
             creationTime: blockceationTime,
             parentId: '1',
@@ -432,7 +439,7 @@ describe('CertificateLogic-Facade', () => {
             onCHainDirectPurchasePrice: '0',
             escrow: [],
             approvedAddress: '0x0000000000000000000000000000000000000000',
-            retired: false,
+            status: '0',
             dataLog: 'lastSmartMeterReadFileHash',
             creationTime: blockceationTime,
             parentId: '1',
@@ -462,7 +469,7 @@ describe('CertificateLogic-Facade', () => {
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
-            retired: false,
+            status: '0',
             dataLog: 'lastSmartMeterReadFileHash#3',
             creationTime: blockceationTime,
             parentId: '2',
@@ -496,7 +503,7 @@ describe('CertificateLogic-Facade', () => {
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
-            retired: false,
+            status: '0',
             dataLog: 'lastSmartMeterReadFileHash#3',
             creationTime: blockceationTime,
             parentId: '2',
@@ -523,7 +530,7 @@ describe('CertificateLogic-Facade', () => {
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
-            retired: false,
+            status: '0',
             dataLog: 'lastSmartMeterReadFileHash#3',
             creationTime: blockceationTime,
             parentId: '2',
@@ -542,7 +549,7 @@ describe('CertificateLogic-Facade', () => {
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
-            retired: false,
+            status: '0',
             dataLog: 'lastSmartMeterReadFileHash#3',
             creationTime: blockceationTime,
             parentId: '2',
@@ -575,7 +582,7 @@ describe('CertificateLogic-Facade', () => {
             onCHainDirectPurchasePrice: '0',
             escrow: [],
             approvedAddress: '0x0000000000000000000000000000000000000000',
-            retired: true,
+            status: '1',
             dataLog: 'lastSmartMeterReadFileHash#3',
             creationTime: blockceationTime,
             parentId: '2',
@@ -611,7 +618,7 @@ describe('CertificateLogic-Facade', () => {
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
-            retired: false,
+            status: '0',
             dataLog: 'lastSmartMeterReadFileHash#3',
             creationTime: blockceationTime,
             parentId: '2',
@@ -640,7 +647,7 @@ describe('CertificateLogic-Facade', () => {
             onCHainDirectPurchasePrice: '0',
             escrow: [],
             approvedAddress: '0x0000000000000000000000000000000000000000',
-            retired: false,
+            status: '0',
             dataLog: 'lastSmartMeterReadFileHash#3',
             creationTime: blockceationTime,
             parentId: '2',
@@ -669,7 +676,7 @@ describe('CertificateLogic-Facade', () => {
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
-            retired: false,
+            status: '0',
             dataLog: 'lastSmartMeterReadFileHash#3',
             creationTime: blockceationTime,
             parentId: '2',
@@ -699,7 +706,7 @@ describe('CertificateLogic-Facade', () => {
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
-            retired: false,
+            status: '0',
             dataLog: 'lastSmartMeterReadFileHash#4',
             creationTime: blockceationTime,
             parentId: '5',
@@ -756,7 +763,7 @@ describe('CertificateLogic-Facade', () => {
             onCHainDirectPurchasePrice: '0',
             escrow: [],
             approvedAddress: '0x0000000000000000000000000000000000000000',
-            retired: false,
+            status: '0',
             dataLog: 'lastSmartMeterReadFileHash#4',
             creationTime: blockceationTime,
             parentId: '5',
@@ -786,7 +793,7 @@ describe('CertificateLogic-Facade', () => {
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
-            retired: false,
+            status: '0',
             dataLog: 'lastSmartMeterReadFileHash#5',
             creationTime: blockceationTime,
             parentId: '6',
@@ -843,7 +850,7 @@ describe('CertificateLogic-Facade', () => {
             onCHainDirectPurchasePrice: '0',
             escrow: [],
             approvedAddress: '0x0000000000000000000000000000000000000000',
-            retired: false,
+            status: '0',
             dataLog: 'lastSmartMeterReadFileHash#5',
             creationTime: blockceationTime,
             parentId: '6',

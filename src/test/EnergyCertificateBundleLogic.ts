@@ -405,7 +405,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const bundleSpecific = bundle.certificateSpecific;
 
-                assert.isFalse(bundleSpecific.retired);
+                assert.equal(bundleSpecific.status, 0);
                 assert.equal(bundleSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(bundleSpecific.parentId, 0);
                 assert.equal(bundleSpecific.children.length, 0);
@@ -557,7 +557,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const bundleSpecific = bundle.certificateSpecific;
 
-                assert.isFalse(bundleSpecific.retired);
+                assert.equal(bundleSpecific.status, 0);
                 assert.equal(bundleSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(bundleSpecific.parentId, 0);
                 assert.equal(bundleSpecific.children.length, 0);
@@ -679,7 +679,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const bundleSpecific = bundle.certificateSpecific;
 
-                assert.isTrue(bundleSpecific.retired);
+                assert.equal(bundleSpecific.status, 1);
                 assert.equal(bundleSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(bundleSpecific.parentId, 0);
                 assert.equal(bundleSpecific.children.length, 0);
@@ -801,7 +801,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 1);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -1069,7 +1069,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 2);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -1464,7 +1464,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 3);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -1654,7 +1654,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 4);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -1784,7 +1784,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 5);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -1970,7 +1970,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 5);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -2052,7 +2052,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 6);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -2237,7 +2237,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 6);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -2318,7 +2318,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 7);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -2411,7 +2411,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 7);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -2498,7 +2498,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 8);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -2665,7 +2665,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 8);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -2745,7 +2745,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 9);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -2909,7 +2909,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 9);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -2989,7 +2989,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 10);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -3025,7 +3025,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 10);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -3109,7 +3109,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 10);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -3190,7 +3190,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 11);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -3226,7 +3226,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 11);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -3326,7 +3326,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 11);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -3407,7 +3407,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 12);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -3443,7 +3443,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 12);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -3543,7 +3543,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 12);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -3624,7 +3624,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 13);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -3694,7 +3694,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 13);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -3758,7 +3758,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 13);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -3816,7 +3816,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 13);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -3880,7 +3880,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isTrue(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 1);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 13);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -3985,7 +3985,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 14);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -4026,7 +4026,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 14);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -4085,7 +4085,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 14);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -4157,7 +4157,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isTrue(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 1);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 14);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -4265,7 +4265,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 15);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -4306,7 +4306,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 15);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -4365,7 +4365,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isFalse(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 0);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 15);
                 assert.equal(certificateSpecific.children.length, 0);
@@ -4430,7 +4430,7 @@ describe('EnergyCertificateBundleLogic', () => {
 
                 const certificateSpecific = cert.certificateSpecific;
 
-                assert.isTrue(certificateSpecific.retired);
+                assert.equal(certificateSpecific.status, 1);
                 assert.equal(certificateSpecific.dataLog, 'lastSmartMeterReadFileHash');
                 assert.equal(certificateSpecific.parentId, 15);
                 assert.equal(certificateSpecific.children.length, 0);

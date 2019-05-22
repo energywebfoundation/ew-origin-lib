@@ -215,16 +215,7 @@ contract CertificateLogic is CertificateInterface, RoleManagement, TradableEntit
             .getCertificate(_certificateId)
             .certificateSpecific.status == uint(CertificateSpecificContract.Status.Retired);
     }
-
-    /// @notice gets whether the certificate is active
-    /// @param _certificateId The id of the requested certificate
-    /// @return flag whether the certificate is active
-    function isActive(uint _certificateId) external view returns (bool) {
-        return CertificateDB(address(db))
-            .getCertificate(_certificateId)
-            .certificateSpecific.status == uint(CertificateSpecificContract.Status.Active);
-    }
-
+    
     /**
         internal functions
     */

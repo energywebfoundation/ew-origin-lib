@@ -118,13 +118,6 @@ contract CertificateSpecificDB is CertificateSpecificDBInterface, Owned {
         return getCertificateInternally(_certificateId).status == uint(CertificateSpecificContract.Status.Retired);
     }
 
-    /// @notice gets the flag whether the certificate is active
-    /// @param _certificateId the id of a certificate
-    /// @return flag whether a certificate is active
-    function isActive(uint _certificateId) external onlyOwner returns (bool) {
-        return getCertificateInternally(_certificateId).status == uint(CertificateSpecificContract.Status.Active);
-    }
-
     /**
         public functions
      */
