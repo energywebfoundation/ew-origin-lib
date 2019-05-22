@@ -42,7 +42,7 @@ contract CertificateDB is TradableEntityDB, CertificateSpecificContract, Certifi
 
     /// @notice Constructor
     /// @param _certificateLogic The address of the corresbonding logic contract
-    // constructor(address _certificateLogic) TradableEntityDB(_certificateLogic) public { }
+    constructor(address _certificateLogic) TradableEntityDB(_certificateLogic) public { }
 
     /**
         external functions

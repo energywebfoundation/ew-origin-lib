@@ -52,13 +52,13 @@ contract EnergyCertificateBundleLogic is EnergyCertificateBundleInterface,
     /// @notice Constructor
     /// @param _assetContractLookup the assetRegitryContractLookup-contract-address
     /// @param _originContractLookup the originContractLookup-contract-address
-    // constructor(
-    //     AssetContractLookupInterface _assetContractLookup,
-    //     OriginContractLookupInterface _originContractLookup
-    // )
-    //     TradableEntityLogic(_assetContractLookup, _originContractLookup)
-    //     public
-    // {}
+    constructor(
+        AssetContractLookupInterface _assetContractLookup,
+        OriginContractLookupInterface _originContractLookup
+    )
+        TradableEntityLogic(_assetContractLookup, _originContractLookup)
+        public
+    {}
 
     /**
         ERC721 functions to overwrite

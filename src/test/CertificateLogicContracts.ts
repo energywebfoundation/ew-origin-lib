@@ -710,7 +710,7 @@ describe('CertificateLogic', () => {
                 );
             });
 
-            it('should be able to transfer the certiificate a 2nd time ', async () => {
+            it('should be able to transfer the certificate a 2nd time ', async () => {
                 //       await certificateLogic.approve(accountAssetOwner, 1, { privateKey: assetOwnerPK });
 
                 const tx = await certificateLogic.transferFrom(accountTrader, accountTrader, 1, {
@@ -747,9 +747,7 @@ describe('CertificateLogic', () => {
                 assert.equal(retireEvent[0].event, 'LogCertificateRetired');
                 assert.deepEqual(retireEvent[0].returnValues, {
                     0: '1',
-                    1: true,
                     _certificateId: '1',
-                    _retire: true
                 });
             });
 
@@ -1153,9 +1151,7 @@ describe('CertificateLogic', () => {
                 assert.equal(retireEvent[0].event, 'LogCertificateRetired');
                 assert.deepEqual(retireEvent[0].returnValues, {
                     0: '3',
-                    1: true,
                     _certificateId: '3',
-                    _retire: true
                 });
 
                 assert.equal(await certificateLogic.getCertificateListLength(), 4);
@@ -1472,9 +1468,7 @@ describe('CertificateLogic', () => {
                 assert.equal(retireEvent[0].event, 'LogCertificateRetired');
                 assert.deepEqual(retireEvent[0].returnValues, {
                     0: '4',
-                    1: true,
                     _certificateId: '4',
-                    _retire: true
                 });
 
                 assert.equal(await certificateLogic.getCertificateListLength(), 5);
@@ -2939,9 +2933,7 @@ describe('CertificateLogic', () => {
                 assert.equal(retiredEvents[0].event, 'LogCertificateRetired');
                 assert.deepEqual(retiredEvents[0].returnValues, {
                     0: '14',
-                    1: true,
                     _certificateId: '14',
-                    _retire: true
                 });
             });
 

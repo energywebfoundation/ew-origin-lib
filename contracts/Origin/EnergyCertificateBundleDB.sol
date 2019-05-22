@@ -43,7 +43,7 @@ contract EnergyCertificateBundleDB is TradableEntityDB, TradableEntityContract, 
 
     /// @notice Constructor
     /// @param _certificateLogic the originContractLookup-address
-    // constructor(address _certificateLogic) TradableEntityDB(_certificateLogic) public { }
+    constructor(address _certificateLogic) TradableEntityDB(_certificateLogic) public { }
 
     /**
         external functions

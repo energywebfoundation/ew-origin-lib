@@ -50,7 +50,7 @@ contract CertificateLogic is CertificateInterface, RoleManagement, TradableEntit
         AssetContractLookupInterface _assetContractLookup,
         OriginContractLookupInterface _originContractLookup
     )
-        TradableEntityLogic(_assetContractLookup, _originContractLookup)  public { }
+    TradableEntityLogic(_assetContractLookup, _originContractLookup)  public { }
 
     /**
         ERC721 functions to overwrite
@@ -151,12 +151,10 @@ contract CertificateLogic is CertificateInterface, RoleManagement, TradableEntit
             cert.certificateSpecific.children.length == 0,
             "Unable to split certificates that have already been split"
         );
-        require(
-            cert.certificateSpecific.status == uint(CertificateSpecificContract.Status.Active),
-            "Certificate has to be active to be retired."
-        );
 
-        retireCertificateAuto(_certificateId);
+        if (cert.certificateSpecific.status != uint(CertificateSpecificContract.Status.Retired)) {
+            retireCertificateAuto(_certificateId);
+        }
     }
 
     /// @notice Splits a certificate into two smaller ones, where (total - _power = 2ndCertificate)

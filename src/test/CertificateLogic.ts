@@ -111,6 +111,7 @@ describe('CertificateLogic-Facade', () => {
             assetRegistryLookupAddr,
             privateKeyDeployment
         );
+        console.log({originContracts})
 
         assetRegistryContract = new AssetContractLookup(web3 as any, assetRegistryLookupAddr);
         assetRegistry = new AssetProducingRegistryLogic(web3 as any, assetProducingAddr);
@@ -144,8 +145,6 @@ describe('CertificateLogic-Facade', () => {
             },
             logger
         };
-
-        console.log({ certificateLogic: certificateLogic.web3Contract })
     });
 
     it('should return correct balances', async () => {
