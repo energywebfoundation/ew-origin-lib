@@ -17,7 +17,7 @@
     "prettier": "prettier --write --config-precedence file-override './src/**/*'",
     "lint": "solium -d contracts && tslint 'src/**/*{.ts,.tsx}'",
     "lint-fix": "solium -d contracts --fix && tslint --fix 'src/**/*{.ts,.tsx}'",
-    "prepublishOnly": "npm run compile && npm run build-ts"
+    "prepare": "node scripts/build.js"
   },
   "repository": {
     "type": "git",
@@ -30,17 +30,21 @@
   },
   "homepage": "https://github.com/energywebfoundation/ew-origin-lib#readme",
   "dependencies": {
+    "ew-asset-registry-lib": "energywebfoundation/ew-asset-registry-lib#133748e794a0cd997039146aab7245a694a522f6",
+    "ew-user-registry-lib": "energywebfoundation/ew-user-registry-lib#f583ae76bdd7c4811b87922df36645ffe8d1c098",
+    "ew-utils-general-lib": "energywebfoundation/ew-utils-general-lib#3a0cb9e58c2f18776b59771d39981a44d6640d96",
+    "ew-utils-testbackend": "energywebfoundation/ew-utils-testbackend#f4448692bebfe5019570533114557a943319ff2d",
+    "web3": "1.0.0-beta.37",
+    "winston": "3.2.1"
+  },
+  "devDependencies": {
     "@types/chai": "4.1.4",
     "@types/mocha": "2.2.48",
     "@types/node": "9.6.28",
     "@types/web3": "1.0.14",
     "chai": "4.1.2",
     "ethlint": "1.2.4",
-    "ew-asset-registry-lib": "energywebfoundation/ew-asset-registry-lib#8fa34cecd15410f047209278083d771ed29d5ce3",
     "ew-erc-test-contracts": "0.0.99",
-    "ew-user-registry-lib": "energywebfoundation/ew-user-registry-lib#0f097833300677bc3b562cdcf9b7ca7588ffd762",
-    "ew-utils-general-lib": "energywebfoundation/ew-utils-general-lib#a2d0f16c39bf65fe2c6ee56dec304100ed764e4a",
-    "ew-utils-testbackend": "energywebfoundation/ew-utils-testbackend#f9984fb1b373c3092b1766e5e270f7610e3a5d5f",
     "fs-extra": "8.0.1",
     "ganache-cli": "6.1.8",
     "lint-staged": "8.1.7",
@@ -51,9 +55,7 @@
     "tslint-config-prettier": "1.18.0",
     "tslint-lines-between-class-members": "1.3.1",
     "tslint-sonarts": "1.9.0",
-    "typescript": "2.9.2",
-    "web3": "1.0.0-beta.37",
-    "winston": "3.2.1"
+    "typescript": "2.9.2"
   },
   "postinstall": "rm -f node_modules/web3/index.d.ts",
   "lint-staged": {
@@ -63,7 +65,8 @@
       "git add"
     ]
   },
-  "bin": {
-    "ew-origin-lib-build": "./scripts/build.js"
-  }
+  "files": [
+    "contracts",
+    "dist"
+  ]
 }
