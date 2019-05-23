@@ -20,6 +20,12 @@ import { CertificateLogic } from '..';
 import { logger } from './Logger';
 import { TransactionReceipt, Log } from 'web3/types';
 
+export enum Status {
+    Active,
+    Retired,
+    Split
+}
+
 export interface CertificateSpecific extends TradableEntity.TradableEntity.OnChainProperties {
     status: number;
     dataLog: string;
