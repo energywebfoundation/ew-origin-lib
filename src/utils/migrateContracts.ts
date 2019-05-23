@@ -14,10 +14,7 @@
 //
 // @authors: slock.it GmbH; Martin Kuechler, martin.kuchler@slock.it; Heiko Burkhardt, heiko.burkhardt@slock.it;
 
-import * as fs from 'fs';
-import * as path from 'path';
 import { OriginContractLookup } from '../wrappedContracts/OriginContractLookup';
-import { AssetContractLookup } from 'ew-asset-registry-lib';
 import Web3 from 'web3';
 import { deploy } from 'ew-utils-deployment';
 import {
@@ -35,8 +32,6 @@ export async function migrateCertificateRegistryContracts(
 ): Promise<JSON> {
     return new Promise<any>(async (resolve, reject) => {
         const privateKeyDeployment = deployKey.startsWith('0x') ? deployKey : '0x' + deployKey;
-        const accountDeployment = web3.eth.accounts.privateKeyToAccount(privateKeyDeployment)
-            .address;
 
         const originContractLookupAddress = (await deploy(web3, OriginContractLookupJSON.bytecode, {
             privateKey: privateKeyDeployment
@@ -96,8 +91,6 @@ export async function migrateEnergyBundleContracts(
 ): Promise<JSON> {
     return new Promise<any>(async (resolve, reject) => {
         const privateKeyDeployment = deployKey.startsWith('0x') ? deployKey : '0x' + deployKey;
-        const accountDeployment = web3.eth.accounts.privateKeyToAccount(privateKeyDeployment)
-            .address;
 
         const originContractLookupAddress = (await deploy(web3, OriginContractLookupJSON.bytecode, {
             privateKey: privateKeyDeployment
