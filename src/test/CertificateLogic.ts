@@ -111,7 +111,6 @@ describe('CertificateLogic-Facade', () => {
             assetRegistryLookupAddr,
             privateKeyDeployment
         );
-        console.log({originContracts})
 
         assetRegistryContract = new AssetContractLookup(web3 as any, assetRegistryLookupAddr);
         assetRegistry = new AssetProducingRegistryLogic(web3 as any, assetProducingAddr);
@@ -148,14 +147,9 @@ describe('CertificateLogic-Facade', () => {
     });
 
     it('should return correct balances', async () => {
-        // console.log({ conf })
-        const result1 = await Certificate.Certificate.getCertificateListLength(conf);
-        const result2 = await Certificate.TradableEntity.getBalance(accountAssetOwner, conf);
-        const result3 = await Certificate.TradableEntity.getBalance(accountTrader, conf);
-        console.log({result1, result2, result3});
-        assert.equal(result1, 0);
-        assert.equal(result2, 0);
-        assert.equal(result3, 0);
+        assert.equal(await Certificate.Certificate.getCertificateListLength(conf), 0);
+        assert.equal(await Certificate.TradableEntity.getBalance(accountAssetOwner, conf), 0);
+        assert.equal(await Certificate.TradableEntity.getBalance(accountTrader, conf), 0);
     });
 
     it('should onboard tests-users', async () => {
