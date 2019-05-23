@@ -60,7 +60,7 @@ export const getActiveCertificates = async (configuration: GeneralLib.Configurat
 
     const certs = await Promise.all(certificatePromises);
 
-    return certs.filter((cert: Entity) => cert.status === Status.Active);
+    return certs.filter((cert: Entity) => cert.status == Status.Active);
 };
 
 export const isRetired = async (
