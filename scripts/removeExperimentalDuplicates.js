@@ -1,9 +1,6 @@
 const fs = require('fs');
 
-process.argv.shift();
-process.argv.shift();
-
-const filename = process.argv[0];
+const filename = process.argv[2];
 const keyword = 'pragma experimental ABIEncoderV2;';
 
 const oldFile = fs.readFileSync(filename).toString().split("\n");
@@ -11,11 +8,11 @@ const newFile = [];
 
 let found = false;
 
-for (i in oldFile) {
-    if (oldFile[i] !== keyword) {
-        newFile.push(oldFile[i]);
+for (line in oldFile) {
+    if (oldFile[line] !== keyword) {
+        newFile.push(oldFile[line]);
     } else if (found === false) {
-        newFile.push(oldFile[i]);
+        newFile.push(oldFile[line]);
         found = true;
     }
 }
