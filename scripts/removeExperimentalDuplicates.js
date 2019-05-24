@@ -8,11 +8,11 @@ const newFile = [];
 
 let found = false;
 
-for (line in oldFile) {
-    if (oldFile[line] !== keyword) {
-        newFile.push(oldFile[line]);
+for (const line of oldFile) {
+    if (line !== keyword) {
+        newFile.push(line);
     } else if (found === false) {
-        newFile.push(oldFile[line]);
+        newFile.push(line);
         found = true;
     }
 }
