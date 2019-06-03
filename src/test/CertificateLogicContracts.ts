@@ -716,7 +716,7 @@ describe('CertificateLogic', () => {
                 );
             });
 
-            it('should be able to transfer the certificate a 2nd time ', async () => {
+            it('should be able to transfer the certificate a 2nd time', async () => {
                 //       await certificateLogic.approve(accountAssetOwner, 1, { privateKey: assetOwnerPK });
 
                 const tx = await certificateLogic.transferFrom(accountTrader, accountTrader, 1, {
