@@ -245,6 +245,7 @@ describe('CertificateLogic-Facade', () => {
             children: [],
             owner: accountAssetOwner,
             powerInW: '100',
+            forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
@@ -256,6 +257,44 @@ describe('CertificateLogic-Facade', () => {
             maxOwnerChanges: '3',
             ownerChangerCounter: '0'
         });
+    });
+
+    it('should make certificate available for sale', async() => {
+        conf.blockchainProperties.activeUser = {
+            address: accountAssetOwner,
+            privateKey: assetOwnerPK
+        };
+        let certificate = await new Certificate.Entity('0', conf).sync();
+
+        await certificate.publishForSale();
+
+        certificate = await new Certificate.Entity('0', conf).sync();
+
+        assert.equal(await certificate.getOwner(), accountAssetOwner);
+
+        delete certificate.configuration;
+        delete certificate.proofs;
+
+        assert.deepEqual(certificate as any, {
+            id: '0',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountAssetOwner,
+            powerInW: '100',
+            forSale: true,
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            onCHainDirectPurchasePrice: '0',
+            escrow: [matcherAccount],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            status: Certificate.Status.Active.toString(),
+            dataLog: 'lastSmartMeterReadFileHash',
+            creationTime: blockceationTime,
+            parentId: '0',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '0'
+        });
+
     });
 
     it('should transfer certificate', async () => {
@@ -283,6 +322,7 @@ describe('CertificateLogic-Facade', () => {
             children: [],
             owner: accountTrader,
             powerInW: '100',
+            forSale: true,
             acceptedToken: '0x0000000000000000000000000000000000000000',
             onCHainDirectPurchasePrice: '0',
             escrow: [],
@@ -313,6 +353,7 @@ describe('CertificateLogic-Facade', () => {
             children: [],
             owner: accountAssetOwner,
             powerInW: '100',
+            forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
@@ -344,6 +385,7 @@ describe('CertificateLogic-Facade', () => {
             children: [],
             owner: accountAssetOwner,
             powerInW: '100',
+            forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
@@ -391,6 +433,7 @@ describe('CertificateLogic-Facade', () => {
             children: [],
             owner: accountAssetOwner,
             powerInW: '100',
+            forSale: false,
             acceptedToken: erc20TestAddress,
             onCHainDirectPurchasePrice: '100',
             escrow: [matcherAccount],
@@ -472,6 +515,7 @@ describe('CertificateLogic-Facade', () => {
             children: [],
             owner: accountAssetOwner,
             powerInW: '100',
+            forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
@@ -506,6 +550,7 @@ describe('CertificateLogic-Facade', () => {
             children: ['3', '4'],
             owner: accountAssetOwner,
             powerInW: '100',
+            forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
@@ -533,6 +578,7 @@ describe('CertificateLogic-Facade', () => {
             children: [],
             owner: accountAssetOwner,
             powerInW: '60',
+            forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
@@ -552,6 +598,7 @@ describe('CertificateLogic-Facade', () => {
             children: [],
             owner: accountAssetOwner,
             powerInW: '40',
+            forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
@@ -959,4 +1006,19 @@ describe('CertificateLogic-Facade', () => {
         }*/
         //        console.log(allEvents);
     });
+
+    // it('should set the certificate for sale', async () => {
+    //     const certificate = await new Certificate.Entity('6', conf).sync();
+
+    //     let failed = false;
+
+    //     try {
+    //         await certificate.publishForSale(accountTrader, '0x001');
+    //     } catch (ex) {
+    //         assert.include(ex.message, '_to is not a contract');
+    //         failed = true;
+    //     }
+
+    //     assert.isTrue(failed);
+    // });
 });

@@ -21,6 +21,7 @@ export interface IOnChainProperties {
     assetId: number;
     owner: string;
     powerInW: number;
+    forSale: boolean;
     acceptedToken?: number;
     onCHainDirectPurchasePrice: number;
     escrow: string[];
@@ -99,6 +100,7 @@ export abstract class Entity extends BlockchainDataModelEntity.Entity
     assetId: number;
     owner: string;
     powerInW: number;
+    forSale: boolean;
     acceptedToken?: number;
     onCHainDirectPurchasePrice: number;
     escrow: string[];
@@ -250,6 +252,34 @@ export abstract class Entity extends BlockchainDataModelEntity.Entity
             return this.configuration.blockchainProperties.certificateLogicInstance.addEscrowForEntity(
                 this.id,
                 escrow,
+                { from: this.configuration.blockchainProperties.activeUser.address }
+            );
+        }
+    }
+
+    async publishForSale(): Promise<TransactionReceipt> {
+        if (this.configuration.blockchainProperties.activeUser.privateKey) {
+            return this.configuration.blockchainProperties.certificateLogicInstance.publishForSale(
+                this.id,
+                { privateKey: this.configuration.blockchainProperties.activeUser.privateKey }
+            );
+        } else {
+            return this.configuration.blockchainProperties.certificateLogicInstance.publishForSale(
+                this.id,
+                { from: this.configuration.blockchainProperties.activeUser.address }
+            );
+        }
+    }
+
+    async unpublishForSale(): Promise<TransactionReceipt> {
+        if (this.configuration.blockchainProperties.activeUser.privateKey) {
+            return this.configuration.blockchainProperties.certificateLogicInstance.unpublishForSale(
+                this.id,
+                { privateKey: this.configuration.blockchainProperties.activeUser.privateKey }
+            );
+        } else {
+            return this.configuration.blockchainProperties.certificateLogicInstance.unpublishForSale(
+                this.id,
                 { from: this.configuration.blockchainProperties.activeUser.address }
             );
         }

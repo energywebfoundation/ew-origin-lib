@@ -231,11 +231,11 @@ contract EnergyCertificateBundleLogic is EnergyCertificateBundleInterface,
             assetId: _assetId,
             owner: asset.assetGeneral.owner,
             powerInW: _powerInW,
+            forSale: false,
             acceptedToken: address(0x0),
             onChainDirectPurchasePrice: 0,
             escrow: asset.assetGeneral.matcher,
             approvedAddress: address(0x0)
-
         });
 
         CertificateSpecific memory certificateSpecific = CertificateSpecific({
