@@ -119,6 +119,7 @@ contract CertificateLogic is CertificateInterface, RoleManagement, TradableEntit
      {
         CertificateDB.Certificate memory cert = CertificateDB(address(db)).getCertificate(_certificateId);
 
+        require(cert.tradableEntity.forSale == true, "Unable to buy a certificate that is not for sale.");
         require(cert.tradableEntity.acceptedToken != address(0x0), "0x0 not allowed");
         require(
             ERC20Interface(cert.tradableEntity.acceptedToken).transferFrom(
@@ -126,7 +127,6 @@ contract CertificateLogic is CertificateInterface, RoleManagement, TradableEntit
             ),
             "erc20 transfer failed"
         );
-        require(cert.tradableEntity.forSale == true, "Unable to buy a certificate that is not for sale.");
 
         TradableEntityDBInterface(address(db)).addApprovalExternal(_certificateId, msg.sender);
 
@@ -263,7 +263,6 @@ contract CertificateLogic is CertificateInterface, RoleManagement, TradableEntit
         internal
     {
         CertificateDB.Certificate memory cert = CertificateDB(address(db)).getCertificate(_entityId);
-        require(cert.tradableEntity.forSale, "A certificate has to be made available for sale before it can be transferred.");
 
         simpleTransferInternal(_from, _to, _entityId);
         safeTransferChecks(_from, _to, _entityId, _data);

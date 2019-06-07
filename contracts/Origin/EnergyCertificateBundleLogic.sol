@@ -282,6 +282,7 @@ contract EnergyCertificateBundleLogic is EnergyCertificateBundleInterface,
         internal
     {
         EnergyCertificateBundleDB.EnergyCertificateBundle memory bundle = EnergyCertificateBundleDB(address(db)).getBundle(_entityId);
+        
         simpleTransferInternal(_from, _to, _entityId);
         safeTransferChecks(_from, _to, _entityId, _data);
         emit LogBundleOwnerChanged(_entityId, bundle.tradableEntity.owner, _to, address(0x0));

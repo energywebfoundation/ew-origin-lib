@@ -259,42 +259,47 @@ describe('CertificateLogic-Facade', () => {
         });
     });
 
-    it('should make certificate available for sale', async() => {
+    it('should fail unpublish certificate from sale if not on sale', async () => {
         conf.blockchainProperties.activeUser = {
             address: accountAssetOwner,
             privateKey: assetOwnerPK
         };
+        const certificate = await new Certificate.Entity('0', conf).sync();
+
+        let failed = false;
+
+        try {
+            await certificate.unpublishForSale();
+        } catch (ex) {
+            failed = true;
+            assert.include(ex.message, 'Unable to revoke the tradable entity from sale because the entity has not been posted for sale');
+        }
+
+        assert.isTrue(failed);
+    });
+
+    it('should make certificate available for sale', async() => {
         let certificate = await new Certificate.Entity('0', conf).sync();
 
         await certificate.publishForSale();
 
         certificate = await new Certificate.Entity('0', conf).sync();
+        assert.isTrue(certificate.forSale);
+    });
 
-        assert.equal(await certificate.getOwner(), accountAssetOwner);
+    it('should fail putting certificate for sale if already on sale', async () => {
+        const certificate = await new Certificate.Entity('0', conf).sync();
 
-        delete certificate.configuration;
-        delete certificate.proofs;
+        let failed = false;
 
-        assert.deepEqual(certificate as any, {
-            id: '0',
-            initialized: true,
-            assetId: '0',
-            children: [],
-            owner: accountAssetOwner,
-            powerInW: '100',
-            forSale: true,
-            acceptedToken: '0x0000000000000000000000000000000000000000',
-            onCHainDirectPurchasePrice: '0',
-            escrow: [matcherAccount],
-            approvedAddress: '0x0000000000000000000000000000000000000000',
-            status: Certificate.Status.Active.toString(),
-            dataLog: 'lastSmartMeterReadFileHash',
-            creationTime: blockceationTime,
-            parentId: '0',
-            maxOwnerChanges: '3',
-            ownerChangerCounter: '0'
-        });
+        try {
+            await certificate.publishForSale();
+        } catch (ex) {
+            failed = true;
+            assert.include(ex.message, 'The tradable entity is already published for sale');
+        }
 
+        assert.isTrue(failed);
     });
 
     it('should transfer certificate', async () => {
@@ -336,7 +341,43 @@ describe('CertificateLogic-Facade', () => {
         });
     });
 
+    it('should fail unpublish certificate from sale if not the owner', async () => {
+        conf.blockchainProperties.activeUser = {
+            address: accountAssetOwner,
+            privateKey: assetOwnerPK
+        };
+        const certificate = await new Certificate.Entity('0', conf).sync();
+
+        let failed = false;
+
+        try {
+            await certificate.unpublishForSale();
+        } catch (ex) {
+            failed = true;
+            assert.include(ex.message, 'not the entity-owner');
+        }
+
+        assert.isTrue(failed);
+    });
+
+    it('should unpublish certificate available from sale', async() => {
+        conf.blockchainProperties.activeUser = {
+            address: accountTrader,
+            privateKey: traderPK
+        };
+        let certificate = await new Certificate.Entity('0', conf).sync();
+
+        await certificate.unpublishForSale();
+
+        certificate = await new Certificate.Entity('0', conf).sync();
+        assert.isFalse(certificate.forSale);
+    });
+
     it('create a new certificate (#1)', async () => {
+        conf.blockchainProperties.activeUser = {
+            address: accountAssetOwner,
+            privateKey: assetOwnerPK
+        };
         await assetRegistry.saveSmartMeterRead(0, 200, 'lastSmartMeterReadFileHash', {
             privateKey: assetSmartmeterPK
         });
@@ -447,6 +488,31 @@ describe('CertificateLogic-Facade', () => {
         });
     });
 
+    it('should fail buying a certificate when not for sale', async () => {
+        const certificate = await new Certificate.Entity('1', conf).sync();
+
+        let failed = false;
+
+        try {
+            await certificate.buyCertificate();
+        } catch (ex) {
+            failed = true;
+            assert.include(ex.message, 'Unable to buy a certificate that is not for sale');
+        }
+
+        assert.isTrue(failed);
+    });
+
+    it('should make certificate 1 available for sale', async() => {
+        let certificate = await new Certificate.Entity('1', conf).sync();
+
+        await certificate.publishForSale();
+
+        certificate = await new Certificate.Entity('1', conf).sync();
+
+        assert.isTrue(certificate.forSale);
+    });
+
     it('should fail buying a certificate when not enough erc20 tokens approved', async () => {
         conf.blockchainProperties.activeUser = {
             address: accountTrader,
@@ -485,6 +551,7 @@ describe('CertificateLogic-Facade', () => {
             children: [],
             owner: accountTrader,
             powerInW: '100',
+            forSale: true,
             acceptedToken: '0x0000000000000000000000000000000000000000',
             onCHainDirectPurchasePrice: '0',
             escrow: [],
@@ -639,6 +706,7 @@ describe('CertificateLogic-Facade', () => {
             children: [],
             owner: accountAssetOwner,
             powerInW: '60',
+            forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
             onCHainDirectPurchasePrice: '0',
             escrow: [],
@@ -675,6 +743,7 @@ describe('CertificateLogic-Facade', () => {
             children: [],
             owner: accountAssetOwner,
             powerInW: '40',
+            forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
@@ -704,6 +773,7 @@ describe('CertificateLogic-Facade', () => {
             children: [],
             owner: accountAssetOwner,
             powerInW: '40',
+            forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
             onCHainDirectPurchasePrice: '0',
             escrow: [],
@@ -733,6 +803,7 @@ describe('CertificateLogic-Facade', () => {
             children: [],
             owner: accountAssetOwner,
             powerInW: '40',
+            forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
@@ -763,6 +834,7 @@ describe('CertificateLogic-Facade', () => {
             children: [],
             owner: accountAssetOwner,
             powerInW: '100',
+            forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
@@ -822,6 +894,7 @@ describe('CertificateLogic-Facade', () => {
             children: [],
             owner: testReceiverAddress,
             powerInW: '100',
+            forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
             onCHainDirectPurchasePrice: '0',
             escrow: [],
@@ -852,6 +925,7 @@ describe('CertificateLogic-Facade', () => {
             children: [],
             owner: accountAssetOwner,
             powerInW: '100',
+            forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
             onCHainDirectPurchasePrice: '0',
             escrow: [matcherAccount],
@@ -911,6 +985,7 @@ describe('CertificateLogic-Facade', () => {
             children: [],
             owner: testReceiverAddress,
             powerInW: '100',
+            forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
             onCHainDirectPurchasePrice: '0',
             escrow: [],
@@ -1006,19 +1081,4 @@ describe('CertificateLogic-Facade', () => {
         }*/
         //        console.log(allEvents);
     });
-
-    // it('should set the certificate for sale', async () => {
-    //     const certificate = await new Certificate.Entity('6', conf).sync();
-
-    //     let failed = false;
-
-    //     try {
-    //         await certificate.publishForSale(accountTrader, '0x001');
-    //     } catch (ex) {
-    //         assert.include(ex.message, '_to is not a contract');
-    //         failed = true;
-    //     }
-
-    //     assert.isTrue(failed);
-    // });
 });
