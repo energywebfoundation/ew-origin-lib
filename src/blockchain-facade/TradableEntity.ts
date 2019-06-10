@@ -23,7 +23,7 @@ export interface IOnChainProperties {
     powerInW: number;
     forSale: boolean;
     acceptedToken?: number;
-    onCHainDirectPurchasePrice: number;
+    onChainDirectPurchasePrice: number;
     escrow: string[];
     approvedAddress: string;
 }
@@ -102,7 +102,7 @@ export abstract class Entity extends BlockchainDataModelEntity.Entity
     powerInW: number;
     forSale: boolean;
     acceptedToken?: number;
-    onCHainDirectPurchasePrice: number;
+    onChainDirectPurchasePrice: number;
     escrow: string[];
     approvedAddress: string;
 
