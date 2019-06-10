@@ -551,7 +551,7 @@ describe('CertificateLogic-Facade', () => {
             children: [],
             owner: accountTrader,
             powerInW: '100',
-            forSale: true,
+            forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
             onChainDirectPurchasePrice: '0',
             escrow: [],

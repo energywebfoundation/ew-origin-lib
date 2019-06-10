@@ -132,6 +132,8 @@ contract CertificateLogic is CertificateInterface, RoleManagement, TradableEntit
 
         simpleTransferInternal(cert.tradableEntity.owner, msg.sender, _certificateId);
         checktransferOwnerInternally(_certificateId, cert);
+
+        TradableEntityDBInterface(address(db)).unpublishForSale(_certificateId);
     }
 
     /// @notice creates a new Entity / certificate
