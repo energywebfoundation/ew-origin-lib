@@ -30,6 +30,6 @@ contract TradableEntityContract {
         uint purchasePrice;
         address[] escrow;
         address approvedAddress;
-        Currency.Fiat acceptedOffChainCurrency; // ew-utils-general-lib/Currency
+        Currency.Fiat acceptedOffChainCurrency;
     }
 }

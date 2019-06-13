@@ -21,6 +21,7 @@ pragma experimental ABIEncoderV2;
 /// @notice This contract provides the logic that determines how the data is stored
 /// @dev Needs a valid CertificateDB(db) contract to function correctly
 
+import "ew-utils-general-lib/contracts/Msc/Currency.sol";
 import "ew-user-registry-lib/contracts/Users/RoleManagement.sol";
 import "../../contracts/Origin/CertificateDB.sol";
 import "ew-asset-registry-lib/contracts/Interfaces/AssetProducingInterface.sol";
@@ -120,13 +121,23 @@ contract CertificateLogic is CertificateInterface, RoleManagement, TradableEntit
         CertificateDB.Certificate memory cert = CertificateDB(address(db)).getCertificate(_certificateId);
 
         require(cert.tradableEntity.forSale == true, "Unable to buy a certificate that is not for sale.");
-        require(cert.tradableEntity.acceptedToken != address(0x0), "0x0 not allowed");
-        require(
-            ERC20Interface(cert.tradableEntity.acceptedToken).transferFrom(
-                msg.sender, cert.tradableEntity.owner, cert.tradableEntity.purchasePrice
-            ),
-            "erc20 transfer failed"
-        );
+
+        bool isOnChainSettlement = cert.tradableEntity.acceptedToken != address(0x0)
+            && cert.tradableEntity.acceptedOffChainCurrency == Currency.Fiat.NONE;
+
+        if (isOnChainSettlement) {
+            require(cert.tradableEntity.acceptedToken != address(0x0), "0x0 not allowed");
+            require(
+                ERC20Interface(cert.tradableEntity.acceptedToken).transferFrom(
+                    msg.sender, cert.tradableEntity.owner, cert.tradableEntity.purchasePrice
+                ),
+                "erc20 transfer failed"
+            );
+        } else {
+            // TO-DO: Implement proper off-chain settlement handling.
+            // For now, just transfer the certificate without checking
+            // if it was paid for.
+        }
 
         TradableEntityDBInterface(address(db)).addApprovalExternal(_certificateId, msg.sender);
 

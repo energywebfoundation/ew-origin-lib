@@ -541,7 +541,7 @@ describe('CertificateLogic-Facade', () => {
         assert.isTrue(failed);
     });
 
-    it('should buying a certificate when enough erc20 tokens are approved', async () => {
+    it('should buy a certificate when enough erc20 tokens are approved', async () => {
         await erc20TestToken.approve(accountAssetOwner, 100, { privateKey: traderPK });
 
         let certificate = await new Certificate.Entity('1', conf).sync();
@@ -1101,5 +1101,127 @@ describe('CertificateLogic-Facade', () => {
             console.log('');
         }*/
         //        console.log(allEvents);
+    });
+
+    it('create a new certificate (#7)', async () => {
+        conf.blockchainProperties.activeUser = {
+            address: accountAssetOwner,
+            privateKey: assetOwnerPK
+        };
+        await assetRegistry.saveSmartMeterRead(0, 600, 'lastSmartMeterReadFileHash', {
+            privateKey: assetSmartmeterPK
+        });
+        const certificate = await new Certificate.Entity('7', conf).sync();
+
+        delete certificate.configuration;
+        delete certificate.proofs;
+
+        blockceationTime = '' + (await web3.eth.getBlock('latest')).timestamp;
+        assert.deepEqual(certificate as any, {
+            id: '7',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountAssetOwner,
+            powerInW: '100',
+            forSale: false,
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            purchasePrice: '0',
+            escrow: [matcherAccount],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            acceptedOffChainCurrency: Currency.NONE.toString(),
+            status: Certificate.Status.Active.toString(),
+            dataLog: 'lastSmartMeterReadFileHash',
+            creationTime: blockceationTime,
+            parentId: '7',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '0'
+        });
+    });
+
+    // it('should approve', async () => {
+    //     let certificate = await new Certificate.Entity('1', conf).sync();
+
+    //     assert.equal(await certificate.getApproved(), '0x0000000000000000000000000000000000000000');
+
+    //     await certificate.approve('0x0000000000000000000000000000000000000001');
+    //     assert.equal(await certificate.getApproved(), '0x0000000000000000000000000000000000000001');
+
+    //     certificate = await certificate.sync();
+    //     delete certificate.configuration;
+    //     delete certificate.proofs;
+    //     assert.deepEqual(certificate as any, {
+    //         id: '1',
+    //         initialized: true,
+    //         assetId: '0',
+    //         children: [],
+    //         owner: accountAssetOwner,
+    //         powerInW: '100',
+    //         forSale: false,
+    //         acceptedToken: '0x0000000000000000000000000000000000000000',
+    //         purchasePrice: '0',
+    //         escrow: [matcherAccount],
+    //         approvedAddress: '0x0000000000000000000000000000000000000001',
+    //         acceptedOffChainCurrency: Currency.NONE.toString(),
+    //         status: Certificate.Status.Active.toString(),
+    //         dataLog: 'lastSmartMeterReadFileHash',
+    //         creationTime: blockceationTime,
+    //         parentId: '1',
+    //         maxOwnerChanges: '3',
+    //         ownerChangerCounter: '0'
+    //     });
+    // });
+
+    it('should set off-chain currency for certificate #7', async () => {
+        const certificate = await new Certificate.Entity('7', conf).sync();
+        await certificate.setOffChainCurrency(Currency.EUR);
+
+        assert.equal(await certificate.getOffChainCurrency(), Currency.EUR.toString());
+    });
+
+    it('should make certificate 7 available for sale in fiat currency', async() => {
+        let certificate = await new Certificate.Entity('7', conf).sync();
+
+        await certificate.publishForSaleFiat(10, Currency.USD);
+
+        certificate = await new Certificate.Entity('7', conf).sync();
+
+        assert.isTrue(certificate.forSale);
+        assert.equal(await certificate.getOffChainCurrency(), Currency.USD.toString());
+    });
+
+    it('should buy certificate #7 when using fiat currencies', async () => {
+        conf.blockchainProperties.activeUser = {
+            address: accountTrader,
+            privateKey: traderPK
+        };
+        let certificate = await new Certificate.Entity('7', conf).sync();
+
+        await certificate.buyCertificate();
+        certificate = await certificate.sync();
+
+        delete certificate.configuration;
+        delete certificate.proofs;
+
+        assert.deepEqual(certificate as any, {
+            id: '7',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountTrader,
+            powerInW: '100',
+            forSale: false,
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            purchasePrice: '0',
+            escrow: [],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            acceptedOffChainCurrency: Currency.USD.toString(),
+            status: Certificate.Status.Active.toString(),
+            dataLog: 'lastSmartMeterReadFileHash',
+            creationTime: blockceationTime,
+            parentId: '7',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '1'
+        });
     });
 });

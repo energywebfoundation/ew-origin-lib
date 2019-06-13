@@ -57,6 +57,13 @@ export const getTradableToken = async (
     return configuration.blockchainProperties.certificateLogicInstance.getTradableToken(certId);
 };
 
+export const getOffChainCurrency = async (
+    certId: number,
+    configuration: Configuration.Entity
+): Promise<string> => {
+    return configuration.blockchainProperties.certificateLogicInstance.getOffChainCurrency(certId);
+};
+
 export const getPurchasePrice = async (
     certId: number,
     configuration: Configuration.Entity
@@ -199,6 +206,22 @@ export abstract class Entity extends BlockchainDataModelEntity.Entity
         }
     }
 
+    async setOffChainCurrency(currency: Currency): Promise<TransactionReceipt> {
+        if (this.configuration.blockchainProperties.activeUser.privateKey) {
+            return this.configuration.blockchainProperties.certificateLogicInstance.setOffChainCurrency(
+                this.id,
+                currency,
+                { privateKey: this.configuration.blockchainProperties.activeUser.privateKey }
+            );
+        } else {
+            return this.configuration.blockchainProperties.certificateLogicInstance.setOffChainCurrency(
+                this.id,
+                currency,
+                { from: this.configuration.blockchainProperties.activeUser.address }
+            );
+        }
+    }
+
     async setPurchasePrice(price: number): Promise<TransactionReceipt> {
         if (this.configuration.blockchainProperties.activeUser.privateKey) {
             return this.configuration.blockchainProperties.certificateLogicInstance.setPurchasePrice(
@@ -217,6 +240,12 @@ export abstract class Entity extends BlockchainDataModelEntity.Entity
 
     async getTradableToken(): Promise<string> {
         return this.configuration.blockchainProperties.certificateLogicInstance.getTradableToken(
+            this.id
+        );
+    }
+
+    async getOffChainCurrency(): Promise<string> {
+        return this.configuration.blockchainProperties.certificateLogicInstance.getOffChainCurrency(
             this.id
         );
     }
