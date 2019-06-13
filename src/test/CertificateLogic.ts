@@ -258,7 +258,7 @@ describe('CertificateLogic-Facade', () => {
             powerInW: '100',
             forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
-            onChainDirectPurchasePrice: '0',
+            purchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
             acceptedOffChainCurrency: Currency.NONE.toString(),
@@ -373,7 +373,7 @@ describe('CertificateLogic-Facade', () => {
             powerInW: '100',
             forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
-            onChainDirectPurchasePrice: '0',
+            purchasePrice: '0',
             escrow: [],
             approvedAddress: '0x0000000000000000000000000000000000000000',
             acceptedOffChainCurrency: Currency.NONE.toString(),
@@ -409,7 +409,7 @@ describe('CertificateLogic-Facade', () => {
             powerInW: '100',
             forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
-            onChainDirectPurchasePrice: '0',
+            purchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
             acceptedOffChainCurrency: Currency.NONE.toString(),
@@ -442,7 +442,7 @@ describe('CertificateLogic-Facade', () => {
             powerInW: '100',
             forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
-            onChainDirectPurchasePrice: '0',
+            purchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000001',
             acceptedOffChainCurrency: Currency.NONE.toString(),
@@ -458,13 +458,13 @@ describe('CertificateLogic-Facade', () => {
     it('should set erc20-token and price for a certificate', async () => {
         let certificate = await new Certificate.Entity('1', conf).sync();
 
-        await certificate.setOnChainDirectPurchasePrice(100);
+        await certificate.setPurchasePrice(100);
 
-        assert.equal(await certificate.getOnChainDirectPurchasePrice(), 100);
+        assert.equal(await certificate.getPurchasePrice(), 100);
 
         certificate = await certificate.sync();
 
-        assert.equal(certificate.onChainDirectPurchasePrice, 100);
+        assert.equal(certificate.purchasePrice, 100);
 
         await certificate.setTradableToken(erc20TestTokenAddress);
 
@@ -483,7 +483,7 @@ describe('CertificateLogic-Facade', () => {
             powerInW: '100',
             forSale: false,
             acceptedToken: erc20TestTokenAddress,
-            onChainDirectPurchasePrice: '100',
+            purchasePrice: '100',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000001',
             acceptedOffChainCurrency: Currency.NONE.toString(),
@@ -561,7 +561,7 @@ describe('CertificateLogic-Facade', () => {
             powerInW: '100',
             forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
-            onChainDirectPurchasePrice: '0',
+            purchasePrice: '0',
             escrow: [],
             approvedAddress: '0x0000000000000000000000000000000000000000',
             acceptedOffChainCurrency: Currency.NONE.toString(),
@@ -593,7 +593,7 @@ describe('CertificateLogic-Facade', () => {
             powerInW: '100',
             forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
-            onChainDirectPurchasePrice: '0',
+            purchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
             acceptedOffChainCurrency: Currency.NONE.toString(),
@@ -629,7 +629,7 @@ describe('CertificateLogic-Facade', () => {
             powerInW: '100',
             forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
-            onChainDirectPurchasePrice: '0',
+            purchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
             acceptedOffChainCurrency: Currency.NONE.toString(),
@@ -658,7 +658,7 @@ describe('CertificateLogic-Facade', () => {
             powerInW: '60',
             forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
-            onChainDirectPurchasePrice: '0',
+            purchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
             acceptedOffChainCurrency: Currency.NONE.toString(),
@@ -679,7 +679,7 @@ describe('CertificateLogic-Facade', () => {
             powerInW: '40',
             forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
-            onChainDirectPurchasePrice: '0',
+            purchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
             acceptedOffChainCurrency: Currency.NONE.toString(),
@@ -721,7 +721,7 @@ describe('CertificateLogic-Facade', () => {
             powerInW: '60',
             forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
-            onChainDirectPurchasePrice: '0',
+            purchasePrice: '0',
             escrow: [],
             approvedAddress: '0x0000000000000000000000000000000000000000',
             acceptedOffChainCurrency: Currency.NONE.toString(),
@@ -759,7 +759,7 @@ describe('CertificateLogic-Facade', () => {
             powerInW: '40',
             forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
-            onChainDirectPurchasePrice: '0',
+            purchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
             acceptedOffChainCurrency: Currency.NONE.toString(),
@@ -790,7 +790,7 @@ describe('CertificateLogic-Facade', () => {
             powerInW: '40',
             forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
-            onChainDirectPurchasePrice: '0',
+            purchasePrice: '0',
             escrow: [],
             approvedAddress: '0x0000000000000000000000000000000000000000',
             acceptedOffChainCurrency: Currency.NONE.toString(),
@@ -821,7 +821,7 @@ describe('CertificateLogic-Facade', () => {
             powerInW: '40',
             forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
-            onChainDirectPurchasePrice: '0',
+            purchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
             acceptedOffChainCurrency: Currency.NONE.toString(),
@@ -853,7 +853,7 @@ describe('CertificateLogic-Facade', () => {
             powerInW: '100',
             forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
-            onChainDirectPurchasePrice: '0',
+            purchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
             acceptedOffChainCurrency: Currency.NONE.toString(),
@@ -914,7 +914,7 @@ describe('CertificateLogic-Facade', () => {
             powerInW: '100',
             forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
-            onChainDirectPurchasePrice: '0',
+            purchasePrice: '0',
             escrow: [],
             approvedAddress: '0x0000000000000000000000000000000000000000',
             acceptedOffChainCurrency: Currency.NONE.toString(),
@@ -946,7 +946,7 @@ describe('CertificateLogic-Facade', () => {
             powerInW: '100',
             forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
-            onChainDirectPurchasePrice: '0',
+            purchasePrice: '0',
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
             acceptedOffChainCurrency: Currency.NONE.toString(),
@@ -1007,7 +1007,7 @@ describe('CertificateLogic-Facade', () => {
             powerInW: '100',
             forSale: false,
             acceptedToken: '0x0000000000000000000000000000000000000000',
-            onChainDirectPurchasePrice: '0',
+            purchasePrice: '0',
             escrow: [],
             approvedAddress: '0x0000000000000000000000000000000000000000',
             acceptedOffChainCurrency: Currency.NONE.toString(),

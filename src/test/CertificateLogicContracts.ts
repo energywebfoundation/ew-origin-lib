@@ -402,7 +402,7 @@ describe('CertificateLogic', () => {
                     tradableEntity.acceptedToken,
                     '0x0000000000000000000000000000000000000000'
                 );
-                assert.equal(tradableEntity.onChainDirectPurchasePrice, 0);
+                assert.equal(tradableEntity.purchasePrice, 0);
                 assert.deepEqual(tradableEntity.escrow, [
                     '0x1000000000000000000000000000000000000005'
                 ]);
@@ -467,7 +467,7 @@ describe('CertificateLogic', () => {
                     tradableEntityParent.acceptedToken,
                     '0x0000000000000000000000000000000000000000'
                 );
-                assert.equal(tradableEntityParent.onChainDirectPurchasePrice, 0);
+                assert.equal(tradableEntityParent.purchasePrice, 0);
                 assert.deepEqual(tradableEntityParent.escrow, [
                     '0x1000000000000000000000000000000000000005'
                 ]);
@@ -494,7 +494,7 @@ describe('CertificateLogic', () => {
                     tradableEntityChildOne.acceptedToken,
                     '0x0000000000000000000000000000000000000000'
                 );
-                assert.equal(tradableEntityChildOne.onChainDirectPurchasePrice, 0);
+                assert.equal(tradableEntityChildOne.purchasePrice, 0);
                 assert.deepEqual(tradableEntityChildOne.escrow, [
                     '0x1000000000000000000000000000000000000005'
                 ]);
@@ -521,7 +521,7 @@ describe('CertificateLogic', () => {
                     tradableEntityChildTwo.acceptedToken,
                     '0x0000000000000000000000000000000000000000'
                 );
-                assert.equal(tradableEntityChildTwo.onChainDirectPurchasePrice, 0);
+                assert.equal(tradableEntityChildTwo.purchasePrice, 0);
                 assert.deepEqual(tradableEntityChildTwo.escrow, [
                     '0x1000000000000000000000000000000000000005'
                 ]);
@@ -713,7 +713,7 @@ describe('CertificateLogic', () => {
                     tradableEntity.acceptedToken,
                     '0x0000000000000000000000000000000000000000'
                 );
-                assert.equal(tradableEntity.onChainDirectPurchasePrice, 0);
+                assert.equal(tradableEntity.purchasePrice, 0);
                 assert.deepEqual(tradableEntity.escrow, []);
                 assert.equal(
                     tradableEntity.approvedAddress,
@@ -783,7 +783,7 @@ describe('CertificateLogic', () => {
                     tradableEntity.acceptedToken,
                     '0x0000000000000000000000000000000000000000'
                 );
-                assert.equal(tradableEntity.onChainDirectPurchasePrice, 0);
+                assert.equal(tradableEntity.purchasePrice, 0);
                 assert.deepEqual(tradableEntity.escrow, []);
                 assert.equal(
                     tradableEntity.approvedAddress,
@@ -915,7 +915,7 @@ describe('CertificateLogic', () => {
                     tradableEntity.acceptedToken,
                     '0x0000000000000000000000000000000000000000'
                 );
-                assert.equal(tradableEntity.onChainDirectPurchasePrice, 0);
+                assert.equal(tradableEntity.purchasePrice, 0);
                 assert.deepEqual(tradableEntity.escrow, [
                     '0x1000000000000000000000000000000000000005'
                 ]);
@@ -1113,7 +1113,7 @@ describe('CertificateLogic', () => {
                     tradableEntity.acceptedToken,
                     '0x0000000000000000000000000000000000000000'
                 );
-                assert.equal(tradableEntity.onChainDirectPurchasePrice, 0);
+                assert.equal(tradableEntity.purchasePrice, 0);
                 assert.deepEqual(tradableEntity.escrow, []);
                 assert.equal(
                     tradableEntity.approvedAddress,
@@ -1195,7 +1195,7 @@ describe('CertificateLogic', () => {
                     tradableEntity.acceptedToken,
                     '0x0000000000000000000000000000000000000000'
                 );
-                assert.equal(tradableEntity.onChainDirectPurchasePrice, 0);
+                assert.equal(tradableEntity.purchasePrice, 0);
                 assert.deepEqual(tradableEntity.escrow, []);
                 assert.equal(
                     tradableEntity.approvedAddress,
@@ -1278,7 +1278,7 @@ describe('CertificateLogic', () => {
                     tradableEntity.acceptedToken,
                     '0x0000000000000000000000000000000000000000'
                 );
-                assert.equal(tradableEntity.onChainDirectPurchasePrice, 0);
+                assert.equal(tradableEntity.purchasePrice, 0);
                 assert.deepEqual(tradableEntity.escrow, [
                     '0x1000000000000000000000000000000000000005'
                 ]);
@@ -1431,7 +1431,7 @@ describe('CertificateLogic', () => {
                     tradableEntity.acceptedToken,
                     '0x0000000000000000000000000000000000000000'
                 );
-                assert.equal(tradableEntity.onChainDirectPurchasePrice, 0);
+                assert.equal(tradableEntity.purchasePrice, 0);
                 assert.deepEqual(tradableEntity.escrow, []);
                 assert.equal(
                     tradableEntity.approvedAddress,
@@ -1512,7 +1512,7 @@ describe('CertificateLogic', () => {
                     tradableEntity.acceptedToken,
                     '0x0000000000000000000000000000000000000000'
                 );
-                assert.equal(tradableEntity.onChainDirectPurchasePrice, 0);
+                assert.equal(tradableEntity.purchasePrice, 0);
                 assert.deepEqual(tradableEntity.escrow, []);
                 assert.equal(
                     tradableEntity.approvedAddress,
@@ -1774,7 +1774,7 @@ describe('CertificateLogic', () => {
                     tradableEntity.acceptedToken,
                     '0x0000000000000000000000000000000000000000'
                 );
-                assert.equal(tradableEntity.onChainDirectPurchasePrice, 0);
+                assert.equal(tradableEntity.purchasePrice, 0);
                 assert.deepEqual(tradableEntity.escrow, [
                     '0x1000000000000000000000000000000000000005',
                     matcherAccount
@@ -3048,7 +3048,7 @@ describe('CertificateLogic', () => {
             });
 
             it('should not have a tokenprice', async () => {
-                assert.equal(await certificateLogic.getOnChainDirectPurchasePrice(15), 0);
+                assert.equal(await certificateLogic.getPurchasePrice(15), 0);
             });
 
             it('should fail when trying to set tradableToken as admin', async () => {
@@ -3127,7 +3127,7 @@ describe('CertificateLogic', () => {
                 let failed = false;
 
                 try {
-                    await certificateLogic.setOnChainDirectPurchasePrice(15, 1000, {
+                    await certificateLogic.setPurchasePrice(15, 1000, {
                         privateKey: privateKeyDeployment
                     });
                 } catch (ex) {
@@ -3142,7 +3142,7 @@ describe('CertificateLogic', () => {
                 let failed = false;
 
                 try {
-                    await certificateLogic.setOnChainDirectPurchasePrice(15, 1000, {
+                    await certificateLogic.setPurchasePrice(15, 1000, {
                         privateKey: traderPK
                     });
                 } catch (ex) {
@@ -3154,12 +3154,12 @@ describe('CertificateLogic', () => {
             });
 
             it('should set the onchainPrice as certOwner', async () => {
-                assert.equal(await certificateLogic.getOnChainDirectPurchasePrice(15), 0);
+                assert.equal(await certificateLogic.getPurchasePrice(15), 0);
 
-                await certificateLogic.setOnChainDirectPurchasePrice(15, 100, {
+                await certificateLogic.setPurchasePrice(15, 100, {
                     privateKey: assetOwnerPK
                 });
-                assert.equal(await certificateLogic.getOnChainDirectPurchasePrice(15), 100);
+                assert.equal(await certificateLogic.getPurchasePrice(15), 100);
             });
 
             it('should return the certificate #15', async () => {
@@ -3180,7 +3180,7 @@ describe('CertificateLogic', () => {
                 assert.equal(tradableEntity.owner, accountAssetOwner);
                 assert.equal(tradableEntity.powerInW, 100);
                 assert.equal(tradableEntity.acceptedToken, erc20Test.web3Contract._address);
-                assert.equal(tradableEntity.onChainDirectPurchasePrice, 100);
+                assert.equal(tradableEntity.purchasePrice, 100);
                 assert.deepEqual(tradableEntity.escrow, [
                     '0x1000000000000000000000000000000000000005',
                     matcherAccount
@@ -3197,7 +3197,7 @@ describe('CertificateLogic', () => {
                 assert.equal(tradableEntity.owner, accountAssetOwner);
                 assert.equal(tradableEntity.powerInW, 100);
                 assert.equal(tradableEntity.acceptedToken, erc20Test.web3Contract._address);
-                assert.equal(tradableEntity.onChainDirectPurchasePrice, 100);
+                assert.equal(tradableEntity.purchasePrice, 100);
                 assert.deepEqual(tradableEntity.escrow, [
                     '0x1000000000000000000000000000000000000005',
                     matcherAccount
@@ -3277,7 +3277,7 @@ describe('CertificateLogic', () => {
                     tradableEntity.acceptedToken,
                     '0x0000000000000000000000000000000000000000'
                 );
-                assert.equal(tradableEntity.onChainDirectPurchasePrice, 0);
+                assert.equal(tradableEntity.purchasePrice, 0);
                 assert.deepEqual(tradableEntity.escrow, []);
                 assert.equal(
                     tradableEntity.approvedAddress,
@@ -3306,7 +3306,7 @@ describe('CertificateLogic', () => {
                     tradableEntity.acceptedToken,
                     '0x0000000000000000000000000000000000000000'
                 );
-                assert.equal(tradableEntity.onChainDirectPurchasePrice, 0);
+                assert.equal(tradableEntity.purchasePrice, 0);
                 assert.deepEqual(tradableEntity.escrow, []);
                 assert.equal(
                     tradableEntity.approvedAddress,
@@ -3376,7 +3376,7 @@ describe('CertificateLogic', () => {
                     tradableEntity.acceptedToken,
                     '0x0000000000000000000000000000000000000000'
                 );
-                assert.equal(tradableEntity.onChainDirectPurchasePrice, 0);
+                assert.equal(tradableEntity.purchasePrice, 0);
                 assert.deepEqual(tradableEntity.escrow, [
                     '0x1000000000000000000000000000000000000005',
                     matcherAccount
@@ -3485,7 +3485,7 @@ describe('CertificateLogic', () => {
                     tradableEntity.acceptedToken,
                     '0x0000000000000000000000000000000000000000'
                 );
-                assert.equal(tradableEntity.onChainDirectPurchasePrice, 0);
+                assert.equal(tradableEntity.purchasePrice, 0);
                 assert.deepEqual(tradableEntity.escrow, [matcherAccount]);
                 assert.equal(
                     tradableEntity.approvedAddress,
@@ -3514,7 +3514,7 @@ describe('CertificateLogic', () => {
                     tradableEntity.acceptedToken,
                     '0x0000000000000000000000000000000000000000'
                 );
-                assert.equal(tradableEntity.onChainDirectPurchasePrice, 0);
+                assert.equal(tradableEntity.purchasePrice, 0);
                 assert.deepEqual(tradableEntity.escrow, [matcherAccount]);
                 assert.equal(
                     tradableEntity.approvedAddress,
@@ -3538,7 +3538,7 @@ describe('CertificateLogic', () => {
                     tradableEntity.acceptedToken,
                     '0x0000000000000000000000000000000000000000'
                 );
-                assert.equal(tradableEntity.onChainDirectPurchasePrice, 0);
+                assert.equal(tradableEntity.purchasePrice, 0);
                 assert.deepEqual(tradableEntity.escrow, []);
                 assert.equal(
                     tradableEntity.approvedAddress,
@@ -3567,7 +3567,7 @@ describe('CertificateLogic', () => {
                     tradableEntity.acceptedToken,
                     '0x0000000000000000000000000000000000000000'
                 );
-                assert.equal(tradableEntity.onChainDirectPurchasePrice, 0);
+                assert.equal(tradableEntity.purchasePrice, 0);
                 assert.deepEqual(tradableEntity.escrow, []);
                 assert.equal(
                     tradableEntity.approvedAddress,
@@ -3635,7 +3635,7 @@ describe('CertificateLogic', () => {
                     tradableEntity.acceptedToken,
                     '0x0000000000000000000000000000000000000000'
                 );
-                assert.equal(tradableEntity.onChainDirectPurchasePrice, 0);
+                assert.equal(tradableEntity.purchasePrice, 0);
                 assert.deepEqual(tradableEntity.escrow, [
                     '0x1000000000000000000000000000000000000000',
                     '0x1000000000000000000000000000000000000001',
@@ -3675,7 +3675,7 @@ describe('CertificateLogic', () => {
                     tradableEntity.acceptedToken,
                     '0x0000000000000000000000000000000000000000'
                 );
-                assert.equal(tradableEntity.onChainDirectPurchasePrice, 0);
+                assert.equal(tradableEntity.purchasePrice, 0);
                 assert.deepEqual(tradableEntity.escrow, [
                     '0x1000000000000000000000000000000000000000',
                     '0x1000000000000000000000000000000000000001',

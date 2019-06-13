@@ -123,7 +123,7 @@ contract CertificateLogic is CertificateInterface, RoleManagement, TradableEntit
         require(cert.tradableEntity.acceptedToken != address(0x0), "0x0 not allowed");
         require(
             ERC20Interface(cert.tradableEntity.acceptedToken).transferFrom(
-                msg.sender, cert.tradableEntity.owner, cert.tradableEntity.onChainDirectPurchasePrice
+                msg.sender, cert.tradableEntity.owner, cert.tradableEntity.purchasePrice
             ),
             "erc20 transfer failed"
         );

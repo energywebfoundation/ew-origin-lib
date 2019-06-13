@@ -103,16 +103,16 @@ contract TradableEntityDB is Owned,TradableEntityDBInterface {
     /// @param _entityId the id of the entity
     function removeTokenAndPrice(uint _entityId) external onlyOwner {
         TradableEntityContract.TradableEntity storage te = getTradableEntityInternally(_entityId);
-        te.onChainDirectPurchasePrice = 0;
+        te.purchasePrice = 0;
         te.acceptedToken = address(0);
     }
 
     /// @notice sets the price (as ERC20 token) for direct onchain purchasement
     /// @param _entityId the id of the entity
     /// @param _price the new price (as ERC20 tokens)
-    function setOnChainDirectPurchasePrice(uint _entityId, uint _price) external onlyOwner {
+    function setPurchasePrice(uint _entityId, uint _price) external onlyOwner {
         TradableEntityContract.TradableEntity storage te = getTradableEntityInternally(_entityId);
-        te.onChainDirectPurchasePrice = _price;
+        te.purchasePrice = _price;
     }
 
     /// @notice set the flag whether an escrow is allowed to transfer entites of a company
@@ -193,7 +193,7 @@ contract TradableEntityDB is Owned,TradableEntityDBInterface {
 
     /// @notice gets the price for a direct purchase onchain
     /// @param _entityId the entity-id
-    function getOnChainDirectPurchasePrice(
+    function getPurchasePrice(
         uint _entityId
     )
         external
@@ -201,7 +201,7 @@ contract TradableEntityDB is Owned,TradableEntityDBInterface {
         view
         returns (uint)
     {
-        return getTradableEntity(_entityId).onChainDirectPurchasePrice;
+        return getTradableEntity(_entityId).purchasePrice;
     }
 
     /// @notice returns whether the provided address is allowed to transfer certificates for a company
@@ -232,6 +232,20 @@ contract TradableEntityDB is Owned,TradableEntityDBInterface {
         returns (address)
     {
         return getTradableEntity(_entityId).acceptedToken;
+    }
+
+    /// @notice gets the currency will be used for off-chain settlement
+    /// @param _entityId the entity-id
+    /// @return the currency
+    function getOffChainCurrency(
+        uint _entityId
+    )
+        external
+        onlyOwner
+        view
+        returns (Currency.Fiat)
+    {
+        return getTradableEntity(_entityId).acceptedOffChainCurrency;
     }
 
     /// @notice gets the owner of a tradableEntity

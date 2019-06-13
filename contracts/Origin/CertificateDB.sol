@@ -105,7 +105,7 @@ contract CertificateDB is TradableEntityDB, CertificateSpecificContract, Certifi
             powerInW: _powerInW,
             forSale: false,
             acceptedToken: address(0x0),
-            onChainDirectPurchasePrice: 0,
+            purchasePrice: 0,
             escrow: _escrow,
            // escrow: new address[](0),
             approvedAddress: address(0x0),
@@ -151,7 +151,7 @@ contract CertificateDB is TradableEntityDB, CertificateSpecificContract, Certifi
             powerInW: _power,
             forSale: parent.tradableEntity.forSale,
             acceptedToken: address(0x0),
-            onChainDirectPurchasePrice: 0,
+            purchasePrice: 0,
             escrow: parent.tradableEntity.escrow,
             approvedAddress: parent.tradableEntity.approvedAddress,
             acceptedOffChainCurrency: Currency.Fiat.NONE
@@ -178,7 +178,7 @@ contract CertificateDB is TradableEntityDB, CertificateSpecificContract, Certifi
             powerInW: parent.tradableEntity.powerInW - _power,
             forSale: parent.tradableEntity.forSale,
             acceptedToken: address(0x0),
-            onChainDirectPurchasePrice: 0,
+            purchasePrice: 0,
             escrow: parent.tradableEntity.escrow,
             approvedAddress: parent.tradableEntity.approvedAddress,
             acceptedOffChainCurrency: Currency.Fiat.NONE

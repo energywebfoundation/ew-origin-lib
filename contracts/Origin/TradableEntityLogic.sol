@@ -19,6 +19,7 @@ pragma experimental ABIEncoderV2;
 
 import "ew-user-registry-lib/contracts/Users/RoleManagement.sol";
 import "ew-utils-general-lib/contracts/Interfaces/Updatable.sol";
+import "ew-utils-general-lib/contracts/Msc/Currency.sol";
 import "../../contracts/Origin/TradableEntityContract.sol";
 import "../../contracts/Interfaces/ERC721.sol";
 import "../../contracts/Interfaces/ERC721TokenReceiver.sol";
@@ -51,6 +52,8 @@ contract TradableEntityLogic is Updatable, RoleManagement, ERC721, ERC165, Trada
 
     /// @notice Logs when an entity is published for sale
     event LogPublishForSale(uint indexed _entityId, uint _price, address _token);
+    /// @notice Logs when an entity is published for sale
+    event LogPublishForSaleFiat(uint indexed _entityId, uint _price, Currency.Fiat _currency);
     /// @notice Logs when an entity is published for sale
     event LogUnpublishForSale(uint indexed _entityId);
 
@@ -162,11 +165,25 @@ contract TradableEntityLogic is Updatable, RoleManagement, ERC721, ERC165, Trada
     /// @param _price the purchase price
     /// @param _tokenAddress the address of the ERC20 token address
     function publishForSale(uint _entityId, uint _price, address _tokenAddress) external onlyEntityOwner(_entityId) {
-        db.setOnChainDirectPurchasePrice(_entityId, _price);
+        db.setPurchasePrice(_entityId, _price);
         db.setTradableToken(_entityId, _tokenAddress);
         db.setForSale(_entityId, true);
 
+        db.setOffChainCurrency(_entityId, Currency.Fiat.NONE);
         emit LogPublishForSale(_entityId, _price, _tokenAddress);
+    }
+
+    /// @notice makes the tradable entity available for sale and payable in fiat currencies
+    /// @param _entityId The id of the certificate
+    /// @param _price the purchase price
+    /// @param _currency the currency
+    function publishForSaleFiat(uint _entityId, uint _price, Currency.Fiat _currency) external onlyEntityOwner(_entityId) {
+        db.setPurchasePrice(_entityId, _price);
+        db.setOffChainCurrency(_entityId, _currency);
+        db.setForSale(_entityId, true);
+
+        db.setTradableToken(_entityId, address(0x0));
+        emit LogPublishForSaleFiat(_entityId, _price, _currency);
     }
 
     /// @notice makes the tradable entity available for sale
@@ -227,14 +244,14 @@ contract TradableEntityLogic is Updatable, RoleManagement, ERC721, ERC165, Trada
     /// @notice sets the direct purchase price for onchain
     /// @param _entityId the id of the entity
     /// @param _price the on chain direct purchase price
-    function setOnChainDirectPurchasePrice(
+    function setPurchasePrice(
         uint _entityId,
         uint _price
     )
-        onlyEntityOwner(_entityId)
         external
+        onlyEntityOwner(_entityId)
     {
-        db.setOnChainDirectPurchasePrice(_entityId, _price);
+        db.setPurchasePrice(_entityId, _price);
     }
 
     /// @notice sets the tradable token (ERC20 contract)
@@ -244,12 +261,18 @@ contract TradableEntityLogic is Updatable, RoleManagement, ERC721, ERC165, Trada
         uint _entityId,
         address _tokenContract
     )
-        onlyEntityOwner(_entityId)
         external
+        onlyEntityOwner(_entityId)
     {
         db.setTradableToken(_entityId, _tokenContract);
     }
 
+    /// @notice sets the currency that will be used for off-chain purchasement
+    /// @param _entityId the id of the entity
+    /// @param _offChainCurrency off chain currency
+    function setOffChainCurrency(uint _entityId, Currency.Fiat _offChainCurrency) external onlyEntityOwner(_entityId) {
+        db.setOffChainCurrency(_entityId, _offChainCurrency);
+    }
 
     /// @notice Updates the logic contract
     /// @param _newLogic Address of the new logic contract
@@ -264,8 +287,8 @@ contract TradableEntityLogic is Updatable, RoleManagement, ERC721, ERC165, Trada
     /// @notice gets the onchain direct purchase price
     /// @param _entityId the id of the entity
     /// @return the number of ERC20 required to buy the entity
-    function getOnChainDirectPurchasePrice(uint _entityId) external view returns (uint) {
-        return db.getOnChainDirectPurchasePrice(_entityId);
+    function getPurchasePrice(uint _entityId) external view returns (uint) {
+        return db.getPurchasePrice(_entityId);
     }
 
 
@@ -280,6 +303,13 @@ contract TradableEntityLogic is Updatable, RoleManagement, ERC721, ERC165, Trada
         )
     {
         return TradableEntityDB(address(db)).getTradableEntity(_entityId);
+    }
+
+    /// @notice gets the currency will be used for off-chain settlement
+    /// @param _entityId the entity-id
+    /// @return the currency
+    function getOffChainCurrency(uint _entityId) external view returns (Currency.Fiat){
+        return db.getOffChainCurrency(_entityId);
     }
 
     /// @notice gets the tradable token

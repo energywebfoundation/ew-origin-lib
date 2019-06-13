@@ -233,7 +233,7 @@ contract EnergyCertificateBundleLogic is EnergyCertificateBundleInterface,
             powerInW: _powerInW,
             forSale: false,
             acceptedToken: address(0x0),
-            onChainDirectPurchasePrice: 0,
+            purchasePrice: 0,
             escrow: asset.assetGeneral.matcher,
             approvedAddress: address(0x0),
             acceptedOffChainCurrency: Currency.Fiat.NONE

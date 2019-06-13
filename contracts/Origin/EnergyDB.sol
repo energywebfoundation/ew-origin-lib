@@ -67,13 +67,13 @@ contract EnergyDB is TradableEntityDB, TradableEntityContract {
     /// @param _owner the asset-owner (= the new entity-owner)
     /// @param _powerInW the amount of energy produced
     /// @param _acceptedToken the accepted ERC20-Token
-    /// @param _onChainDirectPurchasePrice the price set onchain for direct purchase (using an ERC20 contract)
+    /// @param _purchasePrice the price set onchain for direct purchase (using an ERC20 contract)
     function createTradableEntityEntry(
         uint _assetId,
         address _owner,
         uint _powerInW,
         address _acceptedToken,
-        uint _onChainDirectPurchasePrice
+        uint _purchasePrice
     )
         external
         onlyOwner
@@ -86,7 +86,7 @@ contract EnergyDB is TradableEntityDB, TradableEntityContract {
             powerInW: _powerInW,
             forSale: false,
             acceptedToken: _acceptedToken,
-            onChainDirectPurchasePrice: _onChainDirectPurchasePrice,
+            purchasePrice: _purchasePrice,
             escrow: new address[](0),
             approvedAddress: address(0x0),
             acceptedOffChainCurrency: Currency.Fiat.NONE
@@ -135,14 +135,14 @@ contract EnergyDB is TradableEntityDB, TradableEntityContract {
     /// @notice sets the onchain price (as erc20 token) for direct purchasement
     /// @param _entityId the id of the entity
     /// @param _price the price for a direct onchain purchasement
-    function setOnChainDirectPurchasePrice(
+    function setPurchasePrice(
         uint _entityId,
         uint _price
     )
         external
         onlyOwner
     {
-        energyList[_entityId].tradableEntity.onChainDirectPurchasePrice = _price;
+        energyList[_entityId].tradableEntity.purchasePrice = _price;
     }
 
     /// @notice gets the approved-address of an entity
@@ -169,8 +169,8 @@ contract EnergyDB is TradableEntityDB, TradableEntityContract {
     /// @notice gets the ERC20 price for an entity
     /// @param _entityId the id of the entity
     /// @return the ERC20 price for an entity
-    function getOnChainDirectPurchasePrice(uint _entityId) external onlyOwner view returns (uint){
-        return energyList[_entityId].tradableEntity.onChainDirectPurchasePrice;
+    function getPurchasePrice(uint _entityId) external onlyOwner view returns (uint){
+        return energyList[_entityId].tradableEntity.purchasePrice;
     }
 
     /// @notice gets the owner of a tradableEntity

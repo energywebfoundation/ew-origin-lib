@@ -148,7 +148,7 @@ export class Entity extends TradableEntity.TradableEntity.Entity implements ICer
             this.powerInW = cert.tradableEntity.powerInW;
             this.forSale = cert.tradableEntity.forSale;
             this.acceptedToken = cert.tradableEntity.acceptedToken;
-            this.onChainDirectPurchasePrice = cert.tradableEntity.onChainDirectPurchasePrice;
+            this.purchasePrice = cert.tradableEntity.purchasePrice;
             this.escrow = cert.tradableEntity.escrow;
             this.approvedAddress = cert.tradableEntity.approvedAddress;
             this.acceptedOffChainCurrency = cert.tradableEntity.acceptedOffChainCurrency;

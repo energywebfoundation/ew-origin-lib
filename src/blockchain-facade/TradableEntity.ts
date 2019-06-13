@@ -23,7 +23,7 @@ export interface IOnChainProperties {
     powerInW: number;
     forSale: boolean;
     acceptedToken?: number;
-    onChainDirectPurchasePrice: number;
+    purchasePrice: number;
     escrow: string[];
     approvedAddress: string;
     acceptedOffChainCurrency: Currency;
@@ -57,11 +57,11 @@ export const getTradableToken = async (
     return configuration.blockchainProperties.certificateLogicInstance.getTradableToken(certId);
 };
 
-export const getOnchainDirectPurchasePrice = async (
+export const getPurchasePrice = async (
     certId: number,
     configuration: Configuration.Entity
 ): Promise<number> => {
-    return configuration.blockchainProperties.certificateLogicInstance.getOnchainDirectPurchasePrice(
+    return configuration.blockchainProperties.certificateLogicInstance.getPurchasePrice(
         certId
     );
 };
@@ -103,7 +103,7 @@ export abstract class Entity extends BlockchainDataModelEntity.Entity
     powerInW: number;
     forSale: boolean;
     acceptedToken?: number;
-    onChainDirectPurchasePrice: number;
+    purchasePrice: number;
     escrow: string[];
     approvedAddress: string;
     acceptedOffChainCurrency: Currency;
@@ -199,15 +199,15 @@ export abstract class Entity extends BlockchainDataModelEntity.Entity
         }
     }
 
-    async setOnChainDirectPurchasePrice(price: number): Promise<TransactionReceipt> {
+    async setPurchasePrice(price: number): Promise<TransactionReceipt> {
         if (this.configuration.blockchainProperties.activeUser.privateKey) {
-            return this.configuration.blockchainProperties.certificateLogicInstance.setOnChainDirectPurchasePrice(
+            return this.configuration.blockchainProperties.certificateLogicInstance.setPurchasePrice(
                 this.id,
                 price,
                 { privateKey: this.configuration.blockchainProperties.activeUser.privateKey }
             );
         } else {
-            return this.configuration.blockchainProperties.certificateLogicInstance.setOnChainDirectPurchasePrice(
+            return this.configuration.blockchainProperties.certificateLogicInstance.setPurchasePrice(
                 this.id,
                 price,
                 { from: this.configuration.blockchainProperties.activeUser.address }
@@ -221,8 +221,8 @@ export abstract class Entity extends BlockchainDataModelEntity.Entity
         );
     }
 
-    async getOnChainDirectPurchasePrice(): Promise<number> {
-        return this.configuration.blockchainProperties.certificateLogicInstance.getOnChainDirectPurchasePrice(
+    async getPurchasePrice(): Promise<number> {
+        return this.configuration.blockchainProperties.certificateLogicInstance.getPurchasePrice(
             this.id
         );
     }
@@ -272,6 +272,24 @@ export abstract class Entity extends BlockchainDataModelEntity.Entity
                 this.id,
                 price,
                 tokenAddress,
+                { from: this.configuration.blockchainProperties.activeUser.address }
+            );
+        }
+    }
+
+    async publishForSaleFiat(price: number, currency: Currency): Promise<TransactionReceipt> {
+        if (this.configuration.blockchainProperties.activeUser.privateKey) {
+            return this.configuration.blockchainProperties.certificateLogicInstance.publishForSaleFiat(
+                this.id,
+                price,
+                currency,
+                { privateKey: this.configuration.blockchainProperties.activeUser.privateKey }
+            );
+        } else {
+            return this.configuration.blockchainProperties.certificateLogicInstance.publishForSaleFiat(
+                this.id,
+                price,
+                currency,
                 { from: this.configuration.blockchainProperties.activeUser.address }
             );
         }

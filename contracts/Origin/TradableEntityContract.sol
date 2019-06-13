@@ -27,7 +27,7 @@ contract TradableEntityContract {
         uint powerInW;
         bool forSale;
         address acceptedToken;
-        uint onChainDirectPurchasePrice;
+        uint purchasePrice;
         address[] escrow;
         address approvedAddress;
         Currency.Fiat acceptedOffChainCurrency; // ew-utils-general-lib/Currency

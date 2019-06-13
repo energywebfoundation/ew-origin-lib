@@ -17,6 +17,8 @@
 pragma solidity ^0.5.2;
 pragma experimental ABIEncoderV2;
 
+import "ew-utils-general-lib/contracts/Msc/Currency.sol";
+
 interface TradableEntityDBInterface {
 
     /// @notice sets the forSale flag
@@ -44,10 +46,15 @@ interface TradableEntityDBInterface {
     /// @param _token the address of the ERC20 token address
     function setTradableToken(uint _entityId, address _token) external;
 
+    /// @notice sets the currency that will be used for off-chain purchasement
+    /// @param _entityId the id of the entity
+    /// @param _offChainCurrency off chain currency
+    function setOffChainCurrency(uint _entityId, Currency.Fiat _offChainCurrency) external;
+
     /// @notice sets the onchain direct purchase price
     /// @param _entityId the id of the entity
     /// @param _price the price
-    function setOnChainDirectPurchasePrice(uint _entityId, uint _price) external;
+    function setPurchasePrice(uint _entityId, uint _price) external;
 
     /// @notice removes accepted token and onchain direct purchase price for an entity
     /// @param _entityId the id of the entity
@@ -92,6 +99,11 @@ interface TradableEntityDBInterface {
     /// @return the address of a ERC20 token
     function getTradableToken(uint _entityId) external view returns (address);
 
+    /// @notice gets the currency will be used for off-chain settlement
+    /// @param _entityId the entity-id
+    /// @return the currency
+    function getOffChainCurrency(uint _entityId) external view returns (Currency.Fiat);
+
     /// @notice gets the owner of a tradable entity
     /// @param _entityId the id of the entity
     /// @return the owner of a tradable entity
@@ -105,7 +117,7 @@ interface TradableEntityDBInterface {
     /// @notice gets the onchain direct purchase price for an entity
     /// @param _entityId the id of the entity
     /// @return the onchain direct purchase price for an entity
-    function getOnChainDirectPurchasePrice(uint _entityId) external view returns (uint);
+    function getPurchasePrice(uint _entityId) external view returns (uint);
 
     /// @notice gets whether the provided address is an operator/escrow for the company
     /// @param _company the company owning tokens
