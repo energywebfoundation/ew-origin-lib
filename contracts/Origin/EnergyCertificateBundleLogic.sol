@@ -235,7 +235,8 @@ contract EnergyCertificateBundleLogic is EnergyCertificateBundleInterface,
             acceptedToken: address(0x0),
             onChainDirectPurchasePrice: 0,
             escrow: asset.assetGeneral.matcher,
-            approvedAddress: address(0x0)
+            approvedAddress: address(0x0),
+            acceptedOffChainCurrency: Currency.Fiat.NONE
         });
 
         CertificateSpecific memory certificateSpecific = CertificateSpecific({

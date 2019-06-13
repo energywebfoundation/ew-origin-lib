@@ -17,6 +17,8 @@
 pragma solidity ^0.5.2;
 pragma experimental ABIEncoderV2;
 
+import "ew-utils-general-lib/contracts/Msc/Currency.sol";
+
 contract TradableEntityContract {
 
     struct TradableEntity {
@@ -28,5 +30,6 @@ contract TradableEntityContract {
         uint onChainDirectPurchasePrice;
         address[] escrow;
         address approvedAddress;
+        Currency.Fiat acceptedOffChainCurrency; // ew-utils-general-lib/Currency
     }
 }

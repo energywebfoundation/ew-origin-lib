@@ -20,6 +20,7 @@ pragma experimental ABIEncoderV2;
 /// @title The Database contract for the Certificate of Origin list
 /// @notice This contract only provides getter and setter methods
 
+import "ew-utils-general-lib/contracts/Msc/Currency.sol";
 import "../../contracts/Origin/TradableEntityContract.sol";
 import "../../contracts/Origin/TradableEntityDB.sol";
 import "../../contracts/Origin/CertificateSpecificContract.sol";
@@ -107,8 +108,8 @@ contract CertificateDB is TradableEntityDB, CertificateSpecificContract, Certifi
             onChainDirectPurchasePrice: 0,
             escrow: _escrow,
            // escrow: new address[](0),
-            approvedAddress: address(0x0)
-
+            approvedAddress: address(0x0),
+            acceptedOffChainCurrency: Currency.Fiat.NONE
         });
 
 
@@ -152,7 +153,8 @@ contract CertificateDB is TradableEntityDB, CertificateSpecificContract, Certifi
             acceptedToken: address(0x0),
             onChainDirectPurchasePrice: 0,
             escrow: parent.tradableEntity.escrow,
-            approvedAddress: parent.tradableEntity.approvedAddress
+            approvedAddress: parent.tradableEntity.approvedAddress,
+            acceptedOffChainCurrency: Currency.Fiat.NONE
         });
 
         CertificateDB.CertificateSpecific memory certificateSpecificOne = CertificateSpecific({
@@ -178,7 +180,8 @@ contract CertificateDB is TradableEntityDB, CertificateSpecificContract, Certifi
             acceptedToken: address(0x0),
             onChainDirectPurchasePrice: 0,
             escrow: parent.tradableEntity.escrow,
-            approvedAddress: parent.tradableEntity.approvedAddress
+            approvedAddress: parent.tradableEntity.approvedAddress,
+            acceptedOffChainCurrency: Currency.Fiat.NONE
         });
 
         CertificateSpecific memory certificateSpecificTwo = CertificateSpecific({

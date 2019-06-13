@@ -88,7 +88,8 @@ contract EnergyDB is TradableEntityDB, TradableEntityContract {
             acceptedToken: _acceptedToken,
             onChainDirectPurchasePrice: _onChainDirectPurchasePrice,
             escrow: new address[](0),
-            approvedAddress: address(0x0)
+            approvedAddress: address(0x0),
+            acceptedOffChainCurrency: Currency.Fiat.NONE
         });
         energyList.push(Energy({tradableEntity: te}));
         _entityId = energyList.length>0?energyList.length-1:0;

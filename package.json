@@ -33,7 +33,7 @@
   "dependencies": {
     "ew-asset-registry-lib": "1.0.3-alpha.2",
     "ew-user-registry-lib": "1.0.3-alpha.2",
-    "ew-utils-general-lib": "1.0.2-alpha.2",
+    "ew-utils-general-lib": "energywebfoundation/ew-utils-general-lib#62f257da2fb7b5b0a283da5eb9f85486d43980fc",
     "web3": "1.0.0-beta.37",
     "winston": "3.2.1"
   },

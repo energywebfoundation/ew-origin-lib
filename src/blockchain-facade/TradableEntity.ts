@@ -14,7 +14,7 @@
 //
 // @authors: slock.it GmbH; Martin Kuechler, martin.kuchler@slock.it; Heiko Burkhardt, heiko.burkhardt@slock.it;
 
-import { Configuration, BlockchainDataModelEntity } from 'ew-utils-general-lib';
+import { Configuration, BlockchainDataModelEntity, Currency } from 'ew-utils-general-lib';
 import { TransactionReceipt } from 'web3/types';
 
 export interface IOnChainProperties {
@@ -26,6 +26,7 @@ export interface IOnChainProperties {
     onChainDirectPurchasePrice: number;
     escrow: string[];
     approvedAddress: string;
+    acceptedOffChainCurrency: Currency;
 }
 
 export const getBalance = async (
@@ -105,6 +106,7 @@ export abstract class Entity extends BlockchainDataModelEntity.Entity
     onChainDirectPurchasePrice: number;
     escrow: string[];
     approvedAddress: string;
+    acceptedOffChainCurrency: Currency;
 
     initialized: boolean;
 

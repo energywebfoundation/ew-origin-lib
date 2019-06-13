@@ -18,6 +18,7 @@ pragma solidity ^0.5.2;
 pragma experimental ABIEncoderV2;
 
 import "ew-utils-general-lib/contracts/Msc/Owned.sol";
+import "ew-utils-general-lib/contracts/Msc/Currency.sol";
 import "../../contracts/Interfaces/TradableEntityDBInterface.sol";
 import "../../contracts/Origin/TradableEntityContract.sol";
 
@@ -161,6 +162,14 @@ contract TradableEntityDB is Owned,TradableEntityDBInterface {
     {
         TradableEntityContract.TradableEntity storage te = getTradableEntityInternally(_entityId);
         te.acceptedToken = _token;
+    }
+
+    /// @notice sets the currency that will be used for off-chain purchasement
+    /// @param _entityId the id of the entity
+    /// @param _offChainCurrency off chain currency
+    function setOffChainCurrency(uint _entityId, Currency.Fiat _offChainCurrency) external onlyOwner {
+        TradableEntityContract.TradableEntity storage te = getTradableEntityInternally(_entityId);
+        te.acceptedOffChainCurrency = _offChainCurrency;
     }
 
     /// @notice gets the approved address for an entity

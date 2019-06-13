@@ -19,6 +19,7 @@ import * as fs from 'fs';
 import 'mocha';
 import Web3 from 'web3';
 
+import { Currency } from 'ew-utils-general-lib';
 import { migrateUserRegistryContracts, UserLogic, UserContractLookup, buildRights, Role } from 'ew-user-registry-lib';
 import {
     migrateAssetRegistryContracts,
@@ -408,6 +409,10 @@ describe('CertificateLogic', () => {
                 assert.equal(
                     tradableEntity.approvedAddress,
                     '0x0000000000000000000000000000000000000000'
+                );
+                assert.equal(
+                    tradableEntity.acceptedOffChainCurrency,
+                    Currency.NONE.toString()
                 );
             });
 
