@@ -195,6 +195,8 @@ contract CertificateLogic is CertificateInterface, RoleManagement, TradableEntit
             start = requestedSMReadsLength;
         }
 
+        require(limitingSmartMeterReadIndex >= start, "limiting index has to higher or equal to start index");
+
         certificationRequests.push(CertificationRequest(
             _assetId,
             start,
