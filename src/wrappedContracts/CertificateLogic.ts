@@ -1088,6 +1088,10 @@ export class CertificateLogic extends GeneralFunctions {
         return await this.web3Contract.methods.getCertificateOwner(_certificateId).call(txParams);
     }
 
+    async getAssetRequestedCertsForSMReadsLength(_assetId: number, txParams?: SpecialTx) {
+        return await this.web3Contract.methods.getAssetRequestedCertsForSMReadsLength(_assetId).call(txParams);
+    }
+
     async getCertificationRequests(txParams?: SpecialTx) {
         const length = await this.web3Contract.methods.getCertificationRequestsLength().call(txParams);
 
