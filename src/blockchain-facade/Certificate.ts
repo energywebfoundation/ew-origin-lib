@@ -231,9 +231,9 @@ export class Entity extends TradableEntity.Entity implements ICertificateSpecifi
 
         const certificateEnergy = Number(this.powerInW);
         const saleParams = {
-            onChainPrice: isErc20Sale ? price : 0,
+            onChainPrice: isErc20Sale ? Math.floor(price) : 0,
             tokenAddress: isErc20Sale ? tokenAddressOrCurrency : '0x0000000000000000000000000000000000000000',
-            offChainPrice: isFiatSale ? price * 100 : 0,
+            offChainPrice: isFiatSale ? Math.floor(price * 100) : 0,
             offChainCurrency: isFiatSale ? tokenAddressOrCurrency : Currency.NONE
         };
 
