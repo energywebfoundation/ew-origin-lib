@@ -47,7 +47,7 @@
     "chai": "4.1.2",
     "ethlint": "1.2.4",
     "ew-erc-test-contracts": "0.0.99",
-    "ew-utils-testbackend": "energywebfoundation/ew-utils-testbackend#2aa6395c6c0918a29b8b744d426d0b5b57a6c61f",
+    "ew-utils-testbackend": "1.0.1-alpha.3",
     "fs-extra": "8.0.1",
     "ganache-cli": "6.4.4",
     "lint-staged": "8.1.7",
