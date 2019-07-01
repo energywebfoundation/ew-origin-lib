@@ -18,6 +18,7 @@
     "prettier": "prettier --write --config-precedence file-override './src/**/*'",
     "lint": "solium -d contracts && tslint 'src/**/*{.ts,.tsx}'",
     "lint-fix": "solium -d contracts --fix && tslint --fix 'src/**/*{.ts,.tsx}'",
+    "clean": "rm -rf node_modules dist build db.json",
     "prepare": "node scripts/build.js"
   },
   "repository": {

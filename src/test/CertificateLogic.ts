@@ -1099,4 +1099,104 @@ describe('CertificateLogic-Facade', () => {
         }*/
         //        console.log(allEvents);
     });
+
+    it('should create a new certificate (#7)', async () => {
+        conf.blockchainProperties.activeUser = {
+            address: accountAssetOwner,
+            privateKey: assetOwnerPK
+        };
+
+        await assetRegistry.saveSmartMeterRead(0, 600, 'lastSmartMeterReadFileHash#7', {
+            privateKey: assetSmartmeterPK
+        });
+        const certificate = await new Certificate.Entity('7', conf).sync();
+
+        delete certificate.configuration;
+        delete certificate.proofs;
+
+        blockceationTime = '' + (await web3.eth.getBlock('latest')).timestamp;
+        assert.deepEqual(certificate as any, {
+            id: '7',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountAssetOwner,
+            powerInW: '100',
+            forSale: false,
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            onChainDirectPurchasePrice: '0',
+            escrow: [matcherAccount],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            status: Certificate.Status.Active.toString(),
+            dataLog: 'lastSmartMeterReadFileHash#7',
+            creationTime: blockceationTime,
+            parentId: '7',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '0'
+        });
+    });
+
+    it('should make certificate #7 available for sale', async() => {
+        let certificate = await new Certificate.Entity('7', conf).sync();
+
+        await certificate.splitAndPublishForSale(30, 10, '0x1230000000000000000000000000000000000000');
+
+        certificate = await certificate.sync();
+
+        console.log({ certificate });
+
+        assert.equal(certificate.status, Certificate.Status.Split);
+        assert.isFalse(certificate.forSale);
+
+        const childCert1 = await new Certificate.Entity('8', conf).sync();
+
+        delete childCert1.configuration;
+        delete childCert1.proofs;
+        delete childCert1.creationTime;
+
+        assert.deepEqual(childCert1 as any, {
+            id: '8',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountAssetOwner,
+            powerInW: '30',
+            forSale: true,
+            acceptedToken: '0x1230000000000000000000000000000000000000',
+            onChainDirectPurchasePrice: '10',
+            escrow: [matcherAccount],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            status: Certificate.Status.Active.toString(),
+            dataLog: 'lastSmartMeterReadFileHash#7',
+            parentId: '7',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '0'
+        });
+
+        const childCert2 = await new Certificate.Entity('9', conf).sync();
+
+        delete childCert2.configuration;
+        delete childCert2.proofs;
+        delete childCert2.creationTime;
+
+        assert.deepEqual(childCert2 as any, {
+            id: '9',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountAssetOwner,
+            powerInW: '70',
+            forSale: false,
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            onChainDirectPurchasePrice: '0',
+            escrow: [matcherAccount],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            status: Certificate.Status.Active.toString(),
+            dataLog: 'lastSmartMeterReadFileHash#7',
+            parentId: '7',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '0'
+        });
+    });
+
 });

@@ -213,6 +213,26 @@ export class Entity extends TradableEntity.TradableEntity.Entity implements ICer
         }
     }
 
+    async splitAndPublishForSale(power: number, price: number, tokenAddress: string): Promise<TransactionReceipt> {
+        if (this.configuration.blockchainProperties.activeUser.privateKey) {
+            return this.configuration.blockchainProperties.certificateLogicInstance.splitAndPublishForSale(
+                this.id,
+                power,
+                price,
+                tokenAddress,
+                { privateKey: this.configuration.blockchainProperties.activeUser.privateKey }
+            );
+        } else {
+            return this.configuration.blockchainProperties.certificateLogicInstance.splitAndPublishForSale(
+                this.id,
+                power,
+                price,
+                tokenAddress,
+                { from: this.configuration.blockchainProperties.activeUser.address }
+            );
+        }
+    }
+
     async getCertificateOwner(): Promise<string> {
         return this.configuration.blockchainProperties.certificateLogicInstance.getCertificateOwner(
             this.id
