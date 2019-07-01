@@ -32,7 +32,7 @@
   "homepage": "https://github.com/energywebfoundation/ew-origin-lib#readme",
   "dependencies": {
     "ew-asset-registry-lib": "energywebfoundation/ew-asset-registry-lib#smart-meter-read-refactor",
-    "ew-user-registry-lib": "energywebfoundation/ew-user-registry-lib#add-issuer",
+    "ew-user-registry-lib": "1.0.3-alpha.4",
     "ew-utils-general-lib": "1.0.2-alpha.3",
     "web3": "1.0.0-beta.37",
     "winston": "3.2.1"
