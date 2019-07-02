@@ -70,10 +70,7 @@ contract CertificateSpecificContract is TradableEntityLogic {
         uint _powerInW
     )
         internal
-        returns (uint)
-    {
-        return 0;
-    }
+        returns (uint);
 
     function getCertificationRequestsLength() public view returns (uint) {
         return certificationRequests.length;
