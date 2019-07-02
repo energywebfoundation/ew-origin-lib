@@ -100,7 +100,7 @@ contract CertificateSpecificContract is TradableEntityLogic {
 
         AssetProducingDB.SmartMeterRead[] memory reads = assetRegistry.getSmartMeterReadsForAsset(_assetId);
 
-        require(lastRequestedSMReadIndex < reads.length, "limiting smart meter read should be lower than smart meter reads length");
+        require(lastRequestedSMReadIndex < reads.length, "lastRequestedSMReadIndex should be lower than smart meter reads length");
 
         uint start = 0;
         uint requestedSMReadsLength = getAssetRequestedCertsForSMReadsLength(_assetId);

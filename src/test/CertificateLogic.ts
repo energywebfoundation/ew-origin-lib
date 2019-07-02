@@ -1230,32 +1230,37 @@ describe('CertificateLogic-Facade', () => {
         assert.equal(await TradableEntity.getBalance(accountAssetOwner, conf), STARTING_ASSET_OWNER_BALANCE + 1);
     });
 
-    it('should create a new certificate (#7)', async () => {
+    it('should create a new certificate (#10)', async () => {
+        const STARTING_CERTIFICATE_LENGTH = Number(await Certificate.getCertificateListLength(conf));
+        const LAST_SM_READ_INDEX = (await assetRegistry.getSmartMeterReadsForAsset(0)).length - 1;
+        const LAST_SMART_METER_READ = Number((await assetRegistry.getAssetGeneral(0)).lastSmartMeterReadWh);
+        const INITIAL_CERTIFICATION_REQUESTS_LENGTH = (await certificateLogic.getCertificationRequests()).length;
+
         conf.blockchainProperties.activeUser = {
             address: accountAssetOwner,
             privateKey: assetOwnerPK
         };
 
-        await assetRegistry.saveSmartMeterRead(0, 600, 'lastSmartMeterReadFileHash#7', 0, {
+        await assetRegistry.saveSmartMeterRead(0, LAST_SMART_METER_READ + 100, 'lastSmartMeterReadFileHash#10', 0, {
             privateKey: assetSmartmeterPK
         });
 
-        await certificateLogic.requestCertificates(0, 7, {
+        await certificateLogic.requestCertificates(0, LAST_SM_READ_INDEX + 1, {
             privateKey: assetOwnerPK
         });
 
-        await certificateLogic.approveCertificationRequest(7, {
+        await certificateLogic.approveCertificationRequest(INITIAL_CERTIFICATION_REQUESTS_LENGTH, {
             privateKey: issuerPK
         });
         
-        const certificate = await new Certificate.Entity('7', conf).sync();
+        const certificate = await new Certificate.Entity(STARTING_CERTIFICATE_LENGTH.toString(), conf).sync();
 
         delete certificate.configuration;
         delete certificate.proofs;
 
         blockCreationTime = '' + (await web3.eth.getBlock('latest')).timestamp;
         assert.deepEqual(certificate as any, {
-            id: '7',
+            id: STARTING_CERTIFICATE_LENGTH.toString(),
             initialized: true,
             assetId: '0',
             children: [],
@@ -1267,9 +1272,9 @@ describe('CertificateLogic-Facade', () => {
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
             status: Certificate.Status.Active.toString(),
-            dataLog: 'lastSmartMeterReadFileHash#7',
+            dataLog: 'lastSmartMeterReadFileHash#10',
             creationTime: blockCreationTime,
-            parentId: '7',
+            parentId: STARTING_CERTIFICATE_LENGTH.toString(),
             maxOwnerChanges: '3',
             ownerChangerCounter: '0',
             offChainSettlementOptions: {
@@ -1279,8 +1284,8 @@ describe('CertificateLogic-Facade', () => {
         });
     });
 
-    it('should make certificate #7 available for sale', async() => {
-        let certificate = await new Certificate.Entity('7', conf).sync();
+    it('should make certificate #10 available for sale', async() => {
+        let certificate = await new Certificate.Entity('10', conf).sync();
 
         await certificate.publishForSale(10, '0x1230000000000000000000000000000000000000', 30);
 
@@ -1289,14 +1294,14 @@ describe('CertificateLogic-Facade', () => {
         assert.equal(certificate.status, Certificate.Status.Split);
         assert.isFalse(certificate.forSale);
 
-        const childCert1 = await new Certificate.Entity('8', conf).sync();
+        const childCert1 = await new Certificate.Entity('11', conf).sync();
 
         delete childCert1.configuration;
         delete childCert1.proofs;
         delete childCert1.creationTime;
 
         assert.deepEqual(childCert1 as any, {
-            id: '8',
+            id: '11',
             initialized: true,
             assetId: '0',
             children: [],
@@ -1308,8 +1313,8 @@ describe('CertificateLogic-Facade', () => {
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
             status: Certificate.Status.Active.toString(),
-            dataLog: 'lastSmartMeterReadFileHash#7',
-            parentId: '7',
+            dataLog: 'lastSmartMeterReadFileHash#10',
+            parentId: '10',
             maxOwnerChanges: '3',
             ownerChangerCounter: '0',
             offChainSettlementOptions: {
@@ -1318,14 +1323,14 @@ describe('CertificateLogic-Facade', () => {
             }
         });
 
-        const childCert2 = await new Certificate.Entity('9', conf).sync();
+        const childCert2 = await new Certificate.Entity('12', conf).sync();
 
         delete childCert2.configuration;
         delete childCert2.proofs;
         delete childCert2.creationTime;
 
         assert.deepEqual(childCert2 as any, {
-            id: '9',
+            id: '12',
             initialized: true,
             assetId: '0',
             children: [],
@@ -1337,8 +1342,8 @@ describe('CertificateLogic-Facade', () => {
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
             status: Certificate.Status.Active.toString(),
-            dataLog: 'lastSmartMeterReadFileHash#7',
-            parentId: '7',
+            dataLog: 'lastSmartMeterReadFileHash#10',
+            parentId: '10',
             maxOwnerChanges: '3',
             ownerChangerCounter: '0',
             offChainSettlementOptions: {
@@ -1348,8 +1353,8 @@ describe('CertificateLogic-Facade', () => {
         });
     });
 
-    it('should make certificate #9 available for sale with fiat', async() => {
-        let certificate = await new Certificate.Entity('9', conf).sync();
+    it('should make certificate #12 available for sale with fiat', async() => {
+        let certificate = await new Certificate.Entity('12', conf).sync();
 
         const price = 10.5;
 
@@ -1361,7 +1366,7 @@ describe('CertificateLogic-Facade', () => {
         delete certificate.creationTime;
 
         assert.deepEqual(certificate as any, {
-            id: '9',
+            id: '12',
             initialized: true,
             assetId: '0',
             children: [],
@@ -1373,8 +1378,8 @@ describe('CertificateLogic-Facade', () => {
             escrow: [matcherAccount],
             approvedAddress: '0x0000000000000000000000000000000000000000',
             status: Certificate.Status.Active.toString(),
-            dataLog: 'lastSmartMeterReadFileHash#7',
-            parentId: '7',
+            dataLog: 'lastSmartMeterReadFileHash#10',
+            parentId: '10',
             maxOwnerChanges: '3',
             ownerChangerCounter: '0',
             offChainSettlementOptions: {
