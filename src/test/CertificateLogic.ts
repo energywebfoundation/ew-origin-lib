@@ -1236,7 +1236,7 @@ describe('CertificateLogic-Facade', () => {
             privateKey: assetOwnerPK
         };
 
-        await assetRegistry.saveSmartMeterRead(0, 600, 'lastSmartMeterReadFileHash#7', {
+        await assetRegistry.saveSmartMeterRead(0, 600, 'lastSmartMeterReadFileHash#7', 0, {
             privateKey: assetSmartmeterPK
         });
         const certificate = await new Certificate.Entity('7', conf).sync();
@@ -1244,7 +1244,7 @@ describe('CertificateLogic-Facade', () => {
         delete certificate.configuration;
         delete certificate.proofs;
 
-        blockceationTime = '' + (await web3.eth.getBlock('latest')).timestamp;
+        blockCreationTime = '' + (await web3.eth.getBlock('latest')).timestamp;
         assert.deepEqual(certificate as any, {
             id: '7',
             initialized: true,
@@ -1259,7 +1259,7 @@ describe('CertificateLogic-Facade', () => {
             approvedAddress: '0x0000000000000000000000000000000000000000',
             status: Certificate.Status.Active.toString(),
             dataLog: 'lastSmartMeterReadFileHash#7',
-            creationTime: blockceationTime,
+            creationTime: blockCreationTime,
             parentId: '7',
             maxOwnerChanges: '3',
             ownerChangerCounter: '0',
