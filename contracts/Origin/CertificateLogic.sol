@@ -143,7 +143,7 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
         TradableEntityDBInterface(address(db)).setForSale(_certificateId, false);
     }
 
-    /// @notice creates a new bundle
+    /// @notice creates a new Entity / certificate
     /// @param _assetId the id of the producing asset
     /// @param _powerInW the power that has been produced
     function createTradableEntity(
