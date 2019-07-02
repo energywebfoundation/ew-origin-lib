@@ -1239,6 +1239,15 @@ describe('CertificateLogic-Facade', () => {
         await assetRegistry.saveSmartMeterRead(0, 600, 'lastSmartMeterReadFileHash#7', 0, {
             privateKey: assetSmartmeterPK
         });
+
+        await certificateLogic.requestCertificates(0, 7, {
+            privateKey: assetOwnerPK
+        });
+
+        await certificateLogic.approveCertificationRequest(7, {
+            privateKey: issuerPK
+        });
+        
         const certificate = await new Certificate.Entity('7', conf).sync();
 
         delete certificate.configuration;
