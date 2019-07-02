@@ -284,7 +284,11 @@ describe('CertificateLogic-Facade', () => {
             creationTime: blockCreationTime,
             parentId: '0',
             maxOwnerChanges: '3',
-            ownerChangerCounter: '0'
+            ownerChangerCounter: '0',
+            offChainSettlementOptions: {
+                price: 0,
+                currency: Currency.NONE
+            }
         });
     });
 
@@ -363,21 +367,6 @@ describe('CertificateLogic-Facade', () => {
         assert.isFalse(certificate.forSale);
     });
 
-    it('should set off chain settlement options', async() => {
-        let certificate = await new Certificate.Entity('0', conf).sync();
-
-        await certificate.setOffChainSettlementOptions({
-            price: 100,
-            currency: Currency.EUR
-        });
-
-        certificate = await new Certificate.Entity('0', conf).sync();
-
-        const { price, currency } = await certificate.getOffChainSettlementOptions();
-        assert.equal(price, 100);
-        assert.equal(currency, Currency.EUR);
-    });
-
     it('should transfer certificate', async () => {
         conf.blockchainProperties.activeUser = {
             address: accountAssetOwner,
@@ -413,7 +402,11 @@ describe('CertificateLogic-Facade', () => {
             creationTime: blockCreationTime,
             parentId: '0',
             maxOwnerChanges: '3',
-            ownerChangerCounter: '1'
+            ownerChangerCounter: '1',
+            offChainSettlementOptions: {
+                price: 0,
+                currency: Currency.NONE
+            }
         });
     });
 
@@ -456,7 +449,11 @@ describe('CertificateLogic-Facade', () => {
             creationTime: blockCreationTime,
             parentId: '1',
             maxOwnerChanges: '3',
-            ownerChangerCounter: '0'
+            ownerChangerCounter: '0',
+            offChainSettlementOptions: {
+                price: 0,
+                currency: Currency.NONE
+            }
         });
     });
 
@@ -488,7 +485,11 @@ describe('CertificateLogic-Facade', () => {
             creationTime: blockCreationTime,
             parentId: '1',
             maxOwnerChanges: '3',
-            ownerChangerCounter: '0'
+            ownerChangerCounter: '0',
+            offChainSettlementOptions: {
+                price: 0,
+                currency: Currency.NONE
+            }
         });
     });
 
@@ -528,7 +529,11 @@ describe('CertificateLogic-Facade', () => {
             creationTime: blockCreationTime,
             parentId: '1',
             maxOwnerChanges: '3',
-            ownerChangerCounter: '0'
+            ownerChangerCounter: '0',
+            offChainSettlementOptions: {
+                price: 0,
+                currency: Currency.NONE
+            }
         });
     });
 
@@ -605,7 +610,11 @@ describe('CertificateLogic-Facade', () => {
             creationTime: blockCreationTime,
             parentId: '1',
             maxOwnerChanges: '3',
-            ownerChangerCounter: '1'
+            ownerChangerCounter: '1',
+            offChainSettlementOptions: {
+                price: 0,
+                currency: Currency.NONE
+            }
         });
     });
 
@@ -645,7 +654,11 @@ describe('CertificateLogic-Facade', () => {
             creationTime: blockCreationTime,
             parentId: '2',
             maxOwnerChanges: '3',
-            ownerChangerCounter: '0'
+            ownerChangerCounter: '0',
+            offChainSettlementOptions: {
+                price: 0,
+                currency: Currency.NONE
+            }
         });
     });
 
@@ -680,7 +693,11 @@ describe('CertificateLogic-Facade', () => {
             creationTime: blockCreationTime,
             parentId: '2',
             maxOwnerChanges: '3',
-            ownerChangerCounter: '0'
+            ownerChangerCounter: '0',
+            offChainSettlementOptions: {
+                price: 0,
+                currency: Currency.NONE
+            }
         });
 
         const c1 = await new Certificate.Entity('3', conf).sync();
@@ -708,7 +725,11 @@ describe('CertificateLogic-Facade', () => {
             creationTime: blockCreationTime,
             parentId: '2',
             maxOwnerChanges: '3',
-            ownerChangerCounter: '0'
+            ownerChangerCounter: '0',
+            offChainSettlementOptions: {
+                price: 0,
+                currency: Currency.NONE
+            }
         });
 
         assert.deepEqual(c2 as any, {
@@ -728,7 +749,11 @@ describe('CertificateLogic-Facade', () => {
             creationTime: blockCreationTime,
             parentId: '2',
             maxOwnerChanges: '3',
-            ownerChangerCounter: '0'
+            ownerChangerCounter: '0',
+            offChainSettlementOptions: {
+                price: 0,
+                currency: Currency.NONE
+            }
         });
 
         const activeCerts = await Certificate.getActiveCertificates(conf);
@@ -769,7 +794,11 @@ describe('CertificateLogic-Facade', () => {
             creationTime: blockCreationTime,
             parentId: '2',
             maxOwnerChanges: '3',
-            ownerChangerCounter: '0'
+            ownerChangerCounter: '0',
+            offChainSettlementOptions: {
+                price: 0,
+                currency: Currency.NONE
+            }
         });
     });
 
@@ -806,7 +835,11 @@ describe('CertificateLogic-Facade', () => {
             creationTime: blockCreationTime,
             parentId: '2',
             maxOwnerChanges: '3',
-            ownerChangerCounter: '0'
+            ownerChangerCounter: '0',
+            offChainSettlementOptions: {
+                price: 0,
+                currency: Currency.NONE
+            }
         });
     });
 
@@ -836,7 +869,11 @@ describe('CertificateLogic-Facade', () => {
             creationTime: blockCreationTime,
             parentId: '2',
             maxOwnerChanges: '3',
-            ownerChangerCounter: '0'
+            ownerChangerCounter: '0',
+            offChainSettlementOptions: {
+                price: 0,
+                currency: Currency.NONE
+            }
         });
     });
 
@@ -866,7 +903,11 @@ describe('CertificateLogic-Facade', () => {
             creationTime: blockCreationTime,
             parentId: '2',
             maxOwnerChanges: '3',
-            ownerChangerCounter: '0'
+            ownerChangerCounter: '0',
+            offChainSettlementOptions: {
+                price: 0,
+                currency: Currency.NONE
+            }
         });
     });
 
@@ -906,7 +947,11 @@ describe('CertificateLogic-Facade', () => {
             creationTime: blockCreationTime,
             parentId: '5',
             maxOwnerChanges: '3',
-            ownerChangerCounter: '0'
+            ownerChangerCounter: '0',
+            offChainSettlementOptions: {
+                price: 0,
+                currency: Currency.NONE
+            }
         });
     });
 
@@ -966,7 +1011,11 @@ describe('CertificateLogic-Facade', () => {
             creationTime: blockCreationTime,
             parentId: '5',
             maxOwnerChanges: '3',
-            ownerChangerCounter: '1'
+            ownerChangerCounter: '1',
+            offChainSettlementOptions: {
+                price: 0,
+                currency: Currency.NONE
+            }
         });
     });
 
@@ -1006,7 +1055,11 @@ describe('CertificateLogic-Facade', () => {
             creationTime: blockCreationTime,
             parentId: '6',
             maxOwnerChanges: '3',
-            ownerChangerCounter: '0'
+            ownerChangerCounter: '0',
+            offChainSettlementOptions: {
+                price: 0,
+                currency: Currency.NONE
+            }
         });
     });
 
@@ -1066,7 +1119,11 @@ describe('CertificateLogic-Facade', () => {
             creationTime: blockCreationTime,
             parentId: '6',
             maxOwnerChanges: '3',
-            ownerChangerCounter: '1'
+            ownerChangerCounter: '1',
+            offChainSettlementOptions: {
+                price: 0,
+                currency: Currency.NONE
+            }
         });
     });
 
@@ -1172,4 +1229,150 @@ describe('CertificateLogic-Facade', () => {
         assert.equal(await Certificate.getCertificateListLength(conf), STARTING_CERTIFICATE_LENGTH + 1);
         assert.equal(await TradableEntity.getBalance(accountAssetOwner, conf), STARTING_ASSET_OWNER_BALANCE + 1);
     });
+
+    it('should create a new certificate (#7)', async () => {
+        conf.blockchainProperties.activeUser = {
+            address: accountAssetOwner,
+            privateKey: assetOwnerPK
+        };
+
+        await assetRegistry.saveSmartMeterRead(0, 600, 'lastSmartMeterReadFileHash#7', {
+            privateKey: assetSmartmeterPK
+        });
+        const certificate = await new Certificate.Entity('7', conf).sync();
+
+        delete certificate.configuration;
+        delete certificate.proofs;
+
+        blockceationTime = '' + (await web3.eth.getBlock('latest')).timestamp;
+        assert.deepEqual(certificate as any, {
+            id: '7',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountAssetOwner,
+            powerInW: '100',
+            forSale: false,
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            onChainDirectPurchasePrice: '0',
+            escrow: [matcherAccount],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            status: Certificate.Status.Active.toString(),
+            dataLog: 'lastSmartMeterReadFileHash#7',
+            creationTime: blockceationTime,
+            parentId: '7',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '0',
+            offChainSettlementOptions: {
+                price: 0,
+                currency: Currency.NONE
+            }
+        });
+    });
+
+    it('should make certificate #7 available for sale', async() => {
+        let certificate = await new Certificate.Entity('7', conf).sync();
+
+        await certificate.publishForSale(10, '0x1230000000000000000000000000000000000000', 30);
+
+        certificate = await certificate.sync();
+
+        assert.equal(certificate.status, Certificate.Status.Split);
+        assert.isFalse(certificate.forSale);
+
+        const childCert1 = await new Certificate.Entity('8', conf).sync();
+
+        delete childCert1.configuration;
+        delete childCert1.proofs;
+        delete childCert1.creationTime;
+
+        assert.deepEqual(childCert1 as any, {
+            id: '8',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountAssetOwner,
+            powerInW: '30',
+            forSale: true,
+            acceptedToken: '0x1230000000000000000000000000000000000000',
+            onChainDirectPurchasePrice: '10',
+            escrow: [matcherAccount],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            status: Certificate.Status.Active.toString(),
+            dataLog: 'lastSmartMeterReadFileHash#7',
+            parentId: '7',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '0',
+            offChainSettlementOptions: {
+                price: 0,
+                currency: Currency.NONE
+            }
+        });
+
+        const childCert2 = await new Certificate.Entity('9', conf).sync();
+
+        delete childCert2.configuration;
+        delete childCert2.proofs;
+        delete childCert2.creationTime;
+
+        assert.deepEqual(childCert2 as any, {
+            id: '9',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountAssetOwner,
+            powerInW: '70',
+            forSale: false,
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            onChainDirectPurchasePrice: '0',
+            escrow: [matcherAccount],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            status: Certificate.Status.Active.toString(),
+            dataLog: 'lastSmartMeterReadFileHash#7',
+            parentId: '7',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '0',
+            offChainSettlementOptions: {
+                price: 0,
+                currency: Currency.NONE
+            }
+        });
+    });
+
+    it('should make certificate #9 available for sale with fiat', async() => {
+        let certificate = await new Certificate.Entity('9', conf).sync();
+
+        const price = 10.5;
+
+        await certificate.publishForSale(price, Currency.EUR);
+
+        certificate = await certificate.sync();
+        delete certificate.configuration;
+        delete certificate.proofs;
+        delete certificate.creationTime;
+
+        assert.deepEqual(certificate as any, {
+            id: '9',
+            initialized: true,
+            assetId: '0',
+            children: [],
+            owner: accountAssetOwner,
+            powerInW: '70',
+            forSale: true,
+            acceptedToken: '0x0000000000000000000000000000000000000000',
+            onChainDirectPurchasePrice: '0',
+            escrow: [matcherAccount],
+            approvedAddress: '0x0000000000000000000000000000000000000000',
+            status: Certificate.Status.Active.toString(),
+            dataLog: 'lastSmartMeterReadFileHash#7',
+            parentId: '7',
+            maxOwnerChanges: '3',
+            ownerChangerCounter: '0',
+            offChainSettlementOptions: {
+                price: price * 100,
+                currency: Currency.EUR
+            }
+        });
+    });
+
 });

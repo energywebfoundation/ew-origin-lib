@@ -1,6 +1,6 @@
 {
   "name": "ew-origin-lib",
-  "version": "1.0.2-alpha.5",
+  "version": "1.0.2-alpha.6",
   "description": "",
   "main": "dist/js/src/index.js",
   "types": "dist/js/src/index.d.ts",
@@ -11,13 +11,14 @@
     "compile": "truffle compile",
     "deploy-contracts": "truffle migrate",
     "build-ts": "rm -rf dist/js && tsc",
-    "start-test-backend": "node node_modules/ew-utils-testbackend/dist/js/src/index.js",
+    "start-test-backend": "rm -rf db.json && node node_modules/ew-utils-testbackend/dist/js/src/index.js",
     "test": "npm run build-ts && mocha dist/js/src/test/ --timeout 60000",
     "start-ganache": "ganache-cli -m 'chalk park staff buzz chair purchase wise oak receive avoid avoid home' -g 0 -l 80000000 -e 1000000 -a 20",
     "flatten-contracts": "truffle-flattener contracts/Origin/* > build/flattenedContracts.sol && node scripts/removeExperimentalDuplicates.js build/flattenedContracts.sol",
     "prettier": "prettier --write --config-precedence file-override './src/**/*'",
     "lint": "solium -d contracts && tslint 'src/**/*{.ts,.tsx}'",
     "lint-fix": "solium -d contracts --fix && tslint --fix 'src/**/*{.ts,.tsx}'",
+    "clean": "rm -rf node_modules dist build db.json",
     "prepare": "node scripts/build.js"
   },
   "repository": {
@@ -46,7 +47,7 @@
     "chai": "4.1.2",
     "ethlint": "1.2.4",
     "ew-erc-test-contracts": "0.0.99",
-    "ew-utils-testbackend": "1.0.1-alpha.2",
+    "ew-utils-testbackend": "1.0.1-alpha.3",
     "fs-extra": "8.0.1",
     "ganache-cli": "6.4.4",
     "lint-staged": "8.1.7",
