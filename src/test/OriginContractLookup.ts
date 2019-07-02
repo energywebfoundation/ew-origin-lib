@@ -28,7 +28,7 @@ import { CertificateDB } from '../wrappedContracts/CertificateDB';
 import { CertificateLogic } from '../wrappedContracts/CertificateLogic';
 import { OriginContractLookupJSON, CertificateLogicJSON, CertificateDBJSON } from '..';
 
-describe.skip('OriginContractLookup', () => {
+describe('OriginContractLookup', () => {
     const configFile = JSON.parse(
         fs.readFileSync(process.cwd() + '/connection-config.json', 'utf8')
     );

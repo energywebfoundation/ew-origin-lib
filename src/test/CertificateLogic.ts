@@ -238,7 +238,7 @@ describe('CertificateLogic-Facade', () => {
             { privateKey: assetOwnerPK }
         );
 
-        await assetRegistry.saveSmartMeterRead(0, 100, 0, 'lastSmartMeterReadFileHash', {
+        await assetRegistry.saveSmartMeterRead(0, 100, 'lastSmartMeterReadFileHash', 0, {
             privateKey: assetSmartmeterPK
         });
     });
@@ -422,7 +422,7 @@ describe('CertificateLogic-Facade', () => {
             address: accountAssetOwner,
             privateKey: assetOwnerPK
         };
-        await assetRegistry.saveSmartMeterRead(0, 200, 0, 'lastSmartMeterReadFileHash', {
+        await assetRegistry.saveSmartMeterRead(0, 200, 'lastSmartMeterReadFileHash', 0, {
             privateKey: assetSmartmeterPK
         });
         await certificateLogic.requestCertificates(0, 1, {
@@ -610,7 +610,7 @@ describe('CertificateLogic-Facade', () => {
     });
 
     it('should create a new certificate (#2)', async () => {
-        await assetRegistry.saveSmartMeterRead(0, 300, 0, 'lastSmartMeterReadFileHash#3', {
+        await assetRegistry.saveSmartMeterRead(0, 300, 'lastSmartMeterReadFileHash#3', 0, {
             privateKey: assetSmartmeterPK
         });
 
@@ -871,7 +871,7 @@ describe('CertificateLogic-Facade', () => {
     });
 
     it('should create a new certificate (#5)', async () => {
-        await assetRegistry.saveSmartMeterRead(0, 400, 0, 'lastSmartMeterReadFileHash#4', {
+        await assetRegistry.saveSmartMeterRead(0, 400, 'lastSmartMeterReadFileHash#4', 0, {
             privateKey: assetSmartmeterPK
         });
 
@@ -971,7 +971,7 @@ describe('CertificateLogic-Facade', () => {
     });
 
     it('should create a new certificate (#6)', async () => {
-        await assetRegistry.saveSmartMeterRead(0, 500, 0, 'lastSmartMeterReadFileHash#5', {
+        await assetRegistry.saveSmartMeterRead(0, 500, 'lastSmartMeterReadFileHash#5', 0, {
             privateKey: assetSmartmeterPK
         });
 
@@ -1077,25 +1077,25 @@ describe('CertificateLogic-Facade', () => {
         const LAST_SMART_METER_READ = Number((await assetRegistry.getAssetGeneral(0)).lastSmartMeterReadWh);
         const INITIAL_CERTIFICATION_REQUESTS_LENGTH = (await certificateLogic.getCertificationRequests()).length;
 
-        await assetRegistry.saveSmartMeterRead(0, LAST_SMART_METER_READ + 100, 0, '', {
+        await assetRegistry.saveSmartMeterRead(0, LAST_SMART_METER_READ + 100, '', 0, {
             privateKey: assetSmartmeterPK
         });
 
-        await assetRegistry.saveSmartMeterRead(0, LAST_SMART_METER_READ + 200, 0, '', {
+        await assetRegistry.saveSmartMeterRead(0, LAST_SMART_METER_READ + 200, '', 0, {
             privateKey: assetSmartmeterPK
         });
 
         assert.equal((await assetRegistry.getSmartMeterReadsForAsset(0)).length - 1, LAST_SM_READ_INDEX + 2);
 
-        await assetRegistry.saveSmartMeterRead(0, LAST_SMART_METER_READ + 301, 0, '', {
+        await assetRegistry.saveSmartMeterRead(0, LAST_SMART_METER_READ + 301, '', 0, {
             privateKey: assetSmartmeterPK
         });
 
-        await assetRegistry.saveSmartMeterRead(0, LAST_SMART_METER_READ + 425, 0, '', {
+        await assetRegistry.saveSmartMeterRead(0, LAST_SMART_METER_READ + 425, '', 0, {
             privateKey: assetSmartmeterPK
         });
 
-        await assetRegistry.saveSmartMeterRead(0, LAST_SMART_METER_READ + 582, 0, '', {
+        await assetRegistry.saveSmartMeterRead(0, LAST_SMART_METER_READ + 582, '', 0, {
             privateKey: assetSmartmeterPK
         });
 
@@ -1143,7 +1143,7 @@ describe('CertificateLogic-Facade', () => {
         const LAST_SMART_METER_READ = Number((await assetRegistry.getAssetGeneral(0)).lastSmartMeterReadWh);
         const INITIAL_CERTIFICATION_REQUESTS_LENGTH = (await certificateLogic.getCertificationRequests()).length;
 
-        await assetRegistry.saveSmartMeterRead(0, LAST_SMART_METER_READ + 100, 0, '', {
+        await assetRegistry.saveSmartMeterRead(0, LAST_SMART_METER_READ + 100, '', 0, {
             privateKey: assetSmartmeterPK
         });
 

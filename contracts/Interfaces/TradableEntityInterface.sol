@@ -19,7 +19,7 @@ pragma experimental ABIEncoderV2;
 
 interface TradableEntityInterface {
 
-    function requestCertificates(uint _assetId, uint limitingSmartMeterReadIndex) external;
+    function requestCertificates(uint _assetId, uint lastRequestedSMReadIndex) external;
     
     /// @notice sets the tradable token (ERC20 contract) for an entity
     /// @param _entityId the id of the entity

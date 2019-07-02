@@ -39,7 +39,7 @@ import { OriginContractLookupJSON, CertificateLogicJSON, CertificateDBJSON } fro
 import * as Certificate from '../blockchain-facade/Certificate';
 import moment from 'moment';
 
-describe.skip('CertificateLogic', () => {
+describe('CertificateLogic', () => {
     let assetRegistryContract: AssetContractLookup;
     let originRegistryContract: OriginContractLookup;
     let certificateLogic: CertificateLogic;
@@ -79,6 +79,10 @@ describe.skip('CertificateLogic', () => {
 
     const approvedPK = '0x7da67da863672d4cc2984e93ce28d98b0d782d8caa43cd1c977b919c0209541b';
     const approvedAccount = web3.eth.accounts.privateKeyToAccount(approvedPK).address;
+
+    const issuerPK = '0x3d45690190b2f562725ae6b8d506ff9325c66c181aca3e5daec5629a97ba12ad';
+    const issuerAccount = web3.eth.accounts.privateKeyToAccount(issuerPK).address;
+
 
     describe('init checks', () => {
         it('should deploy the contracts', async () => {
@@ -295,6 +299,12 @@ describe.skip('CertificateLogic', () => {
                 Role.AssetManager,
                 Role.Trader
             ]),                      { privateKey: privateKeyDeployment });
+
+            await userLogic.setUser(issuerAccount, 'issuer', { privateKey: privateKeyDeployment });
+
+            await userLogic.setRoles(issuerAccount, buildRights([
+                Role.Issuer
+            ]),                      { privateKey: privateKeyDeployment });
         });
 
         it('should onboard an asset', async () => {
@@ -338,13 +348,17 @@ describe.skip('CertificateLogic', () => {
                 const tx = await assetRegistry.saveSmartMeterRead(
                     0,
                     100,
-                    TIMESTAMP,
                     'lastSmartMeterReadFileHash',
+                    TIMESTAMP,
                     { privateKey: assetSmartmeterPK }
                 );
 
                 await certificateLogic.requestCertificates(0, 0, {
                     privateKey: assetOwnerPK
+                });
+
+                const approveTx = await certificateLogic.approveCertificationRequest(0, {
+                    privateKey: issuerPK
                 });
 
                 const event = (await assetRegistry.getAllLogNewMeterReadEvents({
@@ -365,15 +379,13 @@ describe.skip('CertificateLogic', () => {
                     _timestamp: TIMESTAMP.toString()
                 });
 
-                //  if (isGanache) {
                 const allTransferEvents = await certificateLogic.getAllTransferEvents({
                     fromBlock: tx.blockNumber,
-                    toBlock: tx.blockNumber
+                    toBlock: approveTx.blockNumber
                 });
 
-                assert.equal(allTransferEvents.length, 1);
+                assert.equal(allTransferEvents.length, 1, 'allTransferEvents length should be 1');
 
-                assert.equal(allTransferEvents.length, 1);
                 assert.equal(allTransferEvents[0].event, 'Transfer');
                 assert.deepEqual(allTransferEvents[0].returnValues, {
                     0: '0x0000000000000000000000000000000000000000',
@@ -383,7 +395,6 @@ describe.skip('CertificateLogic', () => {
                     _to: accountAssetOwner,
                     _tokenId: '0'
                 });
-                //    }
             });
 
             it('should have 1 certificate', async () => {
@@ -845,16 +856,24 @@ describe.skip('CertificateLogic', () => {
             });
         });
 
-        describe.skip('saveTransferFrom without data', () => {
+        describe('saveTransferFrom without data', () => {
             it('should log energy again (certificate #3)', async () => {
                 const TIMESTAMP = moment().unix();
                 const tx = await assetRegistry.saveSmartMeterRead(
                     0,
                     200,
-                    TIMESTAMP,
                     'lastSmartMeterReadFileHash',
+                    TIMESTAMP,
                     { privateKey: assetSmartmeterPK }
                 );
+
+                await certificateLogic.requestCertificates(0, 1, {
+                    privateKey: assetOwnerPK
+                });
+
+                const approveTx = await certificateLogic.approveCertificationRequest(1, {
+                    privateKey: issuerPK
+                });
 
                 const event = (await assetRegistry.getAllLogNewMeterReadEvents({
                     fromBlock: tx.blockNumber,
@@ -877,7 +896,7 @@ describe.skip('CertificateLogic', () => {
                 //  if (isGanache) {
                 const allTransferEvents = await certificateLogic.getAllTransferEvents({
                     fromBlock: tx.blockNumber,
-                    toBlock: tx.blockNumber
+                    toBlock: approveTx.blockNumber
                 });
 
                 assert.equal(allTransferEvents.length, 1);
@@ -1212,16 +1231,24 @@ describe.skip('CertificateLogic', () => {
             });
         });
 
-        describe.skip('saveTransferFrom with data', () => {
+        describe('saveTransferFrom with data', () => {
             it('should log energy again (certificate #4)', async () => {
                 const TIMESTAMP = moment().unix();
                 const tx = await assetRegistry.saveSmartMeterRead(
                     0,
                     300,
-                    TIMESTAMP,
                     'lastSmartMeterReadFileHash',
+                    TIMESTAMP,
                     { privateKey: assetSmartmeterPK }
                 );
+
+                await certificateLogic.requestCertificates(0, 2, {
+                    privateKey: assetOwnerPK
+                });
+
+                const approveTx = await certificateLogic.approveCertificationRequest(2, {
+                    privateKey: issuerPK
+                });
 
                 const event = (await assetRegistry.getAllLogNewMeterReadEvents({
                     fromBlock: tx.blockNumber,
@@ -1241,10 +1268,9 @@ describe.skip('CertificateLogic', () => {
                     _timestamp: TIMESTAMP.toString()
                 });
 
-                //    if (isGanache) {
                 const allTransferEvents = await certificateLogic.getAllTransferEvents({
                     fromBlock: tx.blockNumber,
-                    toBlock: tx.blockNumber
+                    toBlock: approveTx.blockNumber
                 });
 
                 assert.equal(allTransferEvents.length, 1);
@@ -1532,7 +1558,7 @@ describe.skip('CertificateLogic', () => {
                 );
             });
         });
-        describe.skip('escrow and approval', () => {
+        describe('escrow and approval', () => {
             it('should set an escrow to the asset', async () => {
                 await assetRegistry.addMatcher(0, matcherAccount, { privateKey: assetOwnerPK });
                 assert.deepEqual(await assetRegistry.getMatcher(0), [
@@ -1718,10 +1744,18 @@ describe.skip('CertificateLogic', () => {
                 const tx = await assetRegistry.saveSmartMeterRead(
                     0,
                     400,
-                    TIMESTAMP,
                     'lastSmartMeterReadFileHash',
+                    TIMESTAMP,
                     { privateKey: assetSmartmeterPK }
                 );
+
+                await certificateLogic.requestCertificates(0, 3, {
+                    privateKey: assetOwnerPK
+                });
+
+                const approveTx = await certificateLogic.approveCertificationRequest(3, {
+                    privateKey: issuerPK
+                });
 
                 const event = (await assetRegistry.getAllLogNewMeterReadEvents({
                     fromBlock: tx.blockNumber,
@@ -1744,7 +1778,7 @@ describe.skip('CertificateLogic', () => {
                 // if (isGanache) {
                 const allTransferEvents = await certificateLogic.getAllTransferEvents({
                     fromBlock: tx.blockNumber,
-                    toBlock: tx.blockNumber
+                    toBlock: approveTx.blockNumber
                 });
 
                 assert.equal(allTransferEvents.length, 1);
@@ -1920,10 +1954,18 @@ describe.skip('CertificateLogic', () => {
                 const tx = await assetRegistry.saveSmartMeterRead(
                     0,
                     500,
-                    TIMESTAMP,
                     'lastSmartMeterReadFileHash',
+                    TIMESTAMP,
                     { privateKey: assetSmartmeterPK }
                 );
+
+                await certificateLogic.requestCertificates(0, 4, {
+                    privateKey: assetOwnerPK
+                });
+
+                const approveTx = await certificateLogic.approveCertificationRequest(4, {
+                    privateKey: issuerPK
+                });
 
                 const event = (await assetRegistry.getAllLogNewMeterReadEvents({
                     fromBlock: tx.blockNumber,
@@ -1946,7 +1988,7 @@ describe.skip('CertificateLogic', () => {
                 //  if (isGanache) {
                 const allTransferEvents = await certificateLogic.getAllTransferEvents({
                     fromBlock: tx.blockNumber,
-                    toBlock: tx.blockNumber
+                    toBlock: approveTx.blockNumber
                 });
 
                 assert.equal(allTransferEvents.length, 1);
@@ -2021,10 +2063,18 @@ describe.skip('CertificateLogic', () => {
                 const tx = await assetRegistry.saveSmartMeterRead(
                     0,
                     600,
-                    TIMESTAMP,
                     'lastSmartMeterReadFileHash',
+                    TIMESTAMP,
                     { privateKey: assetSmartmeterPK }
                 );
+
+                await certificateLogic.requestCertificates(0, 5, {
+                    privateKey: assetOwnerPK
+                });
+
+                const approveTx = await certificateLogic.approveCertificationRequest(5, {
+                    privateKey: issuerPK
+                });
 
                 const event = (await assetRegistry.getAllLogNewMeterReadEvents({
                     fromBlock: tx.blockNumber,
@@ -2047,7 +2097,7 @@ describe.skip('CertificateLogic', () => {
                 //  if (isGanache) {
                 const allTransferEvents = await certificateLogic.getAllTransferEvents({
                     fromBlock: tx.blockNumber,
-                    toBlock: tx.blockNumber
+                    toBlock: approveTx.blockNumber
                 });
 
                 assert.equal(allTransferEvents.length, 1);
@@ -2122,8 +2172,8 @@ describe.skip('CertificateLogic', () => {
                 const tx = await assetRegistry.saveSmartMeterRead(
                     0,
                     700,
-                    TIMESTAMP,
                     'lastSmartMeterReadFileHash',
+                    TIMESTAMP,
                     { privateKey: assetSmartmeterPK }
                 );
 
@@ -2131,6 +2181,14 @@ describe.skip('CertificateLogic', () => {
                     fromBlock: tx.blockNumber,
                     toBlock: tx.blockNumber
                 }))[0];
+
+                await certificateLogic.requestCertificates(0, 6, {
+                    privateKey: assetOwnerPK
+                });
+
+                const approveTx = await certificateLogic.approveCertificationRequest(6, {
+                    privateKey: issuerPK
+                });
 
                 assert.equal(event.event, 'LogNewMeterRead');
 
@@ -2148,7 +2206,7 @@ describe.skip('CertificateLogic', () => {
                 //  if (isGanache) {
                 const allTransferEvents = await certificateLogic.getAllTransferEvents({
                     fromBlock: tx.blockNumber,
-                    toBlock: tx.blockNumber
+                    toBlock: approveTx.blockNumber
                 });
 
                 assert.equal(allTransferEvents.length, 1);
@@ -2278,10 +2336,18 @@ describe.skip('CertificateLogic', () => {
                 const tx = await assetRegistry.saveSmartMeterRead(
                     0,
                     800,
-                    TIMESTAMP,
                     'lastSmartMeterReadFileHash',
+                    TIMESTAMP,
                     { privateKey: assetSmartmeterPK }
                 );
+
+                await certificateLogic.requestCertificates(0, 7, {
+                    privateKey: assetOwnerPK
+                });
+
+                const approveTx = await certificateLogic.approveCertificationRequest(7, {
+                    privateKey: issuerPK
+                });
 
                 const event = (await assetRegistry.getAllLogNewMeterReadEvents({
                     fromBlock: tx.blockNumber,
@@ -2304,7 +2370,7 @@ describe.skip('CertificateLogic', () => {
                 //    if (isGanache) {
                 const allTransferEvents = await certificateLogic.getAllTransferEvents({
                     fromBlock: tx.blockNumber,
-                    toBlock: tx.blockNumber
+                    toBlock: approveTx.blockNumber
                 });
 
                 assert.equal(allTransferEvents.length, 1);
@@ -2379,10 +2445,18 @@ describe.skip('CertificateLogic', () => {
                 const tx = await assetRegistry.saveSmartMeterRead(
                     0,
                     900,
-                    TIMESTAMP,
                     'lastSmartMeterReadFileHash',
+                    TIMESTAMP,
                     { privateKey: assetSmartmeterPK }
                 );
+
+                await certificateLogic.requestCertificates(0, 8, {
+                    privateKey: assetOwnerPK
+                });
+
+                const approveTx = await certificateLogic.approveCertificationRequest(8, {
+                    privateKey: issuerPK
+                });
 
                 const event = (await assetRegistry.getAllLogNewMeterReadEvents({
                     fromBlock: tx.blockNumber,
@@ -2405,7 +2479,7 @@ describe.skip('CertificateLogic', () => {
                 // if (isGanache) {
                 const allTransferEvents = await certificateLogic.getAllTransferEvents({
                     fromBlock: tx.blockNumber,
-                    toBlock: tx.blockNumber
+                    toBlock: approveTx.blockNumber
                 });
 
                 assert.equal(allTransferEvents.length, 1);
@@ -2480,10 +2554,18 @@ describe.skip('CertificateLogic', () => {
                 const tx = await assetRegistry.saveSmartMeterRead(
                     0,
                     1000,
-                    TIMESTAMP,
                     'lastSmartMeterReadFileHash',
+                    TIMESTAMP,
                     { privateKey: assetSmartmeterPK }
                 );
+
+                await certificateLogic.requestCertificates(0, 9, {
+                    privateKey: assetOwnerPK
+                });
+
+                const approveTx = await certificateLogic.approveCertificationRequest(9, {
+                    privateKey: issuerPK
+                });
 
                 const event = (await assetRegistry.getAllLogNewMeterReadEvents({
                     fromBlock: tx.blockNumber,
@@ -2506,7 +2588,7 @@ describe.skip('CertificateLogic', () => {
                 //    if (isGanache) {
                 const allTransferEvents = await certificateLogic.getAllTransferEvents({
                     fromBlock: tx.blockNumber,
-                    toBlock: tx.blockNumber
+                    toBlock: approveTx.blockNumber
                 });
 
                 assert.equal(allTransferEvents.length, 1);
@@ -2627,10 +2709,18 @@ describe.skip('CertificateLogic', () => {
                 const tx = await assetRegistry.saveSmartMeterRead(
                     0,
                     1100,
-                    TIMESTAMP,
                     'lastSmartMeterReadFileHash',
+                    TIMESTAMP,
                     { privateKey: assetSmartmeterPK }
                 );
+
+                await certificateLogic.requestCertificates(0, 10, {
+                    privateKey: assetOwnerPK
+                });
+
+                const approveTx = await certificateLogic.approveCertificationRequest(10, {
+                    privateKey: issuerPK
+                });
 
                 const event = (await assetRegistry.getAllLogNewMeterReadEvents({
                     fromBlock: tx.blockNumber,
@@ -2653,7 +2743,7 @@ describe.skip('CertificateLogic', () => {
                 // if (isGanache) {
                 const allTransferEvents = await certificateLogic.getAllTransferEvents({
                     fromBlock: tx.blockNumber,
-                    toBlock: tx.blockNumber
+                    toBlock: approveTx.blockNumber
                 });
 
                 assert.equal(allTransferEvents.length, 1);
@@ -2749,10 +2839,18 @@ describe.skip('CertificateLogic', () => {
                 const tx = await assetRegistry.saveSmartMeterRead(
                     0,
                     1200,
-                    TIMESTAMP,
                     'lastSmartMeterReadFileHash',
+                    TIMESTAMP,
                     { privateKey: assetSmartmeterPK }
                 );
+
+                await certificateLogic.requestCertificates(0, 11, {
+                    privateKey: assetOwnerPK
+                });
+
+                const approveTx = await certificateLogic.approveCertificationRequest(11, {
+                    privateKey: issuerPK
+                });
 
                 const event = (await assetRegistry.getAllLogNewMeterReadEvents({
                     fromBlock: tx.blockNumber,
@@ -2774,7 +2872,7 @@ describe.skip('CertificateLogic', () => {
                 //  if (isGanache) {
                 const allTransferEvents = await certificateLogic.getAllTransferEvents({
                     fromBlock: tx.blockNumber,
-                    toBlock: tx.blockNumber
+                    toBlock: approveTx.blockNumber
                 });
 
                 assert.equal(allTransferEvents.length, 1);
@@ -2909,10 +3007,18 @@ describe.skip('CertificateLogic', () => {
                 const tx = await assetRegistry.saveSmartMeterRead(
                     0,
                     1300,
-                    TIMESTAMP,
                     'lastSmartMeterReadFileHash',
+                    TIMESTAMP,
                     { privateKey: assetSmartmeterPK }
                 );
+
+                await certificateLogic.requestCertificates(0, 12, {
+                    privateKey: assetOwnerPK
+                });
+
+                const approveTx = await certificateLogic.approveCertificationRequest(12, {
+                    privateKey: issuerPK
+                });
 
                 const event = (await assetRegistry.getAllLogNewMeterReadEvents({
                     fromBlock: tx.blockNumber,
@@ -2935,7 +3041,7 @@ describe.skip('CertificateLogic', () => {
                 //     if (isGanache) {
                 const allTransferEvents = await certificateLogic.getAllTransferEvents({
                     fromBlock: tx.blockNumber,
-                    toBlock: tx.blockNumber
+                    toBlock: approveTx.blockNumber
                 });
 
                 assert.equal(allTransferEvents.length, 1);
@@ -3033,7 +3139,7 @@ describe.skip('CertificateLogic', () => {
             });
         });
 
-        describe.skip('ERC20', () => {
+        describe('ERC20', () => {
             it('should have correct balanes', async () => {
                 assert.equal(await erc20Test.balanceOf(accountTrader), 1000000);
                 assert.equal(await erc20Test.balanceOf(accountDeployment), 99999999999999000000);
@@ -3045,10 +3151,18 @@ describe.skip('CertificateLogic', () => {
                 const tx = await assetRegistry.saveSmartMeterRead(
                     0,
                     1400,
-                    TIMESTAMP,
                     'lastSmartMeterReadFileHash',
+                    TIMESTAMP,
                     { privateKey: assetSmartmeterPK }
                 );
+
+                await certificateLogic.requestCertificates(0, 13, {
+                    privateKey: assetOwnerPK
+                });
+
+                const approveTx = await certificateLogic.approveCertificationRequest(13, {
+                    privateKey: issuerPK
+                });
 
                 const event = (await assetRegistry.getAllLogNewMeterReadEvents({
                     fromBlock: tx.blockNumber,
@@ -3071,7 +3185,7 @@ describe.skip('CertificateLogic', () => {
                 // if (isGanache) {
                 const allTransferEvents = await certificateLogic.getAllTransferEvents({
                     fromBlock: tx.blockNumber,
-                    toBlock: tx.blockNumber
+                    toBlock: approveTx.blockNumber
                 });
 
                 assert.equal(allTransferEvents.length, 1);
@@ -3375,10 +3489,18 @@ describe.skip('CertificateLogic', () => {
                 const tx = await assetRegistry.saveSmartMeterRead(
                     0,
                     1500,
-                    TIMESTAMP,
                     'lastSmartMeterReadFileHash',
+                    TIMESTAMP,
                     { privateKey: assetSmartmeterPK }
                 );
+
+                await certificateLogic.requestCertificates(0, 14, {
+                    privateKey: assetOwnerPK
+                });
+
+                const approveTx = await certificateLogic.approveCertificationRequest(14, {
+                    privateKey: issuerPK
+                });
 
                 const event = (await assetRegistry.getAllLogNewMeterReadEvents({
                     fromBlock: tx.blockNumber,
@@ -3401,7 +3523,7 @@ describe.skip('CertificateLogic', () => {
                 //  if (isGanache) {
                 const allTransferEvents = await certificateLogic.getAllTransferEvents({
                     fromBlock: tx.blockNumber,
-                    toBlock: tx.blockNumber
+                    toBlock: approveTx.blockNumber
                 });
 
                 assert.equal(allTransferEvents.length, 1);

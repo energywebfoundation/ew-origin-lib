@@ -36,27 +36,11 @@ import "ew-asset-registry-lib/contracts/Asset/AssetProducingDB.sol";
 import "../../contracts/Origin/CertificateSpecificDB.sol";
 import "../../contracts/Origin/CertificateSpecificContract.sol";
 
-contract CertificateLogic is CertificateInterface, RoleManagement, TradableEntityLogic, TradableEntityContract {
-    enum CertificationRequestStatus {
-        Pending,
-        Approved
-    }
-
-    struct CertificationRequest {
-        uint assetId;
-        uint readsStartIndex;
-        uint readsEndIndex;
-        CertificationRequestStatus status;
-    }
-
-    CertificationRequest[] public certificationRequests;
-
+contract CertificateLogic is CertificateInterface, CertificateSpecificContract, TradableEntityContract {
     /// @notice Logs the creation of an event
     event LogCreatedCertificate(uint indexed _certificateId, uint powerInW, address owner);
     event LogCertificateRetired(uint indexed _certificateId);
     event LogCertificateSplit(uint indexed _certificateId, uint _childOne, uint _childTwo);
-
-    mapping(uint => uint) internal assetRequestedCertsForSMReadsLength;
 
     /// @notice constructor
     /// @param _assetContractLookup the asset-RegistryContractLookup-Address
@@ -65,9 +49,7 @@ contract CertificateLogic is CertificateInterface, RoleManagement, TradableEntit
         AssetContractLookupInterface _assetContractLookup,
         OriginContractLookupInterface _originContractLookup
     )
-    TradableEntityLogic(_assetContractLookup, _originContractLookup) public {
-        // certificationRequests = new CertificationRequest[]();
-    }
+    CertificateSpecificContract(_assetContractLookup, _originContractLookup) public { }
 
     /**
         ERC721 functions to overwrite
@@ -161,76 +143,17 @@ contract CertificateLogic is CertificateInterface, RoleManagement, TradableEntit
         TradableEntityDBInterface(address(db)).setForSale(_certificateId, false);
     }
 
-    function getCertificationRequestsLength() public view returns (uint) {
-        return certificationRequests.length;
-    }
-
-    function getAssetRequestedCertsForSMReadsLength(uint _assetId) public view returns (uint) {
-        return assetRequestedCertsForSMReadsLength[_assetId];
-    }
-
-    function setAssetRequestedCertsForSMReadsLength(uint _assetId, uint readsLength)
+    /// @notice creates a new bundle
+    /// @param _assetId the id of the producing asset
+    /// @param _powerInW the power that has been produced
+    function createTradableEntity(
+        uint _assetId,
+        uint _powerInW
+    )
         internal
+        returns (uint)
     {
-        assetRequestedCertsForSMReadsLength[_assetId] = readsLength;
-    }
-
-    function requestCertificates(uint _assetId, uint limitingSmartMeterReadIndex)
-        public
-    {
-        AssetProducingInterface assetRegistry = AssetProducingInterface(address(assetContractLookup.assetProducingRegistry()));
-
-        AssetProducingDB.Asset memory asset = assetRegistry.getAssetById(_assetId);
-
-        require(asset.assetGeneral.owner == msg.sender, "msg.sender must be asset owner");
-
-        AssetProducingDB.SmartMeterRead[] memory reads = assetRegistry.getSmartMeterReadsForAsset(_assetId);
-
-        require(limitingSmartMeterReadIndex < reads.length, "limiting smart meter read should be lower than smart meter reads length");
-
-        uint start = 0;
-        uint requestedSMReadsLength = getAssetRequestedCertsForSMReadsLength(_assetId);
-
-        if (requestedSMReadsLength > start) {
-            start = requestedSMReadsLength;
-        }
-
-        require(limitingSmartMeterReadIndex >= start, "limiting index has to higher or equal to start index");
-
-        certificationRequests.push(CertificationRequest(
-            _assetId,
-            start,
-            limitingSmartMeterReadIndex,
-            CertificationRequestStatus.Pending
-        ));
-
-        setAssetRequestedCertsForSMReadsLength(_assetId, limitingSmartMeterReadIndex + 1);
-    }
-
-    function approveCertificationRequest(uint _certicationRequestIndex)
-        public
-        onlyRole(RoleManagement.Role.Issuer)
-    {
-        CertificationRequest storage request = certificationRequests[_certicationRequestIndex];
-        
-        require(request.status == CertificationRequestStatus.Pending, "certification request has to be in pending state");
-
-        AssetProducingInterface assetRegistry = AssetProducingInterface(address(assetContractLookup.assetProducingRegistry()));
-
-        AssetProducingDB.SmartMeterRead[] memory reads = assetRegistry.getSmartMeterReadsForAsset(request.assetId);
-
-        uint energy = 0;
-        for (uint i = request.readsStartIndex; i <= request.readsEndIndex; i++)
-        {
-            energy += reads[i].energy;
-        }
-
-        createCertificate(
-            request.assetId,
-            energy
-        );
-
-        request.status = CertificationRequestStatus.Approved;
+        return createCertificate(_assetId, _powerInW);
     }
 
     /// @notice Request a certificate to retire. Only Certificate owner can retire
