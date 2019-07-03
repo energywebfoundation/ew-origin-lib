@@ -76,6 +76,10 @@ export class CertificateSpecificContract extends GeneralFunctions {
                 }
                 gas = Math.round(gas * 2);
 
+                if (gas < 20000) {
+                    gas = 7000000;
+                }
+
                 txParams.gas = gas;
             }
 
