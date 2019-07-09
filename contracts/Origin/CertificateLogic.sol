@@ -113,7 +113,7 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
     /// @notice buys a certificate
     /// @param _certificateId the id of the certificate
     function buyCertificate(uint _certificateId)
-        external
+        public
         onlyRole(RoleManagement.Role.Trader)
      {
         CertificateDB.Certificate memory cert = CertificateDB(address(db)).getCertificate(_certificateId);
@@ -141,6 +141,34 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
         checktransferOwnerInternally(_certificateId, cert);
 
         TradableEntityDBInterface(address(db)).setForSale(_certificateId, false);
+    }
+
+    function splitAndBuyCertificate(uint _certificateId, uint _energy)
+        external
+        onlyRole(RoleManagement.Role.Trader)
+     {
+        CertificateDB.Certificate memory cert = CertificateDB(address(db)).getCertificate(_certificateId);
+
+        require(_energy > 0 && _energy <= cert.tradableEntity.powerInW, "Energy has to be higher than 0 and lower or equal than certificate energy");
+
+        if (_energy == cert.tradableEntity.powerInW) {
+            buyCertificate(_certificateId);
+        } else {
+            require(cert.tradableEntity.forSale == true, "Unable to split and buy a certificate that is not for sale.");
+
+            (uint childOneId, uint childTwoId) = splitCertificateInternal(_certificateId, _energy);
+
+            TradableEntityDBInterface(address(db)).setOnChainDirectPurchasePrice(childOneId, cert.tradableEntity.onChainDirectPurchasePrice);
+            TradableEntityDBInterface(address(db)).setTradableToken(childOneId, cert.tradableEntity.acceptedToken);
+
+            TradableEntityDBInterface(address(db)).setOnChainDirectPurchasePrice(childTwoId, cert.tradableEntity.onChainDirectPurchasePrice);
+            TradableEntityDBInterface(address(db)).setTradableToken(childTwoId, cert.tradableEntity.acceptedToken);
+
+            emit LogPublishForSale(childOneId, cert.tradableEntity.onChainDirectPurchasePrice, cert.tradableEntity.acceptedToken);
+            emit LogPublishForSale(childTwoId, cert.tradableEntity.onChainDirectPurchasePrice, cert.tradableEntity.acceptedToken);
+
+            buyCertificate(childOneId);
+        }
     }
 
     /// @notice creates a new Entity / certificate
@@ -200,7 +228,7 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
             "You are not the owner of the certificate"
         );
 
-        uint childOneId = splitCertificateInternal(_certificateId, _power);
+        (uint childOneId, uint childTwoId) = splitCertificateInternal(_certificateId, _power);
 
         TradableEntityDBInterface(address(db)).setOnChainDirectPurchasePrice(childOneId, _price);
         TradableEntityDBInterface(address(db)).setTradableToken(childOneId, _tokenAddress);
@@ -246,7 +274,7 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
     /// @notice Splits a certificate into two smaller ones, where (total - _power = 2ndCertificate)
     /// @param _certificateId The id of the certificate
     /// @param _power The amount of power in W for the 1st certificate
-    function splitCertificateInternal(uint _certificateId, uint _power) internal returns (uint childOneId) {
+    function splitCertificateInternal(uint _certificateId, uint _power) internal returns (uint childOneId, uint ChildTwoId) {
         CertificateDB.Certificate memory parent = CertificateDB(address(db)).getCertificate(_certificateId);
 
         require(parent.tradableEntity.powerInW > _power, "The certificate doesn't have enough power to be split.");
@@ -266,7 +294,7 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
         CertificateSpecificDB(address(db)).setStatus(_certificateId, CertificateSpecificContract.Status.Split);
         emit LogCertificateSplit(_certificateId, childIdOne, childIdTwo);
 
-        return childIdOne;
+        return (childIdOne, childIdTwo);
     }
 
 	/// @notice Retires a certificate

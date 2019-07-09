@@ -171,7 +171,23 @@ export class Entity extends TradableEntity.Entity implements ICertificateSpecifi
         return this;
     }
 
-    async buyCertificate(): Promise<TransactionReceipt> {
+    async buyCertificate(wh?: number): Promise<TransactionReceipt> {
+        if (wh) {
+            if (this.configuration.blockchainProperties.activeUser.privateKey) {
+                return this.configuration.blockchainProperties.certificateLogicInstance.splitAndBuyCertificate(
+                    this.id,
+                    wh,
+                    { privateKey: this.configuration.blockchainProperties.activeUser.privateKey }
+                );
+            } else {
+                return this.configuration.blockchainProperties.certificateLogicInstance.splitAndBuyCertificate(
+                    this.id,
+                    wh,
+                    { from: this.configuration.blockchainProperties.activeUser.address }
+                );
+            }
+        }
+
         if (this.configuration.blockchainProperties.activeUser.privateKey) {
             return this.configuration.blockchainProperties.certificateLogicInstance.buyCertificate(
                 this.id,

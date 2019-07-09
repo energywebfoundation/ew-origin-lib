@@ -49,7 +49,7 @@ import * as Certificate from '../blockchain-facade/Certificate';
 import * as TradableEntity from '../blockchain-facade/TradableEntity';
 import { logger } from '../blockchain-facade/Logger';
 
-describe('CertificateLogic-Facade', () => {
+describe.only('CertificateLogic-Facade', () => {
     let userLogic: UserLogic;
     let certificateLogic: CertificateLogic;
     let assetRegistry: AssetProducingRegistryLogic;
@@ -93,6 +93,13 @@ describe('CertificateLogic-Facade', () => {
 
     let conf: Configuration.Entity;
     let blockCreationTime;
+
+    function setActiveUser(privateKey) {
+        conf.blockchainProperties.activeUser = {
+            address: web3.eth.accounts.privateKeyToAccount(privateKey).address,
+            privateKey
+        };
+    }
         
     it('should set ERC20 token', async () => {
         erc20TestTokenAddress = (await deployERC20TestToken(
@@ -1389,4 +1396,123 @@ describe('CertificateLogic-Facade', () => {
         });
     });
 
+    it('should split certificate when trying to buy just a part of it', async () => {
+        const STARTING_CERTIFICATE_LENGTH = Number(await Certificate.getCertificateListLength(conf));
+        const LAST_SM_READ_INDEX = (await assetRegistry.getSmartMeterReadsForAsset(0)).length - 1;
+        const LAST_SMART_METER_READ = Number((await assetRegistry.getAssetGeneral(0)).lastSmartMeterReadWh);
+        const INITIAL_CERTIFICATION_REQUESTS_LENGTH = (await certificateLogic.getCertificationRequests()).length;
+        const CERTIFICATE_POWER = 100;
+        const CERTIFICATE_PRICE = 7;
+
+        setActiveUser(assetOwnerPK);
+
+        await assetRegistry.saveSmartMeterRead(0, LAST_SMART_METER_READ + CERTIFICATE_POWER, '', 0, {
+            privateKey: assetSmartmeterPK
+        });
+
+        await certificateLogic.requestCertificates(0, LAST_SM_READ_INDEX + 1, {
+            privateKey: assetOwnerPK
+        });
+
+        await certificateLogic.approveCertificationRequest(INITIAL_CERTIFICATION_REQUESTS_LENGTH, {
+            privateKey: issuerPK
+        });
+        
+        let parentCertificate = await new Certificate.Entity(STARTING_CERTIFICATE_LENGTH.toString(), conf).sync();
+
+        await parentCertificate.publishForSale(CERTIFICATE_PRICE, Currency.EUR);
+
+        await parentCertificate.buyCertificate(CERTIFICATE_POWER / 2);
+        
+        parentCertificate = await parentCertificate.sync();
+
+        assert.equal(parentCertificate.status, Certificate.Status.Split);
+
+        const firstChildCertificate = await new Certificate.Entity((STARTING_CERTIFICATE_LENGTH + 1).toString(), conf).sync();
+
+        assert.equal(firstChildCertificate.status, Certificate.Status.Active);
+        assert.equal(firstChildCertificate.forSale, false);
+        assert.equal(firstChildCertificate.powerInW, CERTIFICATE_POWER / 2);
+
+        const secondChildCertificate = await new Certificate.Entity((STARTING_CERTIFICATE_LENGTH + 2).toString(), conf).sync();
+
+        assert.equal(secondChildCertificate.status, Certificate.Status.Active);
+        assert.equal(secondChildCertificate.forSale, true);
+        assert.equal(secondChildCertificate.powerInW, CERTIFICATE_POWER / 2);
+    });
+
+    it('should fail to split and buy and split certificate when trying to buy higher power than certificate has', async () => {
+        const STARTING_CERTIFICATE_LENGTH = Number(await Certificate.getCertificateListLength(conf));
+        const LAST_SM_READ_INDEX = (await assetRegistry.getSmartMeterReadsForAsset(0)).length - 1;
+        const LAST_SMART_METER_READ = Number((await assetRegistry.getAssetGeneral(0)).lastSmartMeterReadWh);
+        const INITIAL_CERTIFICATION_REQUESTS_LENGTH = (await certificateLogic.getCertificationRequests()).length;
+        const CERTIFICATE_POWER = 100;
+        const CERTIFICATE_PRICE = 7;
+
+        setActiveUser(assetOwnerPK);
+
+        await assetRegistry.saveSmartMeterRead(0, LAST_SMART_METER_READ + CERTIFICATE_POWER, '', 0, {
+            privateKey: assetSmartmeterPK
+        });
+
+        await certificateLogic.requestCertificates(0, LAST_SM_READ_INDEX + 1, {
+            privateKey: assetOwnerPK
+        });
+
+        await certificateLogic.approveCertificationRequest(INITIAL_CERTIFICATION_REQUESTS_LENGTH, {
+            privateKey: issuerPK
+        });
+        
+        let parentCertificate = await new Certificate.Entity(STARTING_CERTIFICATE_LENGTH.toString(), conf).sync();
+
+        await parentCertificate.publishForSale(CERTIFICATE_PRICE, Currency.EUR);
+
+        try {
+            await parentCertificate.buyCertificate(CERTIFICATE_POWER * 2);
+        } catch (error) {
+            assert.include(error.message, 'revert Energy has to be higher than 0 and lower or equal than certificate energy');
+        }
+        
+        parentCertificate = await parentCertificate.sync();
+
+        assert.equal(parentCertificate.status, Certificate.Status.Active);
+        assert.equal(parentCertificate.forSale, true);
+    });
+
+    it('should buy certificate without splitting when passing energy equal to certificate energy', async () => {
+        const STARTING_CERTIFICATE_LENGTH = Number(await Certificate.getCertificateListLength(conf));
+        const LAST_SM_READ_INDEX = (await assetRegistry.getSmartMeterReadsForAsset(0)).length - 1;
+        const LAST_SMART_METER_READ = Number((await assetRegistry.getAssetGeneral(0)).lastSmartMeterReadWh);
+        const INITIAL_CERTIFICATION_REQUESTS_LENGTH = (await certificateLogic.getCertificationRequests()).length;
+        const CERTIFICATE_POWER = 100;
+        const CERTIFICATE_PRICE = 7;
+
+        setActiveUser(assetOwnerPK);
+
+        await assetRegistry.saveSmartMeterRead(0, LAST_SMART_METER_READ + CERTIFICATE_POWER, '', 0, {
+            privateKey: assetSmartmeterPK
+        });
+
+        await certificateLogic.requestCertificates(0, LAST_SM_READ_INDEX + 1, {
+            privateKey: assetOwnerPK
+        });
+
+        await certificateLogic.approveCertificationRequest(INITIAL_CERTIFICATION_REQUESTS_LENGTH, {
+            privateKey: issuerPK
+        });
+        
+        let parentCertificate = await new Certificate.Entity(STARTING_CERTIFICATE_LENGTH.toString(), conf).sync();
+
+        await parentCertificate.publishForSale(CERTIFICATE_PRICE, Currency.EUR);
+
+        setActiveUser(traderPK);
+
+        await parentCertificate.buyCertificate(CERTIFICATE_POWER);
+        
+        parentCertificate = await parentCertificate.sync();
+
+        assert.equal(parentCertificate.status, Certificate.Status.Active);
+        assert.equal(parentCertificate.forSale, false);
+        assert.equal(parentCertificate.owner, accountTrader);
+    });
 });
