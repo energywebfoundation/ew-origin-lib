@@ -1403,6 +1403,8 @@ describe('CertificateLogic-Facade', () => {
         const INITIAL_CERTIFICATION_REQUESTS_LENGTH = (await certificateLogic.getCertificationRequests()).length;
         const CERTIFICATE_POWER = 100;
         const CERTIFICATE_PRICE = 7;
+        const TRADER_STARTING_TOKEN_BALANCE = Number(await erc20TestToken.balanceOf(accountTrader));
+        const ASSET_OWNER_STARTING_TOKEN_BALANCE = Number(await erc20TestToken.balanceOf(accountAssetOwner));
 
         setActiveUser(assetOwnerPK);
 
@@ -1420,9 +1422,17 @@ describe('CertificateLogic-Facade', () => {
         
         let parentCertificate = await new Certificate.Entity(STARTING_CERTIFICATE_LENGTH.toString(), conf).sync();
 
-        await parentCertificate.publishForSale(CERTIFICATE_PRICE, Currency.EUR);
+        await parentCertificate.publishForSale(CERTIFICATE_PRICE, erc20TestTokenAddress);
+
+        assert.equal(await erc20TestToken.balanceOf(accountAssetOwner), ASSET_OWNER_STARTING_TOKEN_BALANCE);
+        assert.equal(await erc20TestToken.balanceOf(accountTrader), TRADER_STARTING_TOKEN_BALANCE);
+
+        setActiveUser(traderPK);
 
         await parentCertificate.buyCertificate(CERTIFICATE_POWER / 2);
+
+        assert.equal(await erc20TestToken.balanceOf(accountAssetOwner), ASSET_OWNER_STARTING_TOKEN_BALANCE + CERTIFICATE_PRICE);
+        assert.equal(await erc20TestToken.balanceOf(accountTrader), TRADER_STARTING_TOKEN_BALANCE - CERTIFICATE_PRICE);
         
         parentCertificate = await parentCertificate.sync();
 
