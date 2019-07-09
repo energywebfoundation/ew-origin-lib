@@ -49,7 +49,7 @@ import * as Certificate from '../blockchain-facade/Certificate';
 import * as TradableEntity from '../blockchain-facade/TradableEntity';
 import { logger } from '../blockchain-facade/Logger';
 
-describe.only('CertificateLogic-Facade', () => {
+describe('CertificateLogic-Facade', () => {
     let userLogic: UserLogic;
     let certificateLogic: CertificateLogic;
     let assetRegistry: AssetProducingRegistryLogic;
