@@ -173,23 +173,39 @@ export class Entity extends TradableEntity.Entity implements ICertificateSpecifi
     }
 
     async buyCertificate(wh?: number): Promise<TransactionReceipt> {
-        const logic : CertificateLogic = this.configuration.blockchainProperties.certificateLogicInstance;
-        const id : number = Number(this.id);
+        const logic: CertificateLogic = this.configuration.blockchainProperties.certificateLogicInstance;
+        const id: number = Number(this.id);
 
         if (wh) {
+            let splitAndBuyCertificateCall;
             if (this.configuration.blockchainProperties.activeUser.privateKey) {
-                return logic.splitAndBuyCertificate(
+                splitAndBuyCertificateCall = logic.splitAndBuyCertificate(
                     id,
                     wh,
                     { privateKey: this.configuration.blockchainProperties.activeUser.privateKey }
                 );
             } else {
-                return logic.splitAndBuyCertificate(
+                splitAndBuyCertificateCall = logic.splitAndBuyCertificate(
                     id,
                     wh,
                     { from: this.configuration.blockchainProperties.activeUser.address, privateKey: '' }
                 );
             }
+
+            const txResult = await splitAndBuyCertificateCall;
+
+            await this.sync();
+            const offChainSettlementOptions = await this.getOffChainSettlementOptions();
+
+            if (Number(this.status) === Status.Split) {
+                for (const certificateId of this.children) {
+                    const certificate = new Entity(certificateId.toString(), this.configuration);
+
+                    await certificate.setOffChainSettlementOptions(offChainSettlementOptions);
+                }
+            }
+
+            return txResult;
         }
 
         if (this.configuration.blockchainProperties.activeUser.privateKey) {
