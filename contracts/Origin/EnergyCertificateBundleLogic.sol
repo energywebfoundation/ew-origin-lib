@@ -141,7 +141,7 @@ contract EnergyCertificateBundleLogic is TradableEntityContract, CertificateSpec
         uint _assetId,
         uint _powerInW
     )
-        internal
+        public
         returns (uint)
     {
         return createBundle(_assetId, _powerInW);

@@ -184,7 +184,7 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
         uint _assetId,
         uint _powerInW
     )
-        internal
+        public
         returns (uint)
     {
         return createCertificate(_assetId, _powerInW);

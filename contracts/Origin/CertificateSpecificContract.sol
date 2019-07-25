@@ -69,7 +69,7 @@ contract CertificateSpecificContract is TradableEntityLogic {
         uint _assetId,
         uint _powerInW
     )
-        internal
+        public
         returns (uint);
 
     function getCertificationRequestsLength() public view returns (uint) {
