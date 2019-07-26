@@ -36,7 +36,6 @@ export {
     migrateEnergyBundleContracts
 } from './utils/migrateContracts';
 export { CertificateLogic } from './wrappedContracts/CertificateLogic';
-export { EnergyCertificateBundleLogic } from './wrappedContracts/EnergyCertificateBundleLogic';
 
 export { OriginContractLookup } from './wrappedContracts/OriginContractLookup';
 

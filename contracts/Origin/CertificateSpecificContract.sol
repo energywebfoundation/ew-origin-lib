@@ -69,7 +69,8 @@ contract CertificateSpecificContract is TradableEntityLogic {
 
     function createTradableEntity(
         uint _assetId,
-        uint _powerInW
+        uint _powerInW,
+        uint _supplyId
     )
         public
         returns (uint);
@@ -124,22 +125,6 @@ contract CertificateSpecificContract is TradableEntityLogic {
         public
         onlyRole(RoleManagement.Role.Issuer)
     {
-        CertificationRequest storage request = certificationRequests[_certicationRequestIndex];
         
-        require(request.status == CertificationRequestStatus.Pending, "certification request has to be in pending state");
-
-        AssetProducingInterface assetRegistry = AssetProducingInterface(address(assetContractLookup.assetProducingRegistry()));
-
-        AssetProducingDB.SmartMeterRead[] memory reads = assetRegistry.getSmartMeterReadsForAsset(request.assetId);
-
-        uint energy = 0;
-        for (uint i = request.readsStartIndex; i <= request.readsEndIndex; i++)
-        {
-            energy += reads[i].energy;
-        }
-
-        createTradableEntity(request.assetId, energy);
-
-        request.status = CertificationRequestStatus.Approved;
     }
 }
