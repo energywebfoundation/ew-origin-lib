@@ -119,7 +119,8 @@ contract CertificateDB is TradableEntityDB, CertificateSpecificDB {
             parentId: getCertificateListLength(),
             children: new uint256[](0),
             maxOwnerChanges: _maxOwnerChanges,
-            ownerChangeCounter: 0
+            ownerChangeCounter: 0,
+            approved: false
         });
 
 
@@ -162,7 +163,8 @@ contract CertificateDB is TradableEntityDB, CertificateSpecificDB {
             parentId: _parentId,
             children: new uint256[](0),
             maxOwnerChanges: parent.certificateSpecific.maxOwnerChanges,
-            ownerChangeCounter: parent.certificateSpecific.ownerChangeCounter
+            ownerChangeCounter: parent.certificateSpecific.ownerChangeCounter,
+            approved: false
         });
 
         _childIdOne = createCertificate(
@@ -188,7 +190,8 @@ contract CertificateDB is TradableEntityDB, CertificateSpecificDB {
             parentId: _parentId,
             children: new uint256[](0),
             maxOwnerChanges: parent.certificateSpecific.maxOwnerChanges,
-            ownerChangeCounter: parent.certificateSpecific.ownerChangeCounter
+            ownerChangeCounter: parent.certificateSpecific.ownerChangeCounter,
+            approved: false
         });
 
         _childIdTwo = createCertificate(
@@ -258,6 +261,15 @@ contract CertificateDB is TradableEntityDB, CertificateSpecificDB {
         onlyOwnerOrSelf
     {
         certificateList[_certificateId].certificateSpecific = _certificate;
+    }
+
+    function approveFlexibility(
+        uint _certificateId
+    )
+        public
+        onlyOwnerOrSelf
+    {
+        certificateList[_certificateId].certificateSpecific.approved = true;
     }
 
     /**

@@ -241,7 +241,8 @@ contract EnergyCertificateBundleLogic is TradableEntityContract, CertificateSpec
             parentId: EnergyCertificateBundleDB(address(db)).getBundleListLength(),
             children: new uint256[](0),
             maxOwnerChanges: asset.maxOwnerChanges,
-            ownerChangeCounter: 0
+            ownerChangeCounter: 0,
+            approved: false
         });
 
         uint bundleId = EnergyCertificateBundleDB(address(db)).createEnergyCertificateBundle(

@@ -106,6 +106,16 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
         checktransferOwnerInternally(_entityId, cert);
     }
 
+    function approveFlexibility(
+        uint certificateId
+    )
+        onlyRole(RoleManagement.Role.Trader)
+        external
+        payable
+    {
+        CertificateDB(address(db)).approveFlexibility(certificateId);
+    }
+
     /**
         external functions
     */
