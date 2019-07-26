@@ -190,12 +190,15 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
     function createTradableEntity(
         uint _assetId,
         uint _powerInW,
-        uint _supplyId
+        uint _supplyId,
+        uint _averagePower,
+        uint _powerProfileURL,
+        uint _powerProfileHash
     )
         public
         returns (uint)
     {
-        return createCertificate(_assetId, _powerInW, _supplyId);
+        return createCertificate(_assetId, _powerInW, _supplyId, _averagePower, _powerProfileURL, _powerProfileHash);
     }
 
     /// @notice Request a certificate to retire. Only Certificate owner can retire
@@ -322,15 +325,24 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
     /// @notice Creates a certificate of origin. Checks in the AssetRegistry if requested wh are available.
     /// @param _assetId The id of the asset that generated the energy for the certificate
     /// @param _powerInW The amount of Watts the Certificate holds
-    function createCertificate(uint _assetId, uint _powerInW, uint _supplyId)
+    function createCertificate(uint _assetId, uint _powerInW, uint _supplyId,
+        uint _averagePower,
+        uint _powerProfileURL,
+        uint _powerProfileHash  
+    )
         internal
         returns (uint)
     {
         AssetProducingDB.Asset memory asset =  AssetProducingInterface(address(assetContractLookup.assetProducingRegistry())).getAssetById(_assetId);
         address trader = address(0x7672fa3f8C04aBBcbaD14d896AaD8bedECe72d2b);
 
-        uint certId = CertificateDB(address(db)).createCertificateRaw(_assetId, _powerInW, asset.assetGeneral.matcher,
-        trader, asset.assetGeneral.lastSmartMeterReadFileHash, asset.maxOwnerChanges, _supplyId);
+        uint certId = CertificateDB(address(db)).createCertificateRaw(
+            _assetId, _powerInW, asset.assetGeneral.matcher,
+            trader, asset.assetGeneral.lastSmartMeterReadFileHash, asset.maxOwnerChanges, _supplyId,
+            _averagePower,
+            _powerProfileURL,
+            _powerProfileHash  
+        );
         emit Transfer(address(0),  asset.assetGeneral.owner, certId);
 
         emit LogCreatedCertificate(certId, _powerInW, asset.assetGeneral.owner);

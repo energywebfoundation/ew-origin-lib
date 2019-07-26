@@ -80,19 +80,7 @@ contract EnergyDB is TradableEntityDB, TradableEntityContract {
         returns (uint _entityId)
     {
 
-        TradableEntity memory te = TradableEntity({
-            assetId: _assetId,
-            owner: _owner,
-            powerInW: _powerInW,
-            forSale: false,
-            acceptedToken: _acceptedToken,
-            onChainDirectPurchasePrice: _onChainDirectPurchasePrice,
-            escrow: new address[](0),
-            approvedAddress: address(0x0)
-        });
-        energyList.push(Energy({tradableEntity: te}));
-        _entityId = energyList.length>0?energyList.length-1:0;
-        tokenAmountMapping[_owner]++;
+        
     }
 
     /// @notice sets a new array of escrows for an entity

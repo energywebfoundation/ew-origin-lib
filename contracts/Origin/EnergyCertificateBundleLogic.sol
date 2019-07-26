@@ -139,12 +139,15 @@ contract EnergyCertificateBundleLogic is TradableEntityContract, CertificateSpec
     /// @param _powerInW the power that has been produced
     function createTradableEntity(
         uint _assetId,
-        uint _powerInW
+        uint _powerInW,
+        uint _averagePower,
+        uint _powerProfileURL,
+        uint _powerProfileHash  
     )
         public
         returns (uint)
     {
-        return createBundle(_assetId, _powerInW);
+        
     }
 
     /// @notice Request a bundle to retire. Only bundle owner can retire

@@ -55,6 +55,9 @@ contract CertificateSpecificContract is TradableEntityLogic {
         uint ownerChangeCounter;
         bool approved;
         uint supplyId;
+        uint averagePower;
+        uint powerProfileURL;
+        uint powerProfileHash;
     }
 
     enum Status {
@@ -70,7 +73,10 @@ contract CertificateSpecificContract is TradableEntityLogic {
     function createTradableEntity(
         uint _assetId,
         uint _powerInW,
-        uint _supplyId
+        uint _supplyId,
+        uint _averagePower,
+        uint _powerProfileURL,
+        uint _powerProfileHash  
     )
         public
         returns (uint);

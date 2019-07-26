@@ -93,7 +93,10 @@ contract CertificateDB is TradableEntityDB, CertificateSpecificDB {
         address _assetOwner,
         string memory _lastSmartMeterReadFileHash,
         uint _maxOwnerChanges,
-        uint _supplyId
+        uint _supplyId,
+        uint _averagePower,
+        uint _powerProfileURL,
+        uint _powerProfileHash  
     )
         public
         onlyOwner
@@ -122,7 +125,10 @@ contract CertificateDB is TradableEntityDB, CertificateSpecificDB {
             maxOwnerChanges: _maxOwnerChanges,
             ownerChangeCounter: 0,
             approved: false,
-            supplyId: _supplyId
+            supplyId: _supplyId,
+            averagePower: _averagePower,
+            powerProfileURL: _powerProfileURL,
+            powerProfileHash: _powerProfileHash  
         });
 
 
