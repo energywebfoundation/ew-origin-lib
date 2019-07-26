@@ -56,8 +56,8 @@ contract CertificateSpecificContract is TradableEntityLogic {
         bool approved;
         uint supplyId;
         uint averagePower;
-        uint powerProfileURL;
-        uint powerProfileHash;
+        string powerProfileURL;
+        string powerProfileHash;
     }
 
     enum Status {
@@ -75,8 +75,8 @@ contract CertificateSpecificContract is TradableEntityLogic {
         uint _powerInW,
         uint _supplyId,
         uint _averagePower,
-        uint _powerProfileURL,
-        uint _powerProfileHash  
+        string memory _powerProfileURL,
+        string memory _powerProfileHash  
     )
         public
         returns (uint);

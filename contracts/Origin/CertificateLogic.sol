@@ -192,8 +192,8 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
         uint _powerInW,
         uint _supplyId,
         uint _averagePower,
-        uint _powerProfileURL,
-        uint _powerProfileHash
+        string memory _powerProfileURL,
+        string memory _powerProfileHash
     )
         public
         returns (uint)
@@ -327,8 +327,8 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
     /// @param _powerInW The amount of Watts the Certificate holds
     function createCertificate(uint _assetId, uint _powerInW, uint _supplyId,
         uint _averagePower,
-        uint _powerProfileURL,
-        uint _powerProfileHash  
+        string memory _powerProfileURL,
+        string memory _powerProfileHash  
     )
         internal
         returns (uint)

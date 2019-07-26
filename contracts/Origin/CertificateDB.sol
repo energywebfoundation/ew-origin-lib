@@ -95,8 +95,8 @@ contract CertificateDB is TradableEntityDB, CertificateSpecificDB {
         uint _maxOwnerChanges,
         uint _supplyId,
         uint _averagePower,
-        uint _powerProfileURL,
-        uint _powerProfileHash  
+        string memory _powerProfileURL,
+        string memory _powerProfileHash  
     )
         public
         onlyOwner

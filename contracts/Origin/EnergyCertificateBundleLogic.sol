@@ -141,8 +141,8 @@ contract EnergyCertificateBundleLogic is TradableEntityContract, CertificateSpec
         uint _assetId,
         uint _powerInW,
         uint _averagePower,
-        uint _powerProfileURL,
-        uint _powerProfileHash  
+        string memory _powerProfileURL,
+        string memory _powerProfileHash  
     )
         public
         returns (uint)

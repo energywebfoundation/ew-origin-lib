@@ -136,6 +136,9 @@ export class Entity extends TradableEntity.Entity implements ICertificateSpecifi
     ownerChangerCounter: number;
     approved: boolean;
     supplyId: number;
+    averagePower: number;
+    powerProfileURL: string;
+    powerProfileHash : string;
 
     getUrl(): string {
         return `${this.configuration.offChainDataSource.baseUrl}/Certificate`;
@@ -165,6 +168,9 @@ export class Entity extends TradableEntity.Entity implements ICertificateSpecifi
             this.ownerChangerCounter = cert.certificateSpecific.ownerChangeCounter;
             this.approved = cert.certificateSpecific.approved;
             this.supplyId = cert.certificateSpecific.supplyId;
+            this.averagePower = cert.certificateSpecific.averagePower;
+            this.powerProfileURL = cert.certificateSpecific.powerProfileURL;
+            this.powerProfileHash = cert.certificateSpecific.powerProfileHash;
             this.offChainSettlementOptions = await this.getOffChainSettlementOptions();
 
             this.initialized = true;
