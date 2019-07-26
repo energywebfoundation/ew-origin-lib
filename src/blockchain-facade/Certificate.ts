@@ -240,6 +240,20 @@ export class Entity extends TradableEntity.Entity implements ICertificateSpecifi
         }
     }
 
+    async approveFlexibility(): Promise<TransactionReceipt> {
+        if (this.configuration.blockchainProperties.activeUser.privateKey) {
+            return this.configuration.blockchainProperties.certificateLogicInstance.approveFlexibility(
+                this.id,
+                { privateKey: this.configuration.blockchainProperties.activeUser.privateKey }
+            );
+        } else {
+            return this.configuration.blockchainProperties.certificateLogicInstance.approveFlexibility(
+                this.id,
+                { from: this.configuration.blockchainProperties.activeUser.address }
+            );
+        }
+    }
+
     async splitCertificate(power: number): Promise<TransactionReceipt> {
         if (this.configuration.blockchainProperties.activeUser.privateKey) {
             return this.configuration.blockchainProperties.certificateLogicInstance.splitCertificate(

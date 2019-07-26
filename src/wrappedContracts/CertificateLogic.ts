@@ -380,6 +380,12 @@ export class CertificateLogic extends CertificateSpecificContract {
         return await this.send(method, txParams);
     }
 
+    async approveFlexibility(_certificateId: number, txParams?: SpecialTx) {
+        const method = this.web3Contract.methods.approveFlexibility(_certificateId);
+
+        return await this.send(method, txParams);
+    }
+
     async setTradableToken(_entityId: number, _tokenContract: string, txParams?: SpecialTx) {
         const method = this.web3Contract.methods.setTradableToken(_entityId, _tokenContract);
 
