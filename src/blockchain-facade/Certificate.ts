@@ -34,6 +34,7 @@ export interface ICertificateSpecific extends TradableEntity.IOnChainProperties 
     children: number[];
     maxOwnerChanges: number;
     ownerChangerCounter: number;
+    approved: boolean;
 }
 
 export const getCertificateListLength = async (
@@ -133,6 +134,8 @@ export class Entity extends TradableEntity.Entity implements ICertificateSpecifi
     children: number[];
     maxOwnerChanges: number;
     ownerChangerCounter: number;
+    approved: boolean;
+    supplyId: number;
 
     getUrl(): string {
         return `${this.configuration.offChainDataSource.baseUrl}/Certificate`;
@@ -160,6 +163,8 @@ export class Entity extends TradableEntity.Entity implements ICertificateSpecifi
             this.parentId = cert.certificateSpecific.parentId;
             this.maxOwnerChanges = cert.certificateSpecific.maxOwnerChanges;
             this.ownerChangerCounter = cert.certificateSpecific.ownerChangeCounter;
+            this.approved = cert.certificateSpecific.approved;
+            this.supplyId = cert.certificateSpecific.supplyId;
             this.offChainSettlementOptions = await this.getOffChainSettlementOptions();
 
             this.initialized = true;

@@ -92,7 +92,8 @@ contract CertificateDB is TradableEntityDB, CertificateSpecificDB {
         address[] memory _escrow,
         address _assetOwner,
         string memory _lastSmartMeterReadFileHash,
-        uint _maxOwnerChanges
+        uint _maxOwnerChanges,
+        uint _supplyId
     )
         public
         onlyOwner
@@ -120,7 +121,8 @@ contract CertificateDB is TradableEntityDB, CertificateSpecificDB {
             children: new uint256[](0),
             maxOwnerChanges: _maxOwnerChanges,
             ownerChangeCounter: 0,
-            approved: false
+            approved: false,
+            supplyId: _supplyId
         });
 
 
@@ -143,64 +145,7 @@ contract CertificateDB is TradableEntityDB, CertificateSpecificDB {
         returns
         (uint _childIdOne, uint _childIdTwo)
     {
-        Certificate memory parent = certificateList[_parentId];
-
-        TradableEntityContract.TradableEntity memory childOneEntity = TradableEntityContract.TradableEntity({
-            assetId: parent.tradableEntity.assetId,
-            owner: parent.tradableEntity.owner,
-            powerInW: _power,
-            forSale: parent.tradableEntity.forSale,
-            acceptedToken: address(0x0),
-            onChainDirectPurchasePrice: 0,
-            escrow: parent.tradableEntity.escrow,
-            approvedAddress: parent.tradableEntity.approvedAddress
-        });
-
-        CertificateSpecificContract.CertificateSpecific memory certificateSpecificOne = CertificateSpecificContract.CertificateSpecific({
-            status: uint(CertificateSpecificContract.Status.Active),
-            dataLog: parent.certificateSpecific.dataLog,
-            creationTime: parent.certificateSpecific.creationTime,
-            parentId: _parentId,
-            children: new uint256[](0),
-            maxOwnerChanges: parent.certificateSpecific.maxOwnerChanges,
-            ownerChangeCounter: parent.certificateSpecific.ownerChangeCounter,
-            approved: false
-        });
-
-        _childIdOne = createCertificate(
-            childOneEntity,
-            certificateSpecificOne
-        );
-
-        TradableEntityContract.TradableEntity memory childTwoEntity = TradableEntityContract.TradableEntity({
-            assetId: parent.tradableEntity.assetId,
-            owner: parent.tradableEntity.owner,
-            powerInW: parent.tradableEntity.powerInW - _power,
-            forSale: parent.tradableEntity.forSale,
-            acceptedToken: address(0x0),
-            onChainDirectPurchasePrice: 0,
-            escrow: parent.tradableEntity.escrow,
-            approvedAddress: parent.tradableEntity.approvedAddress
-        });
-
-        CertificateSpecificContract.CertificateSpecific memory certificateSpecificTwo = CertificateSpecificContract.CertificateSpecific({
-            status: uint(CertificateSpecificContract.Status.Active),
-            dataLog: parent.certificateSpecific.dataLog,
-            creationTime: parent.certificateSpecific.creationTime,
-            parentId: _parentId,
-            children: new uint256[](0),
-            maxOwnerChanges: parent.certificateSpecific.maxOwnerChanges,
-            ownerChangeCounter: parent.certificateSpecific.ownerChangeCounter,
-            approved: false
-        });
-
-        _childIdTwo = createCertificate(
-            childTwoEntity,
-            certificateSpecificTwo
-        );
-        addChildren(_parentId, _childIdOne);
-        addChildren(_parentId, _childIdTwo);
-
+   
     }
 
     /// @notice Returns the certificate that corresponds to the given array id

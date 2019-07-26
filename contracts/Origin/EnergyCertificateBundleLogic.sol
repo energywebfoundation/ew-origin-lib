@@ -220,41 +220,7 @@ contract EnergyCertificateBundleLogic is TradableEntityContract, CertificateSpec
         internal
         returns (uint)
     {
-        AssetProducingDB.Asset memory asset = AssetProducingInterface(address(assetContractLookup.assetProducingRegistry()))
-            .getAssetById(_assetId);
-
-        TradableEntityContract.TradableEntity memory tradableEntity = TradableEntityContract.TradableEntity({
-            assetId: _assetId,
-            owner: asset.assetGeneral.owner,
-            powerInW: _powerInW,
-            forSale: false,
-            acceptedToken: address(0x0),
-            onChainDirectPurchasePrice: 0,
-            escrow: asset.assetGeneral.matcher,
-            approvedAddress: address(0x0)
-        });
-
-        CertificateSpecific memory certificateSpecific = CertificateSpecific({
-            status: uint(CertificateSpecificContract.Status.Active),
-            dataLog: asset.assetGeneral.lastSmartMeterReadFileHash,
-            creationTime: block.timestamp,
-            parentId: EnergyCertificateBundleDB(address(db)).getBundleListLength(),
-            children: new uint256[](0),
-            maxOwnerChanges: asset.maxOwnerChanges,
-            ownerChangeCounter: 0,
-            approved: false
-        });
-
-        uint bundleId = EnergyCertificateBundleDB(address(db)).createEnergyCertificateBundle(
-            tradableEntity,
-            certificateSpecific
-        );
-
-        emit Transfer(address(0),  asset.assetGeneral.owner, bundleId);
-
-        emit LogCreatedBundle(bundleId, _powerInW, asset.assetGeneral.owner);
-        return bundleId;
-
+     
     }
 
     /// @notice automatically retires a bundle

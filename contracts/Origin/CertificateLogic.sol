@@ -187,17 +187,15 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
         }
     }
 
-    /// @notice creates a new Entity / certificate
-    /// @param _assetId the id of the producing asset
-    /// @param _powerInW the power that has been produced
     function createTradableEntity(
         uint _assetId,
-        uint _powerInW
+        uint _powerInW,
+        uint _supplyId
     )
         public
         returns (uint)
     {
-        return createCertificate(_assetId, _powerInW);
+        return createCertificate(_assetId, _powerInW, _supplyId);
     }
 
     /// @notice Request a certificate to retire. Only Certificate owner can retire
@@ -324,7 +322,7 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
     /// @notice Creates a certificate of origin. Checks in the AssetRegistry if requested wh are available.
     /// @param _assetId The id of the asset that generated the energy for the certificate
     /// @param _powerInW The amount of Watts the Certificate holds
-    function createCertificate(uint _assetId, uint _powerInW)
+    function createCertificate(uint _assetId, uint _powerInW, uint _supplyId)
         internal
         returns (uint)
     {
@@ -332,7 +330,7 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
         address trader = address(0x7672fa3f8C04aBBcbaD14d896AaD8bedECe72d2b);
 
         uint certId = CertificateDB(address(db)).createCertificateRaw(_assetId, _powerInW, asset.assetGeneral.matcher,
-        trader, asset.assetGeneral.lastSmartMeterReadFileHash, asset.maxOwnerChanges);
+        trader, asset.assetGeneral.lastSmartMeterReadFileHash, asset.maxOwnerChanges, _supplyId);
         emit Transfer(address(0),  asset.assetGeneral.owner, certId);
 
         emit LogCreatedCertificate(certId, _powerInW, asset.assetGeneral.owner);

@@ -54,6 +54,7 @@ contract CertificateSpecificContract is TradableEntityLogic {
         uint maxOwnerChanges;
         uint ownerChangeCounter;
         bool approved;
+        uint supplyId;
     }
 
     enum Status {
