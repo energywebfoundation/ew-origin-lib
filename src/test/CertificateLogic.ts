@@ -100,14 +100,14 @@ describe('CertificateLogic-Facade', () => {
             privateKey
         };
     }
-        
+
     it('should set ERC20 token', async () => {
         erc20TestTokenAddress = (await deployERC20TestToken(
             web3,
             accountTrader,
             privateKeyDeployment
         )).contractAddress;
-    
+
         erc20TestToken = new Erc20TestToken(web3, erc20TestTokenAddress);
     });
 
@@ -1221,7 +1221,7 @@ describe('CertificateLogic-Facade', () => {
         await certificateLogic.approveCertificationRequest(INITIAL_CERTIFICATION_REQUESTS_LENGTH, {
             privateKey: issuerPK
         });
-       
+
         assert.equal(await Certificate.getCertificateListLength(conf), STARTING_CERTIFICATE_LENGTH + 1);
         assert.equal(await TradableEntity.getBalance(accountAssetOwner, conf), STARTING_ASSET_OWNER_BALANCE + 1);
 
@@ -1419,7 +1419,7 @@ describe('CertificateLogic-Facade', () => {
         await certificateLogic.approveCertificationRequest(INITIAL_CERTIFICATION_REQUESTS_LENGTH, {
             privateKey: issuerPK
         });
-        
+
         let parentCertificate = await new Certificate.Entity(STARTING_CERTIFICATE_LENGTH.toString(), conf).sync();
 
         await parentCertificate.publishForSale(CERTIFICATE_PRICE, erc20TestTokenAddress);
@@ -1433,7 +1433,7 @@ describe('CertificateLogic-Facade', () => {
 
         assert.equal(await erc20TestToken.balanceOf(accountAssetOwner), ASSET_OWNER_STARTING_TOKEN_BALANCE + CERTIFICATE_PRICE);
         assert.equal(await erc20TestToken.balanceOf(accountTrader), TRADER_STARTING_TOKEN_BALANCE - CERTIFICATE_PRICE);
-        
+
         parentCertificate = await parentCertificate.sync();
 
         assert.equal(parentCertificate.status, Certificate.Status.Split);
@@ -1472,7 +1472,7 @@ describe('CertificateLogic-Facade', () => {
         await certificateLogic.approveCertificationRequest(INITIAL_CERTIFICATION_REQUESTS_LENGTH, {
             privateKey: issuerPK
         });
-        
+
         let parentCertificate = await new Certificate.Entity(STARTING_CERTIFICATE_LENGTH.toString(), conf).sync();
 
         await parentCertificate.publishForSale(CERTIFICATE_PRICE, Currency.EUR);
@@ -1482,7 +1482,7 @@ describe('CertificateLogic-Facade', () => {
         } catch (error) {
             assert.include(error.message, 'revert Energy has to be higher than 0 and lower or equal than certificate energy');
         }
-        
+
         parentCertificate = await parentCertificate.sync();
 
         assert.equal(parentCertificate.status, Certificate.Status.Active);
@@ -1510,7 +1510,7 @@ describe('CertificateLogic-Facade', () => {
         await certificateLogic.approveCertificationRequest(INITIAL_CERTIFICATION_REQUESTS_LENGTH, {
             privateKey: issuerPK
         });
-        
+
         let parentCertificate = await new Certificate.Entity(STARTING_CERTIFICATE_LENGTH.toString(), conf).sync();
 
         await parentCertificate.publishForSale(CERTIFICATE_PRICE, Currency.EUR);
@@ -1518,7 +1518,7 @@ describe('CertificateLogic-Facade', () => {
         setActiveUser(traderPK);
 
         await parentCertificate.buyCertificate(CERTIFICATE_POWER);
-        
+
         parentCertificate = await parentCertificate.sync();
 
         assert.equal(parentCertificate.status, Certificate.Status.Active);
@@ -1550,7 +1550,7 @@ describe('CertificateLogic-Facade', () => {
         await certificateLogic.approveCertificationRequest(INITIAL_CERTIFICATION_REQUESTS_LENGTH, {
             privateKey: issuerPK
         });
-        
+
         let parentCertificate = await new Certificate.Entity(STARTING_CERTIFICATE_LENGTH.toString(), conf).sync();
 
         await parentCertificate.publishForSale(CERTIFICATE_PRICE, CERTIFICATE_CURRENCY);
@@ -1573,7 +1573,7 @@ describe('CertificateLogic-Facade', () => {
 
         assert.equal(await erc20TestToken.balanceOf(accountAssetOwner), ASSET_OWNER_STARTING_TOKEN_BALANCE);
         assert.equal(await erc20TestToken.balanceOf(accountTrader), TRADER_STARTING_TOKEN_BALANCE);
-        
+
         parentCertificate = await parentCertificate.sync();
 
         assert.equal(parentCertificate.status, Certificate.Status.Split);
@@ -1593,5 +1593,60 @@ describe('CertificateLogic-Facade', () => {
         assert.equal(secondChildCertificate.powerInW, CERTIFICATE_POWER / 2);
         assert.equal(secondChildCertificate.onChainDirectPurchasePrice, 0);
         assert.deepEqual(await secondChildCertificate.getOffChainSettlementOptions(), parentOffchainSettlementOptions);
+    });
+
+    it('should bulk buy certificates', async () => {
+        const STARTING_CERTIFICATE_LENGTH = Number(await Certificate.getCertificateListLength(conf));
+        const LAST_SM_READ_INDEX = (await assetRegistry.getSmartMeterReadsForAsset(0)).length - 1;
+        const LAST_SMART_METER_READ = Number((await assetRegistry.getAssetGeneral(0)).lastSmartMeterReadWh);
+        const INITIAL_CERTIFICATION_REQUESTS_LENGTH = (await certificateLogic.getCertificationRequests()).length;
+        const CERTIFICATE_POWER = 100;
+        const CERTIFICATE_PRICE = 7;
+
+        setActiveUser(assetOwnerPK);
+
+        await assetRegistry.saveSmartMeterRead(0, LAST_SMART_METER_READ + CERTIFICATE_POWER, '', 0, {
+            privateKey: assetSmartmeterPK
+        });
+        await certificateLogic.requestCertificates(0, LAST_SM_READ_INDEX + 1, {
+            privateKey: assetOwnerPK
+        });
+        await certificateLogic.approveCertificationRequest(INITIAL_CERTIFICATION_REQUESTS_LENGTH, {
+            privateKey: issuerPK
+        });
+
+        let firstCertificate = await new Certificate.Entity(STARTING_CERTIFICATE_LENGTH.toString(), conf).sync();
+
+        await assetRegistry.saveSmartMeterRead(0, LAST_SMART_METER_READ + CERTIFICATE_POWER * 2, '', 0, {
+            privateKey: assetSmartmeterPK
+        });
+        await certificateLogic.requestCertificates(0, LAST_SM_READ_INDEX + 2, {
+            privateKey: assetOwnerPK
+        });
+        await certificateLogic.approveCertificationRequest(INITIAL_CERTIFICATION_REQUESTS_LENGTH + 1, {
+            privateKey: issuerPK
+        });
+
+        let secondCertificate = await new Certificate.Entity((STARTING_CERTIFICATE_LENGTH + 1).toString(), conf).sync();
+
+        await firstCertificate.publishForSale(CERTIFICATE_PRICE, erc20TestTokenAddress);
+        firstCertificate = await firstCertificate.sync();
+        await secondCertificate.publishForSale(CERTIFICATE_PRICE, erc20TestTokenAddress);
+        secondCertificate = await secondCertificate.sync();
+
+        setActiveUser(traderPK);
+
+        assert.equal(firstCertificate.owner, accountAssetOwner);
+        assert.equal(secondCertificate.owner, accountAssetOwner);
+
+        await certificateLogic.buyCertificateBulk([Number(firstCertificate.id), Number(secondCertificate.id)], {
+            privateKey: traderPK
+        });
+
+        firstCertificate = await firstCertificate.sync();
+        secondCertificate = await secondCertificate.sync();
+
+        assert.equal(firstCertificate.owner, accountTrader);
+        assert.equal(secondCertificate.owner, accountTrader);
     });
 });

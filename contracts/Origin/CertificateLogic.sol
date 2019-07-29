@@ -111,12 +111,11 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
         external functions
     */
 
-    function buyCertificateInternal(uint _certificateId, address buyer)
-        internal
-    {
+    function buyCertificateInternal(uint _certificateId, address buyer) internal{
         CertificateDB.Certificate memory cert = CertificateDB(address(db)).getCertificate(_certificateId);
 
         require(cert.tradableEntity.forSale == true, "Unable to buy a certificate that is not for sale.");
+        require(cert.certificateSpecific.status == uint(CertificateSpecificContract.Status.Active), "You can only buy Active certificates.");
 
         bool isOnChainSettlement = cert.tradableEntity.acceptedToken != address(0x0);
 
@@ -143,17 +142,27 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
 
     /// @notice buys a certificate
     /// @param _certificateId the id of the certificate
+    /// @return whether it succeded in buying or not
     function buyCertificate(uint _certificateId)
         external
         onlyRole(RoleManagement.Role.Trader)
      {
-        return buyCertificateInternal(_certificateId, msg.sender);
+        buyCertificateInternal(_certificateId, msg.sender);
+    }
+
+    /// @notice buys a set of certificates
+    /// @param _idArray the ids of the certificates to be bought
+    /// @return array of values whether it succeded in buying or not
+    function buyCertificateBulk(uint[] calldata _idArray) external {
+        for (uint i = 0; i < _idArray.length; i++) {
+            buyCertificateInternal(_idArray[i], msg.sender);
+        }
     }
 
     function splitAndBuyCertificate(uint _certificateId, uint _energy)
         external
         onlyRole(RoleManagement.Role.Trader)
-     {
+    {
         CertificateDB.Certificate memory cert = CertificateDB(address(db)).getCertificate(_certificateId);
 
         require(_energy > 0 && _energy <= cert.tradableEntity.powerInW, "Energy has to be higher than 0 and lower or equal than certificate energy");
