@@ -1664,6 +1664,9 @@ describe('CertificateLogic-Facade', () => {
     it('should bulk buy certificates', async () => {
         setActiveUser(traderPK);
 
+        const ASSET_OWNER_STARTING_TOKEN_BALANCE = Number(await erc20TestToken.balanceOf(accountAssetOwner));
+        const TRADER_STARTING_TOKEN_BALANCE = Number(await erc20TestToken.balanceOf(accountTrader));
+
         const latestCertificateId = Number(await Certificate.getCertificateListLength(conf)) - 1;
         await certificateLogic.buyCertificateBulk([latestCertificateId - 1, latestCertificateId], {
             privateKey: traderPK
@@ -1674,5 +1677,8 @@ describe('CertificateLogic-Facade', () => {
 
         assert.equal(firstCertificate.owner, accountTrader);
         assert.equal(secondCertificate.owner, accountTrader);
+
+        assert.isAbove(Number(await erc20TestToken.balanceOf(accountAssetOwner)), ASSET_OWNER_STARTING_TOKEN_BALANCE);
+        assert.isBelow(Number(await erc20TestToken.balanceOf(accountTrader)), TRADER_STARTING_TOKEN_BALANCE);
     });
 });
