@@ -143,7 +143,6 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
 
     /// @notice buys a certificate
     /// @param _certificateId the id of the certificate
-    /// @return whether it succeded in buying or not
     function buyCertificate(uint _certificateId)
         external
         onlyRole(RoleManagement.Role.Trader)
@@ -153,7 +152,6 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
 
     /// @notice buys a set of certificates
     /// @param _idArray the ids of the certificates to be bought
-    /// @return array of values whether it succeded in buying or not
     function buyCertificateBulk(uint[] calldata _idArray) external {
         for (uint i = 0; i < _idArray.length; i++) {
             buyCertificateInternal(_idArray[i], msg.sender);
