@@ -545,6 +545,8 @@ describe('CertificateLogic-Facade', () => {
     });
 
     it('should fail buying a certificate when not for sale', async () => {
+        setActiveUser(traderPK);
+
         const certificate = await new Certificate.Entity('1', conf).sync();
 
         let failed = false;
@@ -560,6 +562,8 @@ describe('CertificateLogic-Facade', () => {
     });
 
     it('should make certificate 1 available for sale', async() => {
+        setActiveUser(assetOwnerPK);
+
         let certificate = await new Certificate.Entity('1', conf).sync();
 
         await certificate.publishForSale(10, erc20TestTokenAddress);
@@ -1595,7 +1599,7 @@ describe('CertificateLogic-Facade', () => {
         assert.deepEqual(await secondChildCertificate.getOffChainSettlementOptions(), parentOffchainSettlementOptions);
     });
 
-    it('should bulk buy certificates', async () => {
+    it('should setup bulk buy certificates', async () => {
         const STARTING_CERTIFICATE_LENGTH = Number(await Certificate.getCertificateListLength(conf));
         const LAST_SM_READ_INDEX = (await assetRegistry.getSmartMeterReadsForAsset(0)).length - 1;
         const LAST_SMART_METER_READ = Number((await assetRegistry.getAssetGeneral(0)).lastSmartMeterReadWh);
@@ -1634,17 +1638,39 @@ describe('CertificateLogic-Facade', () => {
         await secondCertificate.publishForSale(CERTIFICATE_PRICE, erc20TestTokenAddress);
         secondCertificate = await secondCertificate.sync();
 
-        setActiveUser(traderPK);
+        assert.equal(firstCertificate.owner, accountAssetOwner);
+        assert.equal(secondCertificate.owner, accountAssetOwner);
+    });
+
+    it('should not be able to bulk buy own certificates', async () => {
+        setActiveUser(assetOwnerPK);
+
+        const latestCertificateId = Number(await Certificate.getCertificateListLength(conf)) - 1;
+        try {
+            await certificateLogic.buyCertificateBulk([latestCertificateId - 1, latestCertificateId], {
+                privateKey: assetOwnerPK
+            });
+        } catch (error) {
+            assert.include(error.message, `Can't buy your own certificates`);
+        }
+
+        const firstCertificate = await new Certificate.Entity((latestCertificateId - 1).toString(), conf).sync();
+        const secondCertificate = await new Certificate.Entity((latestCertificateId).toString(), conf).sync();
 
         assert.equal(firstCertificate.owner, accountAssetOwner);
         assert.equal(secondCertificate.owner, accountAssetOwner);
+    });
 
-        await certificateLogic.buyCertificateBulk([Number(firstCertificate.id), Number(secondCertificate.id)], {
+    it('should bulk buy certificates', async () => {
+        setActiveUser(traderPK);
+
+        const latestCertificateId = Number(await Certificate.getCertificateListLength(conf)) - 1;
+        await certificateLogic.buyCertificateBulk([latestCertificateId - 1, latestCertificateId], {
             privateKey: traderPK
         });
 
-        firstCertificate = await firstCertificate.sync();
-        secondCertificate = await secondCertificate.sync();
+        const firstCertificate = await new Certificate.Entity((latestCertificateId - 1).toString(), conf).sync();
+        const secondCertificate = await new Certificate.Entity((latestCertificateId).toString(), conf).sync();
 
         assert.equal(firstCertificate.owner, accountTrader);
         assert.equal(secondCertificate.owner, accountTrader);

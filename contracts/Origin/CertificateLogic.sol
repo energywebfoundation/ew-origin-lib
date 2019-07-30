@@ -114,6 +114,7 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
     function buyCertificateInternal(uint _certificateId, address buyer) internal{
         CertificateDB.Certificate memory cert = CertificateDB(address(db)).getCertificate(_certificateId);
 
+        require(buyer != cert.tradableEntity.owner, "Can't buy your own certificates.");
         require(cert.tradableEntity.forSale == true, "Unable to buy a certificate that is not for sale.");
         require(cert.certificateSpecific.status == uint(CertificateSpecificContract.Status.Active), "You can only buy Active certificates.");
 

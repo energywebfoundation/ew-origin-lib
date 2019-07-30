@@ -51,7 +51,7 @@ interface CertificateInterface {
     /// @return the length of all created certificates
     function getCertificateListLength() external view returns (uint);
 
-    /// @notice gets the certificats owner
+    /// @notice gets the certificate's owner
     /// @param _certificateId the certificate-id
     /// @return the owner of a certificate
     function getCertificateOwner(uint _certificateId) external view returns (address);
