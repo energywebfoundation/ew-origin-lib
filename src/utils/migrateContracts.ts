@@ -46,7 +46,7 @@ export async function migrateCertificateRegistryContracts(
 
         const certificateLogicAddress = (await deploy(
             web3,
-            CertificateLogicJSON.bytecode +
+            (CertificateLogicJSON as any).bytecode +
                 web3.eth.abi
                     .encodeParameters(
                         ['address', 'address'],

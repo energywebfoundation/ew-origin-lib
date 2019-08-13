@@ -62,6 +62,16 @@ async function run() {
     await fs.move(`${ROOT_DIRECTORY}/build`, `${ROOT_DIRECTORY}/dist/js/build`);
   }
 
+  const contractPath = `${ROOT_DIRECTORY}/dist/js/build/contracts/CertificateLogic.json`;
+
+  const contractJSON = await fs.readJson(contractPath);
+  
+  await fs.writeJson(contractPath, {
+    contractName: contractJSON.contractName,
+    abi: contractJSON.abi,
+    networks: contractJSON.networks
+  });
+
   console.log('EW-ORIGIN-LIB-BUILD: End');
 }
 
