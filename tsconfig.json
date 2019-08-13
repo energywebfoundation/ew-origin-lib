@@ -4,15 +4,14 @@
         "sourceMap": true,
         "noImplicitAny": false,
         "declaration": true,
-        "module": "CommonJS",
-        "target": "es6",
-        "jsx": "react",
+        "moduleResolution": "node",
+        "module": "esnext",
+        "target": "esnext",
         "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
         "esModuleInterop": true,
         "lib": [
-            "es2017",
-            "dom"
+            "es2017"
         ]
     },
     "include": [

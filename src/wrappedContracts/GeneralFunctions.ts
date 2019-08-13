@@ -1,5 +1,4 @@
-import Web3 = require('web3');
-import { Tx } from 'web3/eth/types';
+import Web3 from 'web3';import { Tx } from 'web3/eth/types';
 import { TransactionReceipt, Logs } from 'web3/types';
 
 export declare interface SpecialTx extends Tx {

@@ -1,6 +1,5 @@
 import { GeneralFunctions, SpecialTx, getClientVersion } from './GeneralFunctions';
-import Web3 = require('web3');
-import CertificateSpecificContractJSON from '../../build/contracts/CertificateSpecificContract.json';
+import Web3 from 'web3';import CertificateSpecificContractJSON from '../../build/contracts/CertificateSpecificContract.json';
 
 export class CertificateSpecificContract extends GeneralFunctions {
     web3: Web3;
