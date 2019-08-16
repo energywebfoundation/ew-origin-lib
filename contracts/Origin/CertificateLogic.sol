@@ -128,9 +128,10 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
 
     function getFlexibilityTotalPrice(uint _certificateId) external returns (uint total)
     {
+        require(address(marketContractLookup) != address(0), "marketLogic has to be set");
         CertificateDB.Certificate memory cert = CertificateDB(address(db)).getCertificate(_certificateId);
 
-        (,uint _price,,,,,) = MarketLogicInterface(marketContractLookup).getSupply(_certificateId);
+        (,uint _price,,,,,) = MarketLogicInterface(marketContractLookup).getSupply(cert.certificateSpecific.supplyId);
 
         total = (_price * cert.tradableEntity.powerInW * 111) / 100;
 
