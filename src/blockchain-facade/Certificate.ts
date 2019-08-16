@@ -341,8 +341,14 @@ export class Entity extends TradableEntity.Entity implements ICertificateSpecifi
         );
     }
 
-    async getFlexibilityTotalPrice(): Promise<string> {
-        return this.configuration.blockchainProperties.certificateLogicInstance.getFlexibilityTotalPrice(
+    async getFlexibilityTotalPriceInEUR(): Promise<string> {
+        return this.configuration.blockchainProperties.certificateLogicInstance.getFlexibilityTotalPriceInEUR(
+            this.id
+        );
+    }
+
+    async getFlexibilityTotalPriceInDAI(): Promise<string> {
+        return this.configuration.blockchainProperties.certificateLogicInstance.getFlexibilityTotalPriceInDAI(
             this.id
         );
     }

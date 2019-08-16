@@ -44,6 +44,9 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
     event LogCertificateSplit(uint indexed _certificateId, uint _childOne, uint _childTwo);
 
     MarketLogicInterface public marketContractLookup;
+    ERC20Interface public tokenAddress;
+    address public tokenHolder;
+    address public tokenReceiver;
 
     /// @notice constructor
     /// @param _assetContractLookup the asset-RegistryContractLookup-Address
@@ -59,6 +62,15 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
      {
         require(address(marketContractLookup) == address(0), "setMarketLogicContract - already set");
         marketContractLookup = _marketContractLookup;
+    }
+
+    function setTokenProps(ERC20Interface _tokenAddress, address _tokenHolder, address _tokenReceiver)
+        external
+     {
+        require(address(tokenAddress) == address(0), "tokenAddress - already set");
+        tokenAddress = _tokenAddress;
+        tokenHolder = _tokenHolder;
+        tokenReceiver = _tokenReceiver;
     }
 
     /**
@@ -123,17 +135,34 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
         external
         payable
     {
+        CertificateDB.Certificate memory cert = CertificateDB(address(db)).getCertificate(certificateId);
+
+        require(!cert.certificateSpecific.approved, "flexibility already approved");
+
         CertificateDB(address(db)).approveFlexibility(certificateId);
+
+        uint priceInDAI = this.getFlexibilityTotalPriceInDAI(certificateId);
+
+        ERC20Interface(address(tokenAddress)).transferFrom(tokenHolder, tokenReceiver, priceInDAI);
     }
 
-    function getFlexibilityTotalPrice(uint _certificateId) external returns (uint total)
+    function getFlexibilityTotalPriceInEUR(uint _certificateId) external returns (uint total)
     {
         require(address(marketContractLookup) != address(0), "marketLogic has to be set");
         CertificateDB.Certificate memory cert = CertificateDB(address(db)).getCertificate(_certificateId);
 
         (,uint _price,,,,,) = MarketLogicInterface(marketContractLookup).getSupply(cert.certificateSpecific.supplyId);
 
-        total = (_price * cert.tradableEntity.powerInW * 111) / 100;
+        total = _price * 10**16 * cert.tradableEntity.powerInW / 1000;
+
+        return total;
+    }
+
+    function getFlexibilityTotalPriceInDAI(uint _certificateId) external returns (uint total)
+    {
+        uint priceInEUR = this.getFlexibilityTotalPriceInEUR(_certificateId);
+
+        total = priceInEUR * 111 / 100;
 
         return total;
     }
@@ -145,31 +174,7 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
     function buyCertificateInternal(uint _certificateId, address buyer)
         internal
     {
-        CertificateDB.Certificate memory cert = CertificateDB(address(db)).getCertificate(_certificateId);
 
-        require(cert.tradableEntity.forSale == true, "Unable to buy a certificate that is not for sale.");
-
-        bool isOnChainSettlement = cert.tradableEntity.acceptedToken != address(0x0);
-
-        if (isOnChainSettlement) {
-            require(
-                ERC20Interface(cert.tradableEntity.acceptedToken).transferFrom(
-                    buyer, cert.tradableEntity.owner, cert.tradableEntity.onChainDirectPurchasePrice
-                ),
-                "erc20 transfer failed"
-            );
-        } else {
-            //  TO-DO: Implement off-chain settlement checks
-            //  For now automatically transfer the certificate
-            //  if it's an off chain settlement
-        }
-
-        TradableEntityDBInterface(address(db)).addApprovalExternal(_certificateId, buyer);
-
-        simpleTransferInternal(cert.tradableEntity.owner, buyer, _certificateId);
-        checktransferOwnerInternally(_certificateId, cert);
-
-        TradableEntityDBInterface(address(db)).setForSale(_certificateId, false);
     }
 
     /// @notice buys a certificate
@@ -178,7 +183,6 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
         external
         onlyRole(RoleManagement.Role.Trader)
      {
-        return buyCertificateInternal(_certificateId, msg.sender);
     }
 
     function createTradableEntity(
