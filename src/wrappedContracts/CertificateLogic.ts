@@ -416,8 +416,8 @@ export class CertificateLogic extends CertificateSpecificContract {
         return await this.web3Contract.methods.getFlexibilityTotalPrice(certificateId).call(txParams);
     }
 
-    async setMarketLogicContract(_certificateId: number, txParams?: SpecialTx) {
-        const method = this.web3Contract.methods.setMarketLogicContract(_certificateId);
+    async setMarketLogicContract(contractAddress: string, txParams?: SpecialTx) {
+        const method = this.web3Contract.methods.setMarketLogicContract(contractAddress);
 
         return await this.send(method, txParams);
     }
