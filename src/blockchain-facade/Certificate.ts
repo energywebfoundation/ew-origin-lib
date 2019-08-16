@@ -353,6 +353,18 @@ export class Entity extends TradableEntity.Entity implements ICertificateSpecifi
         );
     }
 
+    async tokenAddress(): Promise<string> {
+        return this.configuration.blockchainProperties.certificateLogicInstance.tokenAddress();
+    }
+
+    async tokenReceiver(): Promise<string> {
+        return this.configuration.blockchainProperties.certificateLogicInstance.tokenReceiver();
+    }
+
+    async tokenHolder(): Promise<string> {
+        return this.configuration.blockchainProperties.certificateLogicInstance.tokenHolder();
+    }
+
     async isRetired(): Promise<boolean> {
         return this.configuration.blockchainProperties.certificateLogicInstance.isRetired(this.id);
     }

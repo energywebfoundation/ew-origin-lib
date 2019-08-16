@@ -139,11 +139,14 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
 
         require(!cert.certificateSpecific.approved, "flexibility already approved");
 
-        CertificateDB(address(db)).approveFlexibility(certificateId);
-
         uint priceInDAI = this.getFlexibilityTotalPriceInDAI(certificateId);
 
-        ERC20Interface(address(tokenAddress)).transferFrom(tokenHolder, tokenReceiver, priceInDAI);
+        require(
+            ERC20Interface(tokenAddress).transferFrom(tokenHolder, tokenReceiver, priceInDAI),
+            "ERC20 transfer has to succeed before flex approval"
+        );
+
+        CertificateDB(address(db)).approveFlexibility(certificateId);
     }
 
     function getFlexibilityTotalPriceInEUR(uint _certificateId) external returns (uint total)

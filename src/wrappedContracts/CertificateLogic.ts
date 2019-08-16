@@ -420,6 +420,18 @@ export class CertificateLogic extends CertificateSpecificContract {
         return await this.web3Contract.methods.getFlexibilityTotalPriceInDAI(certificateId).call(txParams);
     }
 
+    async tokenAddress(txParams?: SpecialTx) {
+        return await this.web3Contract.methods.tokenAddress().call(txParams);
+    }
+
+    async tokenReceiver(txParams?: SpecialTx) {
+        return await this.web3Contract.methods.tokenReceiver().call(txParams);
+    }
+
+    async tokenHolder(txParams?: SpecialTx) {
+        return await this.web3Contract.methods.tokenHolder().call(txParams);
+    }
+
     async setMarketLogicContract(contractAddress: string, txParams?: SpecialTx) {
         const method = this.web3Contract.methods.setMarketLogicContract(contractAddress);
 
