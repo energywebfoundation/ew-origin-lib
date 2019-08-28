@@ -279,7 +279,7 @@ contract CertificateLogic is CertificateInterface, CertificateSpecificContract, 
         returns (uint)
     {
         AssetProducingDB.Asset memory asset =  AssetProducingInterface(address(assetContractLookup.assetProducingRegistry())).getAssetById(_assetId);
-        address trader = address(0x7672fa3f8C04aBBcbaD14d896AaD8bedECe72d2b);
+        address trader = address(0xFf0b178740B362240167645C65c98966c4F21f52);
 
         uint certId = CertificateDB(address(db)).createCertificateRaw(
             _assetId, _powerInW, asset.assetGeneral.matcher,
