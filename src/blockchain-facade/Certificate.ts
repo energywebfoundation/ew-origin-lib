@@ -26,6 +26,8 @@ export enum Status {
     Split
 }
 
+const GAS_PRICE = '1000000000';
+
 export interface ICertificateSpecific extends TradableEntity.IOnChainProperties {
     status: number;
     dataLog: string;
@@ -250,12 +252,12 @@ export class Entity extends TradableEntity.Entity implements ICertificateSpecifi
         if (this.configuration.blockchainProperties.activeUser.privateKey) {
             return this.configuration.blockchainProperties.certificateLogicInstance.approveFlexibility(
                 this.id,
-                { privateKey: this.configuration.blockchainProperties.activeUser.privateKey }
+                { privateKey: this.configuration.blockchainProperties.activeUser.privateKey, gasPrice: GAS_PRICE }
             );
         } else {
             return this.configuration.blockchainProperties.certificateLogicInstance.approveFlexibility(
                 this.id,
-                { from: this.configuration.blockchainProperties.activeUser.address }
+                { from: this.configuration.blockchainProperties.activeUser.address, gasPrice: GAS_PRICE }
             );
         }
     }
