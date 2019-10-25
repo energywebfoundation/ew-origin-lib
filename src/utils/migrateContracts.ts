@@ -25,6 +25,8 @@ import {
     EnergyCertificateBundleDBJSON
 } from '..';
 
+const GAS_PRICE = '1000000000';
+
 export async function migrateCertificateRegistryContracts(
     web3: Web3,
     assetContractLookupAddress: string,
@@ -53,14 +55,14 @@ export async function migrateCertificateRegistryContracts(
                         [assetContractLookupAddress, originContractLookupAddress]
                     )
                     .substr(2),
-            { privateKey: privateKeyDeployment }
+            { privateKey: privateKeyDeployment, gasPrice: GAS_PRICE }
         )).contractAddress;
 
         const certificateDBAddress = (await deploy(
             web3,
             CertificateDBJSON.bytecode +
                 web3.eth.abi.encodeParameter('address', certificateLogicAddress).substr(2),
-            { privateKey: privateKeyDeployment }
+            { privateKey: privateKeyDeployment, gasPrice: GAS_PRICE }
         )).contractAddress;
 
         const originContractLookup: OriginContractLookup = new OriginContractLookup(
@@ -72,7 +74,7 @@ export async function migrateCertificateRegistryContracts(
             assetContractLookupAddress,
             certificateLogicAddress,
             certificateDBAddress,
-            { privateKey: privateKeyDeployment }
+            { privateKey: privateKeyDeployment, gasPrice: GAS_PRICE }
         );
 
         const resultMapping = {} as any;
@@ -105,7 +107,7 @@ export async function migrateEnergyBundleContracts(
                         [assetContractLookupAddress, originContractLookupAddress]
                     )
                     .substr(2),
-            { privateKey: privateKeyDeployment }
+            { privateKey: privateKeyDeployment, gasPrice: GAS_PRICE }
         )).contractAddress;
 
         const energyCertificateBundleDBAddress = (await deploy(
@@ -114,7 +116,7 @@ export async function migrateEnergyBundleContracts(
                 web3.eth.abi
                     .encodeParameter('address', energyCertificateBundleLogicAddress)
                     .substr(2),
-            { privateKey: privateKeyDeployment }
+            { privateKey: privateKeyDeployment, gasPrice: GAS_PRICE }
         )).contractAddress;
 
         const originContractLookup: OriginContractLookup = new OriginContractLookup(
@@ -126,7 +128,7 @@ export async function migrateEnergyBundleContracts(
             assetContractLookupAddress,
             energyCertificateBundleLogicAddress,
             energyCertificateBundleDBAddress,
-            { privateKey: privateKeyDeployment }
+            { privateKey: privateKeyDeployment, gasPrice: GAS_PRICE }
         );
 
         const resultMapping = {} as any;
